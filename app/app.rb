@@ -6,10 +6,6 @@ module Padfoot
 
     enable :sessions
 
-    get '/' do
-      'Hello World'
-    end
-
     ##
     # Caching support.
     #
