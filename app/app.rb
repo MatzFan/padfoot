@@ -7,7 +7,7 @@ module Padfoot
     enable :sessions
 
     register Padrino::Sprockets
-    sprockets
+    sprockets minify: (Padrino.env == :production)
 
     ##
     # Caching support.

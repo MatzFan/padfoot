@@ -7,6 +7,8 @@ gem 'padrino', '0.12.4'
 gem 'thin', '1.6.3'
 gem 'rake', '10.4.2'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
+gem 'uglifier', '2.6.0' # JS compression
+gem 'yui-compressor', '0.12.0' # CSS compression
 
 # Optional JSON codec (faster performance)
 # gem 'oj'
