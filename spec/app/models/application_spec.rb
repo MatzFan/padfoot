@@ -1,16 +1,15 @@
 describe 'Application Model' do
 
   before(:each) do
-    AppStatus.create(name: 'Pending')
-    AppCategory.create(code: 'P', name: 'Planning')
-    AppOfficer.create(name: 'A Other')
-    AgentAlias.create(name: 'Riva Architects')
-    ParishAlias.create(name: 'St Helier')
+    AppStatus.create(name: 'APPEAL')
+    AppCategory.create(code: 'RW', name: 'RW')
+    AppOfficer.create(name: 'Richard Greig')
+    ParishAlias.create(name: 'St. Brelade')
   end
 
-  let(:pk) { {app_ref: 'P/2012/0219'} }
-  let(:fk) { {app_status: 'Pending', app_category: 'P', app_officer: 'A Other',
-             app_parish: 'St Helier', app_agent: 'Riva Architects'}
+  let(:pk) { {app_ref: 'RW/2014/0548'} }
+  let(:fk) { {app_status: 'APPEAL', app_category: 'RW', app_officer: 'Richard Greig',
+             app_parish: 'St. Brelade'}
            }
 
   let(:app_no_fks) { Application.create(pk) }
