@@ -1,27 +1,26 @@
 source 'https://rubygems.org'
+ruby '2.1.5'
 
 # Distribute your app as a gem
 # gemspec
 
 # Server requirements
-# gem 'thin' # or mongrel
-# gem 'trinidad', :platform => 'jruby'
+gem 'thin', '1.6.3'
+gem 'rake', '10.4.2'
 
 # Optional JSON codec (faster performance)
 # gem 'oj'
 
-# Project requirements
-gem 'rake'
-
 # Component requirements
-gem 'sass'
-gem 'haml'
-gem 'pg'
-gem 'sequel'
+gem 'sass', '3.4.9'
+gem 'haml', '4.0.6'
+gem 'pg', '0.17.1'
+gem 'sequel', '4.17.0'
 
-# Test requirements
-gem 'rspec', :group => 'test'
-gem 'rack-test', :require => 'rack/test', :group => 'test'
+group :test do
+  gem 'rspec', '3.1.0'
+  gem 'rack-test', '0.6.2', require: 'rack/test'
+end
 
 # Padrino Stable Gem
 gem 'padrino', '0.12.4'
