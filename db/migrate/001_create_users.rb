@@ -5,7 +5,7 @@ Sequel.migration do
       primary_key :id
       String :name
       String :email
-
     end
+
   end
 end
