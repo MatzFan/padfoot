@@ -6,6 +6,9 @@ module Padfoot
 
     enable :sessions
 
+    register Padrino::Sprockets
+    sprockets
+
     ##
     # Caching support.
     #

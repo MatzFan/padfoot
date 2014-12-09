@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-# Distribute your app as a gem
-# gemspec
+gem 'padrino', '0.12.4'
 
 # Server requirements
 gem 'thin', '1.6.3'
 gem 'rake', '10.4.2'
+gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 
 # Optional JSON codec (faster performance)
 # gem 'oj'
@@ -21,9 +21,6 @@ group :test do
   gem 'rspec', '3.1.0'
   gem 'rack-test', '0.6.2', require: 'rack/test'
 end
-
-# Padrino Stable Gem
-gem 'padrino', '0.12.4'
 
 # Or Padrino Edge
 # gem 'padrino', :github => 'padrino/padrino-framework'
