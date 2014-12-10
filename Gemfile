@@ -22,6 +22,7 @@ gem 'sequel', '4.17.0'
 group :test do
   gem 'rspec', '3.1.0'
   gem 'rack-test', '0.6.2', require: 'rack/test'
+  gem 'factory_girl', '4.5.0'
   gem 'database_cleaner', '1.3.0'
 end
 
