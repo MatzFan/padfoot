@@ -1,6 +1,6 @@
 describe 'User Model' do
 
-  let(:user) { FactoryGirl.build(:user) }
+  let(:user) { create(:user) }
 
   it 'can be created' do
     expect(user).not_to be_nil

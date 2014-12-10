@@ -7,6 +7,11 @@ RSpec.configure do |config|
 
   config.include Rack::Test::Methods
 
+  config.include FactoryGirl::Syntax::Methods
+  FactoryGirl.define do # FG uses save!, Sequel uses 'save'..
+    to_create { |instance| instance.save }
+  end
+
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
