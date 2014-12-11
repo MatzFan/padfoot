@@ -24,17 +24,23 @@ describe 'User Model' do
       expect(user).not_to be_valid
     end
 
-    pending('no blank password_confirmation')
+    it 'must be at least 8 characters' do
+      user.password = '1234567'
+      expect(user).not_to be_valid
+    end
 
   end
 
-  describe "when name is already used" do
-    pending('should not be saved')
-  end
+  describe 'email address' do
+    it 'should not be valid, if already in the DB' do
+      user.save
+      expect(user).not_to be_valid
+    end
 
-  describe "email address" do
-    pending('valid')
-    pending('not valid')
+    it 'should not be invalid, if not in correct format' do
+      user.email = 'load of rubbish'
+      expect(user).not_to be_valid
+    end
   end
 
 end

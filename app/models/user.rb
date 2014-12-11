@@ -1,10 +1,13 @@
 class User < Sequel::Model
 
+  plugin :validation_helpers
+
   def validate
     super
-    errors.add(:name, 'cannot be empty') if !name || name.empty?
-    errors.add(:email, 'cannot be empty') if !email || email.empty?
-    errors.add(:password, 'cannot be empty') if !password || password.empty?
+    validates_presence [:name, :email, :password]
+    validates_unique(:email) # CHECKS DB
+    validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email
+    validates_min_length 8, :password
   end
 
 end

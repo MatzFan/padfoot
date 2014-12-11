@@ -3,8 +3,9 @@ Sequel.migration do
 
     create_table :users do
       primary_key :id
-      String :name
-      String :email
+      String :name, null: false
+      String :email, null: false, unique: true
+      String :password, null: false
     end
 
   end
