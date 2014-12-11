@@ -6,6 +6,7 @@ Sequel.migration do
       String :name, null: false
       String :email, null: false, unique: true
       String :password, null: false
+      String :password_confirmation
     end
 
   end

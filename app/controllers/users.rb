@@ -24,4 +24,10 @@ Padfoot::App.controllers :users do
     render :new
   end
 
+  post :create do
+    @user = User.new(params[:user])
+    @user.save
+    redirect('/')
+  end
+
 end
