@@ -12,4 +12,40 @@ class User < Sequel::Model
     validates_min_length 8, :password
   end
 
+  # def before_save # callbacks must be defined, unlike ActiveRecord
+  #   self.encrypt_confirmation_code if :registered?
+  #   super
+  # end
+
+  def authenticate
+    return false unless @user = User.find(email: self.email)
+    if @user.confirmation_code == self.confirmation_code
+      self.confirmation = true
+      self.save
+      true
+    else
+      false
+    end
+  end
+
+  # private # good practive to make callbacks private
+  def encrypt_confirmation_code
+    self.confirmation_code = set_confirmation_code
+  end
+
+  def set_confirmation_code
+    # require 'bcrypt'
+    salt = BCrypt::Engine.generate_salt
+    confirmation_code = BCrypt::Engine.hash_secret(self.password, salt)
+    normalize_confirmation_code(confirmation_code)
+  end
+
+  def normalize_confirmation_code(confirmation_code)
+    confirmation_code.gsub("/", "")
+  end
+
+  def registered?
+    self.new? #
+  end
+
 end

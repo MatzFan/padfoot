@@ -3,12 +3,12 @@ ruby '2.1.5'
 
 gem 'padrino', '0.12.4'
 
-# Server requirements
 gem 'thin', '1.6.3'
 gem 'rake', '10.4.2'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '2.6.0' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
+gem 'bcrypt-ruby', '3.1.5', require: 'bcrypt'
 
 # Optional JSON codec (faster performance)
 # gem 'oj'
@@ -24,6 +24,10 @@ group :test do
   gem 'rack-test', '0.6.2', require: 'rack/test'
   gem 'factory_girl', '4.5.0'
   gem 'database_cleaner', '1.3.0'
+end
+
+group :development do
+  gem 'better_errors', '2.0.0'
 end
 
 # Or Padrino Edge
