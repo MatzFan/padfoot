@@ -9,6 +9,14 @@ module Padfoot
     register Padrino::Sprockets
     sprockets minify: (Padrino.env == :production)
 
+    set :delivery_method, smtp: {
+      address: 'smtp.gmail.com',
+      port: 587,
+      user_name: 'jerseypropertyservices@gmail.com',
+      password: 'N0gbad01',
+      authentication: :plain,
+    }
+
     ##
     # Caching support.
     #

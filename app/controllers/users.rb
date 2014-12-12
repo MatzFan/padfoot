@@ -7,7 +7,12 @@ Padfoot::App.controllers :users do
 
   post :create do
     @user = User.new(params[:user])
-    @user.save ? redirect('/') : render(:new) # save triggers validations
+    if @user.save
+      deliver(:registration, :registration_email, @user.name, @user.email)
+      redirect('/')
+    else
+      render :new # refresh the page (with warnings)
+    end
   end
 
 end
