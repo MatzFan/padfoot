@@ -43,4 +43,13 @@ describe 'User Model' do
     end
   end
 
+  describe 'confirmation code' do
+
+    it 'should not be blank' do
+      unconfirmed_user = user.clone
+      unconfirmed_user.confirmation_code = ''
+      expect(unconfirmed_user).not_to be_valid
+    end
+  end
+
 end

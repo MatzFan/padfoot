@@ -6,6 +6,8 @@ Padfoot::App.mailer :registration do
     subject 'Welcome to jerseypropertyservices.com!'
     locals name: name # defines varaibales in scope for the email template
     render :'registration/registration_email' # where msg body is defined
+    # add_file filename: 'welcome.pdf', content:
+    #   File.open("#{Padrino.root}/app/assets/pdf/welcome.pdf") { |f| f.read }
     content_type :plain
   end
 
