@@ -18,7 +18,7 @@ class User < Sequel::Model
   end
 
   def authenticate(confirmation_code)
-    return false unless @user = User.find(email: self.email)
+    return false unless @user = User[self.id] # is the user in the DB?
     if @user.confirmation_code == confirmation_code
       self.confirmation = true
       self.save

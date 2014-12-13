@@ -1,6 +1,6 @@
 Padfoot::App.controllers :users do
 
-  get :new, map: "/login" do
+  get :new, map: '/login' do
     @user = User.new
     render :new
   end
@@ -20,13 +20,11 @@ Padfoot::App.controllers :users do
   end
 
   get :confirm, map: '/confirm/:id/:code' do
-    @user = User[params[:id.to_s.to_i]]
-    redirect('/') unless @user = User[params[:id.to_s.to_i]] # if user is nil
-
-    logger.info "User is #{@user}"
-
-    redirect('/') unless @user.authenticate(params[:code])
-    render 'confirm'
+    redirect('/') unless @user = User[params[:id].to_i] # if user is nil
+    pp @user
+    puts params[:code]
+    redirect('/') unless @user.authenticate(params[:code].to_s)
+    render :confirm
   end
 
 end
