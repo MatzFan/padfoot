@@ -3,6 +3,10 @@ require File.expand_path(__dir__ + '/../config/boot')
 Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
 Dir[File.expand_path(__dir__ + '/../app/helpers/**/*.rb')].each(&method(:require))
 
+def session
+  last_request.env['rack.session'] # for session tests
+end
+
 RSpec.configure do |config|
 
   config.include Rack::Test::Methods
