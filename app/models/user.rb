@@ -6,16 +6,16 @@ class User < Sequel::Model
 
   def validate
     super
-    validates_presence [:name, :email, :confirmation_code]
+    validates_presence [:name, :email]
     validates_unique(:email) # CHECKS DB
     validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email
     validates_min_length 8, :password
   end
 
-  # def before_save # callbacks must be defined, unlike ActiveRecord
-  #   self.encrypt_confirmation_code if :registered?
-  #   super
-  # end
+  def before_save # callbacks must be defined, unlike ActiveRecord
+    self.encrypt_confirmation_code if :registered?
+    super
+  end
 
   def authenticate
     return false unless @user = User.find(email: self.email)
@@ -34,18 +34,17 @@ class User < Sequel::Model
   end
 
   def set_confirmation_code
-    # require 'bcrypt'
     salt = BCrypt::Engine.generate_salt
     confirmation_code = BCrypt::Engine.hash_secret(self.password, salt)
     normalize_confirmation_code(confirmation_code)
   end
 
   def normalize_confirmation_code(confirmation_code)
-    confirmation_code.gsub("/", "")
+    confirmation_code.gsub('/', '')
   end
 
   def registered?
-    self.new? #
+    self.new?
   end
 
 end

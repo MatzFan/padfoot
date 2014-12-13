@@ -47,7 +47,7 @@ describe 'User Model' do
     let(:user_confirmation) { build(:user) }
 
     it 'should not be blank' do
-      user_confirmation.confirmation_code = ""
+      user_confirmation.confirmation_code = ''
       expect(user_confirmation).not_to be_valid
     end
 
@@ -58,12 +58,14 @@ describe 'User Model' do
 
     it 'should authenticate user with correct confirmation code' do
       user_confirmation.save
-      confirmation_of_saved_user = User.first
+      correct_code = User.first.confirmation_code
+      user_confirmation.confirmation_code = correct_code
       expect(user_confirmation.authenticate).to eq(true)
     end
 
     it 'confirmation should be set true after a user is authenticated' do
       user_confirmation.save
+      user_confirmation.confirmation_code = User.first.confirmation_code
       user_confirmation.authenticate
       expect(user_confirmation.confirmation).to eq(true)
     end
