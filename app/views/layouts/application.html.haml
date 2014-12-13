@@ -17,6 +17,11 @@
             = link_to 'About', url_for(:page, :about)
           .span2
             = link_to 'Contact', url_for(:page, :contact)
+          - if signed_in?
+            = link_to 'Logout', url_for(:sessions, :destroy)
+          - else
+            .span2
+              = link_to 'Login', url_for(:sessions, :new)
       .row
         .span9.offset3.site
           = yield

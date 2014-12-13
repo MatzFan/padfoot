@@ -48,22 +48,22 @@ RSpec.describe '/sessions' do
 
   describe 'GET :logout' do
     it 'empty the current session' do
-      delete_logout # sets rack.session for tests
+      get_logout # sets rack.session for tests
       expect(session[:current_user]).to be_nil # session defined in spec_helper
       expect(last_response).to be_redirect
     end
 
     it 'redirect to homepage if user is logging out' do
-      delete_logout
+      get_logout
       expect(last_response).to be_redirect
     end
   end
 
   private
-  def delete_logout
+  def get_logout
       # first arguments are params (like the ones out of an form), the second
       # are environments variables
-    delete '/logout', { name:'Bruce', password: 'password' },
+    get '/logout', { name:'Bruce', password: 'password' },
       'rack.session' => { current_user: 1 }
   end
 
