@@ -52,21 +52,21 @@ describe 'User Model' do
     end
 
     it 'should not authenticate user with incorrect confirmation code' do
-      user_confirmation.confirmation_code = 'wrongcode'
-      expect(user_confirmation.authenticate).to eq(false)
+      expect(user_confirmation.authenticate('wrongcode')).to eq(false)
     end
 
     it 'should authenticate user with correct confirmation code' do
       user_confirmation.save
       correct_code = User.first.confirmation_code
       user_confirmation.confirmation_code = correct_code
-      expect(user_confirmation.authenticate).to eq(true)
+      expect(user_confirmation.authenticate(correct_code)).to eq(true)
     end
 
-    it 'confirmation should be set true after a user is authenticated' do
+    it 'confirmation should be set to true after a user is authenticated' do
       user_confirmation.save
-      user_confirmation.confirmation_code = User.first.confirmation_code
-      user_confirmation.authenticate
+      correct_code = User.first.confirmation_code
+      user_confirmation.confirmation_code = correct_code
+      user_confirmation.authenticate(correct_code)
       expect(user_confirmation.confirmation).to eq(true)
     end
 
