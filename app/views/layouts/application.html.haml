@@ -6,6 +6,14 @@
     =javascript_include_tag '/assets/application'
   %body
   .container
+    = if flash[:notice]
+      #flash.row
+        .span9.offset3.alert.alert-success
+          = flash[:notice] # use jquery
+        :javascript
+          $(function(){
+              $("#flash").fadeOut(2000);
+          });
     .row
       .span12.offset3
         %span#header jerseypropertyservices.com

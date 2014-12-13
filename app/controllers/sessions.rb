@@ -7,6 +7,7 @@ Padfoot::App.controllers :sessions do
   post :create, map: '/create' do
     @user = User.find(email: params[:email])
     if @user && @user.confirmation && @user.password == params[:password]
+      flash[:notice] = "Welcome back #{@user.name.split(' ').first}."
       sign_in(@user) # defined in helpers/sessions
       redirect '/'
     else
@@ -16,6 +17,7 @@ Padfoot::App.controllers :sessions do
 
   get :destroy, map: '/logout' do
     sign_out
+    flash[:notice] = 'You have successfully logged out.'
     redirect '/'
   end
 
