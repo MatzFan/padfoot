@@ -26,4 +26,28 @@ Padfoot::App.controllers :users do
     render :confirm
   end
 
+  get :edit, map: '/users/:id/edit' do
+    @user = User[params[:id].to_i]
+    unless @user
+      redirect('/')
+    end
+    render 'edit'
+  end
+
+  put :update, map: '/users/:id' do
+    @user = User[params[:id].to_i]
+    unless @user
+      flash[:error] = 'User is not registered.'
+      render :edit
+    end
+    @user.set(params[:user]) # CAN'T USE #update in if, as it returns false!
+    if @user.save
+      flash[:notice] = 'You have updated your profile.'
+      redirect('/')
+    else
+      flash[:error] = 'Your profile was not updated.'
+      render :edit
+    end
+  end
+
 end
