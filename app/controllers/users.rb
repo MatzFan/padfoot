@@ -1,5 +1,11 @@
 Padfoot::App.controllers :users do
 
+  before :edit, :update  do
+    redirect('/login') unless signed_in?
+    @user = User[params[:id].to_i]
+    redirect('/login') unless current_user == @user
+  end
+
   get :new, map: '/login' do
     @user = User.new
     render :new
@@ -28,7 +34,6 @@ Padfoot::App.controllers :users do
 
   get :edit, map: '/users/:id/edit' do
     @user = User[params[:id].to_i]
-    redirect('/') if @user == nil
     render :edit
   end
 
@@ -38,7 +43,7 @@ Padfoot::App.controllers :users do
       flash[:error] = 'User is not registered.'
       render :edit
     end
-    @user.set(params[:user]) # CAN'T USE #update in if, as it returns false!
+    @user.set(params[:updates]) # CAN'T USE #update in if, as it returns false!
     if @user.save
       flash[:notice] = 'You have updated your profile.'
       redirect('/')
