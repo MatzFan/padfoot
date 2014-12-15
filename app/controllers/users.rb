@@ -6,6 +6,10 @@ Padfoot::App.controllers :users do
     redirect('/login') unless current_user == @user
   end
 
+  before :create do
+    generate_authenticity_token
+  end
+
   get :new, map: '/login' do
     @user = User.new
     render :new

@@ -12,8 +12,13 @@ class User < Sequel::Model
     validates_min_length 8, :password
   end
 
+  def before_create
+    generate_authenticity_token
+    super
+  end
+
   def before_save # callbacks must be defined, unlike ActiveRecord
-    self.encrypt_confirmation_code if :registered?
+    encrypt_confirmation_code if :registered?
     super
   end
 
@@ -28,7 +33,8 @@ class User < Sequel::Model
     end
   end
 
-  # private # good practive to make callbacks private
+
+  private # good practive to make callbacks private
   def encrypt_confirmation_code
     self.confirmation_code = set_confirmation_code
   end
@@ -45,6 +51,10 @@ class User < Sequel::Model
 
   def registered?
     self.new?
+  end
+
+  def generate_authenticity_token
+    self.authenticity_token = SecureRandom.base64(64)
   end
 
 end
