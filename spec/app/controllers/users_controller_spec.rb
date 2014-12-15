@@ -45,23 +45,25 @@ RSpec.describe "/users" do
     let(:user) { build(:user) }
 
     it 'successful updates should be saved' do
+      new_attributes = { name: 'new', email: 'a.n@other.com', password: '12345678',
+       password_confirmation: '12345678' }
       id = user.id
       allow(User).to receive(:[]) { user }
-      put "users/#{id}", { updates: { name: 'new' } }, { 'rack.session' => { current_user: id } }
+      put "users/#{id}", { user: new_attributes }, { 'rack.session' => { current_user: id } }
       expect(User[id].name).to eq('new')
     end
 
     it 'successful updates should redirect' do
       id = user.id
       allow(User).to receive(:[]) { user }
-      put "users/#{id}", { updates: { name: 'new' } }, { 'rack.session' => { current_user: id } }
+      put "users/#{id}", { user: { name: 'new' } }, { 'rack.session' => { current_user: id } }
       expect(last_response).to be_redirect
     end
 
     it 'stays on the page if the user has made input errors' do
       id = user.id
       allow(User).to receive(:[]) { user } # try empty name in request
-      put "users/#{id}", { updates: { name: '' } }, { 'rack.session' => { current_user: id } }
+      put "users/#{id}", { user: { name: '' } }, { 'rack.session' => { current_user: id } }
       expect(last_response).to be_ok
     end
   end

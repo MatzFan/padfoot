@@ -43,7 +43,7 @@ Padfoot::App.controllers :users do
       flash[:error] = 'User is not registered.'
       render :edit
     end
-    @user.set(params[:updates]) # CAN'T USE #update in if, as it returns false!
+    @user.set(params[:user]) # CAN'T USE #update in if, as it returns false!
     if @user.save
       flash[:notice] = 'You have updated your profile.'
       redirect('/')

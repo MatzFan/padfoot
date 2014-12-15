@@ -14,4 +14,4 @@
     = f.password_field :password_confirmation
     = error_message_on @user, :password_confirmation, class: "form-control"
     %p
-      = f.submit "Create", :class => "btn btn-primary"
+      = submit_tag "Register", :class => "btn btn-primary"
