@@ -13,7 +13,7 @@ class User < Sequel::Model
   end
 
   def before_create
-    save_auth_token
+    generate_auth_token # for cookies
     super
   end
 
@@ -53,12 +53,12 @@ class User < Sequel::Model
     self.new?
   end
 
-  def save_auth_token
-    self.authenticity_token = normalize(SecureRandom.base64(64))
+  def generate_auth_token
+    self.authenticity_token = SecureRandom.urlsafe_base64(64) # for cookies
   end
 
   def save_forget_password_token
-    self.password_reset_token = generate_auth_token
+    self.password_reset_token = SecureRandom.urlsafe_base64(64)
     self.password_reset_sent_date = Time.now
     self.save
   end

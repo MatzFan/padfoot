@@ -15,18 +15,21 @@ Padfoot::App.controllers :forget_password do
     render 'success' # always - give no indication of whether email exists..
   end
 
-  get :edit, map: "/password_reset/:token/edit" do
-    # @user = User.first(password_reset_token: params[:token])
-    # if @user.password_reset_sent_date <= Time.now + (60 * 60)
-    #   @user.update({ password_reset_token: 0, password_reset_sent_date: 0 })
-    #   flash[:error] = 'Password reset token has expired.'
-    #   redirect url(:sessions, :new)
-    # elsif @user
-    #   render 'edit'
-    # else
-    #   @user.update({ password_reset_token: 0, password_reset_sent_date: 0 })
-    #   redirect url(:password_forget, :new)
-    # end
+  get :edit, map: '/password_reset/:token/edit' do
+    @user = User.first(password_reset_token: params[:token])
+    logger.info @user.values
+    logger.info @user.password_reset_sent_date
+    logger.info
+    if @user.password_reset_sent_date + (3600) < Time.now # 1 hour expiry
+      @user.update({ password_reset_token: '0', password_reset_sent_date: nil })
+      flash[:error] = 'Password reset token has expired.'
+      redirect url(:sessions, :new)
+    elsif @user
+      render 'edit'
+    else
+      @user.update({ password_reset_token: '0', password_reset_sent_date: nil })
+      redirect url(:password_forget, :new)
+    end
   end
 
 end
