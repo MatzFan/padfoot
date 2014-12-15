@@ -33,8 +33,9 @@ RSpec.describe "/users" do
     end
 
     it "render the view for editing a user" do
-      allow(User).to receive(:[]).twice.and_return(user)
-      get "/users/#{user.id}/edit"
+      user.save
+      id = user.id
+      get "/users/#{id}/edit"
       expect(last_response).to be_ok
     end
   end
