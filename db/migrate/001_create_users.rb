@@ -10,6 +10,8 @@ Sequel.migration do
       String :confirmation_code
       FalseClass :confirmation, null: false, default: false
       String :authenticity_token
+      String :password_reset_token
+      DateTime :password_reset_sent_date
     end
 
   end

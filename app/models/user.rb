@@ -13,7 +13,7 @@ class User < Sequel::Model
   end
 
   def before_create
-    generate_auth_token
+    save_auth_token
     super
   end
 
@@ -42,19 +42,25 @@ class User < Sequel::Model
   def set_confirmation_code
     salt = BCrypt::Engine.generate_salt
     confirmation_code = BCrypt::Engine.hash_secret(self.password, salt)
-    normalize_confirmation_code(confirmation_code)
+    normalize(confirmation_code)
   end
 
-  def normalize_confirmation_code(confirmation_code)
-    confirmation_code.gsub('/', '')
+  def normalize(string)
+    string.gsub('/', '')
   end
 
   def registered?
     self.new?
   end
 
-  def generate_auth_token
-    self.authenticity_token = SecureRandom.base64(64)
+  def save_auth_token
+    self.authenticity_token = normalize(SecureRandom.base64(64))
+  end
+
+  def save_forget_password_token
+    self.password_reset_token = generate_auth_token
+    self.password_reset_sent_date = Time.now
+    self.save
   end
 
 end

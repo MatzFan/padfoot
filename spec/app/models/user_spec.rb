@@ -69,7 +69,7 @@ describe 'User Model' do
   describe '#generate_auth_token' do
     it 'generate_auth_token generate token if user is saved' do
       allow(user).to receive(:save) { true }
-      user.send(:generate_auth_token)
+      user.send(:save_auth_token)
       user.save
       expect(user.authenticity_token).not_to be_empty
     end
