@@ -28,15 +28,13 @@ Padfoot::App.controllers :users do
 
   get :edit, map: '/users/:id/edit' do
     @user = User[params[:id].to_i]
-    unless @user
-      redirect('/')
-    end
+    redirect('/') if @user == nil
     render 'edit'
   end
 
   put :update, map: '/users/:id' do
     @user = User[params[:id].to_i]
-    unless @user
+    if @user == nil
       flash[:error] = 'User is not registered.'
       render :edit
     end
