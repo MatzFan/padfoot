@@ -13,4 +13,5 @@
 %label.checkbox
   = check_box_tag :remember_me
   Remember me
--# New on this platform? #{link_to 'Register', url(:users, :new)}
+%p
+  = link_to 'forgotten password?', url(:forget_password, :new)
