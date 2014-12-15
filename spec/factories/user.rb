@@ -9,5 +9,6 @@ FactoryGirl.define do
     password 'password'
     password_confirmation 'password'
     confirmation_code 'none_sent_yet'
+    authenticity_token ''
   end
 end

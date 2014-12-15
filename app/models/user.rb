@@ -13,7 +13,7 @@ class User < Sequel::Model
   end
 
   def before_create
-    generate_authenticity_token
+    generate_auth_token
     super
   end
 
@@ -53,7 +53,7 @@ class User < Sequel::Model
     self.new?
   end
 
-  def generate_authenticity_token
+  def generate_auth_token
     self.authenticity_token = SecureRandom.base64(64)
   end
 
