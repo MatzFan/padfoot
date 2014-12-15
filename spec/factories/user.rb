@@ -8,6 +8,6 @@ FactoryGirl.define do
     email
     password 'password'
     password_confirmation 'password'
-    confirmation_code 'somecode'
+    confirmation_code 'none_sent_yet'
   end
 end
