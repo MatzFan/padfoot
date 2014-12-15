@@ -1,1 +1,11 @@
-Reset password here.
+%h2 Reset Password
+= form_for @user, "/password_reset/#{@user.password_reset_token}", method: :post do |f|
+  .form-group.has-warning
+    = f.label :password
+    = f.password_field :password
+    = error_message_on @user, :password, class: "form-control", prepend: 'The password '
+    = f.label :password_confirmation
+    = f.password_field :password_confirmation
+    = error_message_on @user, :password_confirmation, class: "form-control"
+    %p
+      = f.submit 'Reset password', class: "btn btn-primary"
