@@ -13,7 +13,7 @@ module Padfoot
       address: 'smtp.gmail.com',
       port: 587,
       user_name: 'jerseypropertyservices@gmail.com',
-      password: 'N0gbad01',
+      password: ENV['JPS_PASSWORD'],
       authentication: :plain,
     }
 

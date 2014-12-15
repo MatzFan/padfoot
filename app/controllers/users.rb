@@ -29,7 +29,7 @@ Padfoot::App.controllers :users do
   get :edit, map: '/users/:id/edit' do
     @user = User[params[:id].to_i]
     redirect('/') if @user == nil
-    render 'edit'
+    render :edit
   end
 
   put :update, map: '/users/:id' do

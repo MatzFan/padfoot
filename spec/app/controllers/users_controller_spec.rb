@@ -33,9 +33,9 @@ RSpec.describe "/users" do
     end
 
     it "render the view for editing a user" do
-      user.save
       id = user.id
-      get "/users/#{id}/edit"
+      allow(User).to receive(:[]) { user }
+      get "/users/#{id}/edit", {}, { 'rack.session' => { current_user: id } } # ensures user is signed in
       expect(last_response).to be_ok
     end
   end

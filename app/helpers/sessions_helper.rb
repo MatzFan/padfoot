@@ -1,4 +1,4 @@
-# Helper methods defined here can be ACCESSED IN ANY CONTROLLER OR VIEW IN THE APPLICATION!!!!!!!!
+# Helper methods defined here can be ACCESSED IN ANY CONTROLLER OR VIEW
 
 module SessionsHelper
 
