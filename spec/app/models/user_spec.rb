@@ -17,11 +17,6 @@ describe 'User Model' do
     expect(user).not_to be_valid
   end
 
-  it 'must not have a blank confirmation_code' do
-    user.confirmation_code = ''
-    expect(user).not_to be_valid
-  end
-
   describe "passwords" do
 
     it 'must not have a blank email' do

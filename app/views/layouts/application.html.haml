@@ -33,6 +33,8 @@
           - else
             .span3
               = link_to 'Login', url(:sessions, :new)
+            .span3
+              = link_to 'Register', url(:users, :new)
       .row
         .span9.offset3.site
           = yield

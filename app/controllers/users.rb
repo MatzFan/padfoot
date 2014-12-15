@@ -6,11 +6,7 @@ Padfoot::App.controllers :users do
     redirect('/login') unless current_user == @user
   end
 
-  before :create do
-    generate_authenticity_token
-  end
-
-  get :new, map: '/login' do
+  get :new, map: '/register' do
     @user = User.new
     render :new
   end
@@ -23,7 +19,7 @@ Padfoot::App.controllers :users do
             @user.name,
             @user.email,
             @user.id,
-            @user.confirmation_code) unless @user.confirmation# check confirmed
+            @user.confirmation_code) unless @user.confirmation # check confirmed
       redirect('/')
     else
       render :new # refresh the page (with warnings)

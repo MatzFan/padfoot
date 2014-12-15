@@ -6,7 +6,7 @@ class User < Sequel::Model
 
   def validate
     super
-    validates_presence [:name, :email, :confirmation_code]
+    validates_presence [:name, :email]
     validates_unique(:email) # CHECKS DB
     validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email
     validates_min_length 8, :password
