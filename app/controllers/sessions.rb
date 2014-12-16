@@ -17,7 +17,7 @@ Padfoot::App.controllers :sessions do
       end
       flash[:notice] = "Welcome back #{@user.name.split(' ').first}."
       sign_in(@user) # defined in helpers/sessions
-      redirect '/'
+      redirect 'applications/index'
     else
       render :new, locals: { error: true }
     end
