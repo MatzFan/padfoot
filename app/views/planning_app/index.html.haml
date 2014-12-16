@@ -1,0 +1,8 @@
+%table.table-striped
+  %tr
+    - @titles.each do |col|
+      %td= col
+  - @apps.each do |row|
+    %tr
+    - row.each do |data|
+      %td= data
