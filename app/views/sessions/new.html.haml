@@ -1,6 +1,6 @@
 %h1 Login
 = form_tag url(:sessions, :create) do # don't hard code route url :)
-  = if error
+  - if error
     .alert.alert-error
       %h4 Error
       Your Email and/or Password is wrong!
@@ -8,10 +8,10 @@
   = text_field_tag :email
   = label_tag :password
   = password_field_tag :password
+  %label.checkbox
+    = check_box_tag :remember_me
+    Remember me
+  %p
+    = link_to 'forgotten password?', url(:forget_password, :new)
   %p
     = submit_tag "Sign in", :class => "btn btn-primary"
-%label.checkbox
-  = check_box_tag :remember_me
-  Remember me
-%p
-  = link_to 'forgotten password?', url(:forget_password, :new)
