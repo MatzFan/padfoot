@@ -1,5 +1,5 @@
-require File.expand_path(__dir__ + '/../../lib/scrapers/app_refs_scraper')
+require File.expand_path(__dir__ + '/../maintenance_helper')
 
 AppRefsScraper.new(2014, '2174').latest_refs.each do |ref|
-  puts ref
+  Application.find_or_create(app_ref: ref)
 end
