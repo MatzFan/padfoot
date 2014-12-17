@@ -9,4 +9,8 @@ Padfoot::App.controllers :planning_app do
     render :index
   end
 
+  get :map, map: 'applications/map' do
+    render :map
+  end
+
 end
