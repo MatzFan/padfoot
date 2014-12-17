@@ -13,17 +13,18 @@ class AppRefsScraper # scrapes app refs for a given year
   HEADER = 'HeaderHTML'
   DETAILS_URL = '/Planning/Pages/PlanningApplicationDetail.aspx?s=1&amp;r='
 
-  attr_reader :year
+  attr_reader :year, :ref_num_string
 
-  def initialize(year:) # Ruby 2.1 required keyword arg
+  def initialize(year, ref_num_string = '0000') # Ruby 2.1 required keyword arg
     @year = year.to_s
+    @ref_num_string = ref_num_string
   end
 
-  def app_refs_from(num_string: '0000')
+  def latest_refs
     refs_arr = []
     (1..3).collect do |page_num|
       refs_arr += app_refs_on_page(page_num)
-      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{num_string}/ }
+      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{ref_num_string}$/ }
     end
   end
 
@@ -65,5 +66,3 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
 end
-
-# puts AppRefsScraper.new(year: 2013).app_refs_array 2
