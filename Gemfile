@@ -9,6 +9,7 @@ gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '2.6.0' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
 gem 'bcrypt-ruby', '3.1.5', require: 'bcrypt'
+gem 'mechanize', '2.7.2' # 2.7.3 conflicts with Padrino re mime-types 1.0/2.0
 
 # Optional JSON codec (faster performance)
 # gem 'oj'
@@ -26,14 +27,6 @@ group :test do
   gem 'database_cleaner', '1.3.0'
 end
 
-group :development do
+group :test, :development do
   gem 'better_errors', '2.0.0'
 end
-
-# Or Padrino Edge
-# gem 'padrino', :github => 'padrino/padrino-framework'
-
-# Or Individual Gems
-# %w(core support gen helpers cache mailer admin).each do |g|
-#   gem 'padrino-' + g, '0.12.4'
-# end
