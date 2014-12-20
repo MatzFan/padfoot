@@ -12,7 +12,7 @@ describe AppDetailsScraper do
                    "St. Brelade",
                    "JE3 8EA",
                    "Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network",
-                   ""
+                   "" # no agent
                    ] }
   let(:dates) { ["4th April 2014", "15th April 2014", "6th May 2014", "n/a",
                  "15th August 2014", "14th October 2014", "18th June 2014"
@@ -23,11 +23,15 @@ describe AppDetailsScraper do
     expect(scraper).not_to be_nil
   end
 
-  it '#det_t_ok?' do # validates table format
+  it '#is_valid_ref' do
+    expect(AppDetailsScraper.new('garbage_app_ref').is_valid_ref).to be false
+  end
+
+  it '#det_t_ok?' do # validates details tables (2) format
     expect(scraper.det_t_ok?).to be_truthy
   end
 
-  it '#dat_t_ok?' do # validates table format
+  it '#dat_t_ok?' do # validates dates table format
     expect(scraper.dat_t_ok?).to be_truthy
   end
 
@@ -43,8 +47,14 @@ describe AppDetailsScraper do
     expect(scraper.app_coords).to eq(coords)
   end
 
-  it '#app_data' do
-    expect(scraper.app_data.size).to eq(14)
+  it '#app_data returns 21 items if parsing successful' do
+    expect(scraper.app_data.size).to eq(21)
+  end
+
+  it '#app_data returns LESS THAN 21 items if parsing unsuccessful' do
+    bad_dates_table_titles = scraper.send(:details_table_titles)
+    allow(scraper).to receive(:dates_table_titles) { bad_dates_table_titles }
+    expect(scraper.app_data.size).to be < 21
   end
 
 end

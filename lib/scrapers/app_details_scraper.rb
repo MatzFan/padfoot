@@ -28,14 +28,14 @@ class AppDetailsScraper
   ID_DELIM = 'ctl00_lbl'
   COORDS = ['Latitude', 'Longitude']
 
-  attr_reader :agent, :app_ref, :details_page, :dates_page
+  attr_reader :agent, :app_ref, :details_page, :dates_page, :is_valid_ref, :are_tables_valid
 
   def initialize(app_ref)
     @agent = Mechanize.new
     @app_ref = app_ref
     @details_page = details_page
     @dates_page = dates_page
-    return nil unless valid?(details_page) && valid?(dates_page)
+    @is_valid_ref = valid?(details_page) && valid?(dates_page)
   end
 
   def valid?(page) # incorrect app refs yield 'error' in title
@@ -58,8 +58,8 @@ class AppDetailsScraper
     dates_table.map { |i| format(i.text) } if dat_t_ok?
   end
 
-  def app_data # array of the 15 application details, incl. coords
-    app_details + app_coords
+  def app_data # array of the 21 application data - or less is parsing bad
+    (app_details << app_coords << app_dates).flatten.compact
   end
 
   def det_t_ok? # valid details table titles?
