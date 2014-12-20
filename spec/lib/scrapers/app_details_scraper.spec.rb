@@ -14,17 +14,37 @@ describe AppDetailsScraper do
                    "Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network",
                    ""
                    ] }
+  let(:dates) { ["4th April 2014", "15th April 2014", "6th May 2014", "n/a",
+                 "15th August 2014", "14th October 2014", "18th June 2014"
+                 ] }
+  let(:coords) { [49.185511, -2.191882] }
 
-  xit '#valid_details_page?' do
-    expect(scraper.valid_details_page?).to be_truthy
+  it '#initialize' do
+    expect(scraper).not_to be_nil
   end
 
-  xit '#t_valid?' do
-    expect(scraper.t_valid?).to be_truthy
+  it '#det_t_ok?' do # validates table format
+    expect(scraper.det_t_ok?).to be_truthy
   end
 
-  it '#details_data' do
-    expect(scraper.details_data).to eq(details)
+  it '#dat_t_ok?' do # validates table format
+    expect(scraper.dat_t_ok?).to be_truthy
+  end
+
+  it '#app_details' do
+    expect(scraper.app_details).to eq(details)
+  end
+
+  it '#app_dates' do
+    expect(scraper.app_dates).to eq(dates)
+  end
+
+  it '#app_coords' do
+    expect(scraper.app_coords).to eq(coords)
+  end
+
+  it '#app_data' do
+    expect(scraper.app_data.size).to eq(14)
   end
 
 end
