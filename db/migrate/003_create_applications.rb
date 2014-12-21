@@ -16,6 +16,13 @@ Sequel.migration do
       String :app_road
       Float :app_lat
       Float :app_long
+      # Date : :valid_date
+      # Date : :end_pub_date
+      # Date : :site_visit_date
+      # Date : :committee_date
+      # Date : :decision_date
+      # Date : :appeal_date
+      # Integer :order
     end
 
   end

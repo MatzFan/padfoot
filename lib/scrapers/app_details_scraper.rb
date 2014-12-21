@@ -6,36 +6,17 @@ class AppDetailsScraper
   DETAILS_PAGE = 'Planning/Pages/PlanningApplicationDetail.aspx?s=1&r='
   DATES_PAGE = 'Planning/Pages/PlanningApplicationTimeline.aspx?s=1&r='
   TABLE_CSS = ".//table[@class='pln-searchd-table']"
-  DETAILS_TABLE_TITLES = ["Reference",
-                          "Category",
-                          "Status",
-                          "Officer",
-                          "Applicant",
-                          "Description",
-                          "ApplicationAddress",
-                          "RoadName",
-                          "Parish",
-                          "PostCode",
-                          "Constraints",
-                          "Agent"]
-  DATES_TABLE_TITLES = ['ValidDate',
-                        'AdvertisedDate',
-                        'endpublicityDate',
-                        'SitevisitDate',
-                        'CommitteeDate',
-                        'Decisiondate',
-                        'Appealdate']
   ID_DELIM = 'ctl00_lbl'
-  COORDS = ['Latitude', 'Longitude']
+  COORDS = [:Latitude, :Longitude]
 
-  attr_reader :agent, :app_ref, :details_page, :dates_page, :is_valid_ref, :are_tables_valid
+  attr_reader :agent, :app_ref, :details_page, :dates_page, :has_valid_ref
 
   def initialize(app_ref)
     @agent = Mechanize.new
     @app_ref = app_ref
     @details_page = details_page
     @dates_page = dates_page
-    @is_valid_ref = valid?(details_page) && valid?(dates_page)
+    @has_valid_ref = valid?(details_page) && valid?(dates_page)
   end
 
   def valid?(page) # incorrect app refs yield 'error' in title
@@ -54,20 +35,28 @@ class AppDetailsScraper
     (0..1).map { |n| details_table(n).map { |i| i.text } }.flatten if det_t_ok?
   end
 
+  def details_hash
+    Hash[Application.const_get(:DETAILS_TABLE_TITLES).zip(app_details)]
+  end
+
   def app_dates # array of the 7 dates
     dates_table.map { |i| format(i.text) } if dat_t_ok?
   end
 
-  def app_data # array of the 21 application data - or less is parsing bad
-    (app_details << app_coords << app_dates).flatten.compact
+  def dates_hash
+    Hash[Application.const_get(:DATES_TABLE_TITLES).zip(app_dates)]
+  end
+
+  def data_hash # hash of the 21 application table_titles: data
+    details_hash.merge(coords_hash).merge(dates_hash)
   end
 
   def det_t_ok? # valid details table titles?
-    details_table_titles == DETAILS_TABLE_TITLES
+    details_table_titles == Application.const_get(:DETAILS_TABLE_TITLES)
   end
 
   def dat_t_ok? # valid dates table titles?
-    dates_table_titles == DATES_TABLE_TITLES
+    dates_table_titles == Application.const_get(:DATES_TABLE_TITLES)
   end
 
   def details_table(n) # app details are split over 2 tables with same class
@@ -91,7 +80,11 @@ class AppDetailsScraper
   end
 
   def app_coords
-    COORDS.map { |coord| parse_coord(details_page.body, coord).to_f }
+    COORDS.map { |coord| parse_coord(details_page.body, coord.to_s).to_f }
+  end
+
+  def coords_hash
+    Hash[COORDS.zip(app_coords)]
   end
 
   def parse_coord(source, coord)
