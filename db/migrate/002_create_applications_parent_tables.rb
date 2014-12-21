@@ -8,7 +8,7 @@ Sequel.migration do
 
     create_table(:app_categories) do
       String :code, primary_key: true #PK
-      String :name, null: false
+      String :name
     end
 
     create_table(:app_statuses) do

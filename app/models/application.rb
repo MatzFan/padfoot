@@ -7,6 +7,16 @@ class Application < Sequel::Model
   many_to_one :parish_aliases, key: :app_parish
   many_to_one :agent_aliases, key: :app_agent
 
+  def before_create
+    # populate parent tables first if need be
+    AppCategory.find_or_create(code: self.app_category) if self.app_category
+    AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
+    AppStatus.find_or_create(name: self.app_status) if self.app_status
+    ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
+    AppAgent.find_or_create(name: self.app_agent) if self.app_agent
+    super
+  end
+
   DETAILS_TABLE_TITLES = ['Reference',
                           'Category',
                           'Status',
