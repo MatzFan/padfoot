@@ -36,7 +36,7 @@ class AppDetailsScraper
   end
 
   def details_hash
-    Hash[Application.const_get(:DETAILS_TABLE_TITLES).zip(app_details)]
+    Hash[Application.const_get(:DETAILS_FIELDS).zip(app_details)]
   end
 
   def app_dates # array of the 7 dates
@@ -44,7 +44,7 @@ class AppDetailsScraper
   end
 
   def dates_hash
-    Hash[Application.const_get(:DATES_TABLE_TITLES).zip(app_dates)]
+    Hash[Application.const_get(:DATES_FIELDS).zip(app_dates)]
   end
 
   def data_hash # hash of the 21 application table_titles: data
@@ -84,7 +84,7 @@ class AppDetailsScraper
   end
 
   def coords_hash
-    Hash[COORDS.zip(app_coords)]
+    Hash[COORDS.map { |c| c.downcase }.zip(app_coords)] # field names lowercase
   end
 
   def parse_coord(source, coord)

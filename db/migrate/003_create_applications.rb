@@ -14,15 +14,16 @@ Sequel.migration do
       String :app_description
       String :app_postcode, fixed: true, size: 7
       String :app_road
-      Float :app_lat
-      Float :app_long
-      # Date : :valid_date
-      # Date : :end_pub_date
-      # Date : :site_visit_date
-      # Date : :committee_date
-      # Date : :decision_date
-      # Date : :appeal_date
-      # Integer :order
+      Float :latitude
+      Float :longitude
+      Date :valid_date
+      Date :advertised_date
+      Date :end_pub_date
+      Date :site_visit_date
+      Date :committee_date
+      Date :decision_date
+      Date :appeal_date
+      Integer :order
     end
 
   end
