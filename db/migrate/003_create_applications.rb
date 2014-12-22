@@ -23,7 +23,7 @@ Sequel.migration do
       Date :committee_date
       Date :decision_date
       Date :appeal_date
-      Integer :order
+      Integer :order, unique: true
     end
 
   end

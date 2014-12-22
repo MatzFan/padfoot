@@ -32,31 +32,35 @@ class AppDetailsScraper
   end
 
   def app_details
-    (0..1).map { |n| details_table(n).map { |i| i.text } }.flatten if det_t_ok?
+    det_t_ok? ? (0..1).map { |n| details_table(n).map { |i| i.text } }.flatten : {}
   end
 
   def details_hash
-    Hash[Application.const_get(:DETAILS_FIELDS).zip(app_details)]
+    Hash[const(:DETAILS_FIELDS).zip(app_details)].reject { |k,v| v.empty? }
+  end
+
+  def const(sym)
+    Application.const_get(sym)
   end
 
   def app_dates # array of the 7 dates
-    dates_table.map { |i| format(i.text) } if dat_t_ok?
+    dat_t_ok? ? dates_table.map { |i| format(i.text) } : {}
   end
 
   def dates_hash
-    Hash[Application.const_get(:DATES_FIELDS).zip(app_dates)]
+    Hash[const(:DATES_FIELDS).zip(app_dates)].reject { |k,v| v == 'n/a' }
   end
 
-  def data_hash # hash of the 21 application table_titles: data
-    details_hash.merge(coords_hash).merge(dates_hash)
+  def data_hash # hash of the application table_titles: data, less empty values
+    details_hash.merge(coords_hash).merge(dates_hash).reject { |k,v| v.nil? }
   end
 
   def det_t_ok? # valid details table titles?
-    details_table_titles == Application.const_get(:DETAILS_TABLE_TITLES)
+    details_table_titles == const(:DETAILS_TABLE_TITLES)
   end
 
   def dat_t_ok? # valid dates table titles?
-    dates_table_titles == Application.const_get(:DATES_TABLE_TITLES)
+    dates_table_titles == const(:DATES_TABLE_TITLES)
   end
 
   def details_table(n) # app details are split over 2 tables with same class
@@ -79,12 +83,12 @@ class AppDetailsScraper
     text.split(ID_DELIM).last
   end
 
-  def app_coords
+  def coords
     COORDS.map { |coord| parse_coord(details_page.body, coord.to_s).to_f }
   end
 
-  def coords_hash
-    Hash[COORDS.map { |c| c.downcase }.zip(app_coords)] # field names lowercase
+  def coords_hash # validates latitude
+    coords[0] > 48.6 ? Hash[COORDS.map { |c| c.downcase }.zip(coords)] : {}
   end
 
   def parse_coord(source, coord)
