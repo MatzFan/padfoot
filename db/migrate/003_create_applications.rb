@@ -3,6 +3,9 @@ Sequel.migration do
 
     create_table :applications do
       String :app_ref, primary_key: true #PK
+      String :app_code
+      Integer :app_year
+      Integer :app_number
       foreign_key :app_agent, :agent_aliases, type: String
       foreign_key :app_category, :app_categories, type: String
       foreign_key :app_officer, :app_officers, type: String

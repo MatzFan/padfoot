@@ -43,12 +43,16 @@ class AppDetailsScraper
     Application.const_get(sym)
   end
 
-  def app_dates # array of the 7 dates
-    dat_t_ok? ? dates_table.map { |i| format(i.text) } : {}
+  def app_dates # array of the 7 dates, formatted appropriately
+    dat_t_ok? ? dates_table.map { |i| format_date(i.text) } : {}
+  end
+
+  def format_date(string)
+    DateTime.parse(string).to_date rescue nil # returns nil for non-dates
   end
 
   def dates_hash
-    Hash[const(:DATES_FIELDS).zip(app_dates)].reject { |k,v| v == 'n/a' }
+    Hash[const(:DATES_FIELDS).zip(app_dates)].reject { |k,v| v.nil? }
   end
 
   def data_hash # hash of the application table_titles: data, less empty values

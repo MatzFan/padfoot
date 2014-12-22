@@ -14,9 +14,9 @@ describe AppDetailsScraper do
                    "Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network",
                    "" # no agent
                    ] }
-  let(:dates) { ["4th April 2014", "15th April 2014", "6th May 2014", "n/a",
-                 "15th August 2014", "14th October 2014", "18th June 2014"
-                 ] }
+  let(:dates) { ["2014-04-04", "2014-04-15", "2014-05-06", "",
+                 "2014-08-15", "2014-10-14", "2014-06-18"
+                ] }
   let(:app_coords) { [49.185511, -2.191882] }
 
   let(:app_data_hash) { { :app_applicant => 'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA',
@@ -33,13 +33,13 @@ describe AppDetailsScraper do
                           # :app_agent => '', # no agent in this example
                           :latitude => 49.185511,
                           :longitude => -2.191882,
-                          :valid_date => '4th April 2014',
-                          :advertised_date => '15th April 2014',
-                          :end_pub_date =>'6th May 2014',
+                          :valid_date => Date.parse('2014-04-04'),
+                          :advertised_date => Date.parse('2014-04-15'),
+                          :end_pub_date => Date.parse('2014-05-06'),
                           # :site_visit_date => 'n/a', # no site visit date in this example
-                          :committee_date => '15th August 2014',
-                          :decision_date => '14th October 2014',
-                          :appeal_date => '18th June 2014',
+                          :committee_date => Date.parse('2014-08-15'),
+                          :decision_date => Date.parse('2014-10-14'),
+                          :appeal_date => Date.parse('2014-06-18'),
                       } }
 
   it '#initialize' do
@@ -62,8 +62,16 @@ describe AppDetailsScraper do
     expect(scraper.app_details).to eq(details)
   end
 
+  it '#format_date' do
+    expect(scraper.format_date('4th April 2014').class).to eq(Date)
+  end
+
+  it '#format_date for "n/a" returns nil' do
+    expect(scraper.format_date('n/a')).to be_nil
+  end
+
   it '#app_dates' do
-    expect(scraper.app_dates).to eq(dates)
+    expect(scraper.app_dates.map { |date| date.to_s }).to eq(dates)
   end
 
   it '#coords' do

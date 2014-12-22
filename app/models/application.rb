@@ -8,12 +8,17 @@ class Application < Sequel::Model
   many_to_one :agent_aliases, key: :app_agent
 
   def before_create
+    code_year_number = self.app_ref.split('/')
+    self.app_code = code_year_number[0]
+    self.app_year = code_year_number[1].to_i
+    self.app_number = code_year_number[2].to_i
+    self.order = self.app_year * 10000 + self.app_number
     # populate parent tables first if need be
     AppCategory.find_or_create(code: self.app_category) if self.app_category
     AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
     AppStatus.find_or_create(name: self.app_status) if self.app_status
     ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
-    AppAgent.find_or_create(name: self.app_agent) if self.app_agent
+    AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
     super
   end
 
