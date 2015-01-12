@@ -15,17 +15,18 @@ class AppRefsScraper # scrapes app refs for a given year
 
   attr_reader :year, :ref_num_string
 
-  def initialize(year, ref_num_string = '0000') # Ruby 2.1 required keyword arg
+  def initialize(year = Time.now.year, ref_num_string = '0000')
     @year = year.to_s
     @ref_num_string = ref_num_string
   end
 
   def latest_refs
     refs_arr = []
-    (1..3).collect do |page_num|
+    (1..num_pages).collect do |page_num|
       refs_arr += app_refs_on_page(page_num)
       return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{ref_num_string}$/ }
     end
+    refs_arr
   end
 
   def app_refs_on_page(page)
@@ -34,6 +35,10 @@ class AppRefsScraper # scrapes app refs for a given year
 
   def num_apps # returns total number for the year
     JSON.parse(json_for_page(1))[HEADER].split[8].to_i
+  end
+
+  def num_pages
+    num_apps/10 + 1
   end
 
   def delimiter
