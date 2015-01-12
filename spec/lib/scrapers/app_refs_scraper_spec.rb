@@ -10,7 +10,7 @@ describe AppRefsScraper do
   end
 
   it '#num_apps' do
-    expect(scraper.num_apps).to eq(1447)
+    expect(scraper.num_apps).to eq(1449)
   end
 
   it '#app_refs_array' do

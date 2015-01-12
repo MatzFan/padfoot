@@ -3,7 +3,7 @@ describe AppDetailsScraper do
   let(:scraper) { AppDetailsScraper.new('RW/2014/0548') }
   let(:details) { ["RW/2014/0548",
                    "RW",
-                   "APPEAL",
+                   "Upheld",
                    "Richard Greig",
                    "Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA",
                    "Replace 5 No. windows on South elevation..... REQUEST FOR RECONSIDERATION for refusal of planning permission.",
@@ -29,7 +29,7 @@ describe AppDetailsScraper do
                           :app_postcode => 'JE3 8EA',
                           :app_ref => 'RW/2014/0548',
                           :app_road => 'Le Mont Sohier',
-                          :app_status => 'APPEAL',
+                          :app_status => 'Upheld',
                           # :app_agent => '', # no agent in this example
                           :latitude => 49.185511,
                           :longitude => -2.191882,
@@ -78,9 +78,9 @@ describe AppDetailsScraper do
     expect(scraper.coords).to eq(app_coords)
   end
 
-  # it '#coords_hash is empty if map is empty' do
-  #   expect(AppDetailsScraper.new('???????').coords_hash).to eq({})
-  # end
+  it '#coords_hash is empty if map is empty' do
+    expect(AppDetailsScraper.new('P/2012/0219').coords_hash).to eq({})
+  end
 
   it '#coords_hash is empty if there is no map' do
     expect(AppDetailsScraper.new('P/1997/2196').coords_hash).to eq({})
