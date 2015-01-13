@@ -15,16 +15,19 @@ class AppRefsScraper # scrapes app refs for a given year
 
   attr_reader :year, :ref_num_string
 
-  def initialize(year = Time.now.year, ref_num_string = '0000')
+  def initialize(year = Time.now.year)
     @year = year.to_s
-    @ref_num_string = ref_num_string
   end
 
-  def latest_refs
+  def latest_app_num
+    Application.where(app_year: year).order(:order).last[:app_number].to_s.rjust(4, "0") rescue '0000'
+  end
+
+  def refs
     refs_arr = []
     (1..num_pages).collect do |page_num|
       refs_arr += app_refs_on_page(page_num)
-      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{ref_num_string}$/ }
+      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{latest_app_num}$/ }
     end
     refs_arr
   end
