@@ -28,8 +28,10 @@ describe AppRefsScraper do
     expect(scraper.app_refs_on_page(3)).to match_array(page3_2013)
   end
 
-  it '#latest_app_num' do
-    expect(scraper.latest_app_num).to eq('0000')
+  context '#latest_app_num' do
+    it 'should return "0000" if no applications in database' do
+      expect(scraper.latest_app_num).to eq('0000')
+    end
   end
 
   context '#refs' do
