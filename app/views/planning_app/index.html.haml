@@ -1,8 +1,9 @@
-%table.table-striped
-  %tr
-    - @titles.each do |col|
-      %td= col
+%table.table.table-striped.table-condensed{"data-toggle" => "table", "data-sort-name" =>"Ref", "data-sort-order" =>"desc"}
+  %thead
+    %tr
+      - @titles.each do |col|
+        %th{"data-field" => col, "data-sortable" => "true"}= col
   - @apps.each do |row|
     %tr
-    - row.each do |data|
-      %td= data
+      - row.each do |data|
+        %td= data
