@@ -35,6 +35,7 @@ GEM
       url_mount (~> 0.2.1)
     i18n (0.7.0)
     json (1.8.1)
+    kgio (2.9.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -100,6 +101,7 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    raindrops (0.13.0)
     rake (10.4.2)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
@@ -142,6 +144,10 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
+    unicorn (4.8.3)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
     url_mount (0.2.1)
       rack
     webrobots (0.1.1)
@@ -167,4 +173,5 @@ DEPENDENCIES
   sequel (= 4.17.0)
   thin (= 1.6.3)
   uglifier (= 2.6.0)
+  unicorn (= 4.8.3)
   yui-compressor (= 0.12.0)
