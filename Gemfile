@@ -22,6 +22,7 @@ gem 'mechanize', '2.7.2' # 2.7.3 conflicts with Padrino re mime-types 1.0/2.0
 gem 'sass', '3.4.9'
 gem 'haml', '4.0.6'
 gem 'pg', '0.17.1'
+gem 'sequel_pg', '1.6.11', require: 'sequel'
 gem 'sequel', '4.17.0'
 
 group :test do
