@@ -1,7 +1,7 @@
 Sequel.migration do
   change do
 
-    create_table :applications do
+    create_table :planning_apps do
       String :app_ref, primary_key: true #PK
       String :app_code
       Integer :app_year

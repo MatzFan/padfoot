@@ -6,7 +6,7 @@ namespace :sq do
     args.with_defaults(year: Time.now.year)
     AppRefsScraper.new(args.year).refs.each do |ref|
       scraper = AppDetailsScraper.new(ref)
-      Application.find_or_create(scraper.data_hash) if scraper.has_valid_ref
+      PlanningApp.find_or_create(scraper.data_hash) if scraper.has_valid_ref
     end
   end
 end

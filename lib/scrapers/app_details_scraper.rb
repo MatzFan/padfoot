@@ -40,7 +40,7 @@ class AppDetailsScraper
   end
 
   def const(sym)
-    Application.const_get(sym)
+    PlanningApp.const_get(sym)
   end
 
   def app_dates # array of the 7 dates, formatted appropriately

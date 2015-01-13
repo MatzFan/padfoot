@@ -1,6 +1,6 @@
 FactoryGirl.define do
 
-  factory :application do
+  factory :planning_app do
     app_ref 'RW/2014/0548'
     app_category 'RW'
     app_status 'APPEAL'
