@@ -9,5 +9,5 @@ before_fork do |server, worker|
     Process.kill 'QUIT', Process.pid
   end
 
-  defined?(DB) and DB.disconnect
+  DB.disconnect
 end
