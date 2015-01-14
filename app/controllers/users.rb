@@ -28,9 +28,9 @@ Padfoot::App.controllers :users do
 
   get :confirm, map: '/confirm/:id/:code' do
     redirect('/') unless @user = User[params[:id].to_i] # if user is nil
-    puts 'user found'
+    logger.info 'user found'
     redirect('/') unless @user.authenticate(params[:code].to_s)
-    puts 'user authenticated'
+    logger.info 'user authenticated'
     render :confirm
   end
 
