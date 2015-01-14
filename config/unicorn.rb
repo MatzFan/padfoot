@@ -8,6 +8,13 @@ before_fork do |server, worker|
     Process.kill 'QUIT', Process.pid
   end
 
-  # defined?(Sequel::Model) and Sequel::Model.db.disconnect # essential as PG connection persists
-  DB.disconnect
+  defined?(Sequel::Model) and Sequel::Model.db.disconnect # essential as PG connection persists
+end
+
+after_fork do |server, worker|
+  Signal.trap 'TERM' do
+    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to sent QUIT'
+  end
+
+  defined?(Sequel::Model) and Sequel.connect(ENV['DATABASE_URL'], loggers: [logger])
 end
