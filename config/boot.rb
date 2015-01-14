@@ -1,6 +1,7 @@
 # Defines our constants
 RACK_ENV = ENV['RACK_ENV'] ||= 'development'  unless defined?(RACK_ENV)
 PADRINO_ROOT = File.expand_path('../..', __FILE__) unless defined?(PADRINO_ROOT)
+PADRINO_LOGGER = { production: { log_level: :debug } } if PADRINO_ENV == 'production'
 
 # Load our dependencies
 require 'rubygems' unless defined?(Gem)
@@ -10,7 +11,7 @@ Bundler.require(:default, RACK_ENV)
 ##
 # ## Enable devel logging
 #
-Padrino::Logger::Config[:development][:log_level]  = :devel
+Padrino::Logger::Config[:development][:log_level] = :devel
 # Padrino::Logger::Config[:development][:log_static] = true
 #
 # ## Configure your I18n
