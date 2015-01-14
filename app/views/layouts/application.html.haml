@@ -26,7 +26,7 @@
 
   %body
     .container
-      = if flash[:notice]
+      - if flash[:notice]
         #flash.row
           .span9.offset3.alert.alert-success
             = flash[:notice] # use jquery

@@ -8,5 +8,6 @@ before_fork do |server, worker|
     Process.kill 'QUIT', Process.pid
   end
 
-  defined?(Sequel::Model) and Sequel::Model.db.disconnect # essential as PG connection persists
+  # defined?(Sequel::Model) and Sequel::Model.db.disconnect # essential as PG connection persists
+  DB.disconnect
 end

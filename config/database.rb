@@ -5,3 +5,4 @@ Sequel::Model.db = case Padrino.env
   when :production  then Sequel.connect(ENV['DATABASE_URL'],  :loggers => [logger])
   when :test        then Sequel.connect("postgres://localhost/padfoot_test",        :loggers => [logger])
 end
+DB = Sequel::Model.db
