@@ -1,9 +1,9 @@
 %table.table.table-striped.table-condensed{"data-toggle" => "table", "data-sort-name" =>"Order", "data-sort-order" =>"desc"}
   %thead
     %tr
-      - @titles.each do |col|
+      - @titles[1..-1].each do |col| # [1..-1] hides :order column
         %th{"data-field" => col, "data-sortable" => "true"}= col
   - @apps.each do |row|
     %tr
-      - row.each do |data|
+      - row[1..-1].each do |data|
         %td= data
