@@ -1,5 +1,5 @@
 Padfoot::App.mailer :confirmation do
-  CONFIRMATION_URL = 'http://0.0.0.0:9292/confirm'
+  CONFIRMATION_URL = "http://#{ENV['DOMAIN'] || 0.0.0.0:9292}/confirm"
 
   email :confirmation_email do |name, email, id, link|
     from 'jerseypropertyservices.com'
