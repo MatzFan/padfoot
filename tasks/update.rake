@@ -1,12 +1,15 @@
 require File.expand_path(__dir__ + '/../config/boot')
 
 namespace :sq do
-  desc "Updates applications in database for given year (defaults to current year)"
+  desc "Update applications in database for given year (default: current year)"
   task :update, [:year, :ref] do |t, args|
     args.with_defaults(year: Time.now.year)
     AppRefsScraper.new(args.year).refs.each do |ref|
-      scraper = AppDetailsScraper.new(ref)
-      PlanningApp.find_or_create(scraper.data_hash) if scraper.has_valid_ref
+      s = AppDetailsScraper.new(ref)
+      if s.has_valid_ref
+        app_ref = s.data_hash[:app_ref]
+        PlanningApp.create(s.data_hash) if !PlanningApp.find(app_ref: app_ref)
+      end
     end
   end
 end
