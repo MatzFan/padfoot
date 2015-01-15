@@ -33,5 +33,5 @@ group :test do
 end
 
 group :test, :development do
-  gem 'better_errors', '2.0.0'
+  gem 'better_errors', '2.0.0', require: 'better_errors'
 end
