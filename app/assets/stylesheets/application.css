@@ -3,8 +3,5 @@
  * ...
  *
  *= require_self
- *= require bootstrap
- *= require bootstrap-theme
- *= require bootstrap-table-filter
  *= require site
 */
