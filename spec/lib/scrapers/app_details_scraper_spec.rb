@@ -90,14 +90,20 @@ describe AppDetailsScraper do
     expect(AppDetailsScraper.new('P/2000/2196').coords_hash).to eq({})
   end
 
-  it '#data_hash returns hash of field names and data' do
-    expect(scraper.data_hash).to eq(app_data_hash)
-  end
+  context '#data_hash' do
+    it 'returns hash of field names and data' do
+      expect(scraper.data_hash).to eq(app_data_hash)
+    end
 
-  it '#app_data returns fewer items if parsing unsuccessful' do
-    bad_dates_table_titles = scraper.send(:details_table_titles)
-    allow(scraper).to receive(:dates_table_titles) { bad_dates_table_titles }
-    expect(scraper.data_hash.size).to eq(13)
+    it 'returns fewer items if parsing unsuccessful' do
+      bad_dates_table_titles = scraper.send(:details_table_titles)
+      allow(scraper).to receive(:dates_table_titles) { bad_dates_table_titles }
+      expect(scraper.data_hash.size).to eq(13)
+    end
+
+    it 'returns strings cleaned of leading, trailing & repeated spaces' do
+      expect(AppDetailsScraper.new('S/2014/1979').data_hash[:app_postcode]).to eq('JE3 3DA')
+    end
   end
 
 end

@@ -32,7 +32,11 @@ class AppDetailsScraper
   end
 
   def app_details
-    det_t_ok? ? (0..1).map { |n| details_table(n).map { |i| i.text } }.flatten : {}
+    det_t_ok? ? (0..1).map { |n| details_table(n).map { |i| clean(i.text) } }.flatten : {}
+  end
+
+  def clean(text)
+    text.strip.squeeze(' ') # removes all repeated spaces :)
   end
 
   def details_hash

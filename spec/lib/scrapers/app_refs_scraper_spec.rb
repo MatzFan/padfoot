@@ -1,9 +1,6 @@
 describe AppRefsScraper do
 
-  year = 2013
-  number = '1833'
-
-  let(:scraper) { AppRefsScraper.new(year) }
+  let(:scraper) { AppRefsScraper.new(2013) }
   let(:page3_2013) { %w(P/2013/1812 P/2013/1813 P/2013/1814 P/2013/1815
                         P/2013/1816 P/2013/1817 P/2013/1820 P/2013/1821
                         P/2013/1822 P/2013/1823) }
@@ -17,7 +14,7 @@ describe AppRefsScraper do
   end
 
   it '#num_pages' do
-    expect(AppRefsScraper.new(2015).num_pages).to eq(3)
+    expect(AppRefsScraper.new(2014).num_pages).to eq(161)
   end
 
   it '#app_refs_array' do
@@ -35,8 +32,8 @@ describe AppRefsScraper do
   end
 
   context '#refs' do
-    it "should return 20 apps for #{year} app ref: #{number}" do
-      allow(scraper).to receive(:latest_app_num) { number } # stub to simulate database read
+    it "should return 20 apps for 2013 if latest_app_num is '1833'" do
+      scraper.instance_variable_set(:@latest_app_num, '1833') # simulates latest app ref '1833' in database
       expect(scraper.refs.count).to eq(20)
     end
   end
