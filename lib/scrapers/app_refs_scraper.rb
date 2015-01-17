@@ -17,6 +17,7 @@ class AppRefsScraper # scrapes app refs for a given year
 
   def initialize(year = Time.now.year)
     @year = year.to_s
+    @latest_app_num = latest_app_num
   end
 
   def latest_app_num
@@ -26,8 +27,9 @@ class AppRefsScraper # scrapes app refs for a given year
   def refs
     refs_arr = []
     (1..num_pages).collect do |page_num|
+      logger.info "Getting apps for page: #{page_num}"
       refs_arr += app_refs_on_page(page_num)
-      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{latest_app_num}$/ }
+      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{@latest_app_num}$/ }
     end
     refs_arr
   end
