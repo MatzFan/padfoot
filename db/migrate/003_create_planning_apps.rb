@@ -15,7 +15,7 @@ Sequel.migration do
       String :app_address
       String :app_constraints
       String :app_description
-      String :app_postcode, fixed: true, size: 7
+      String :app_postcode
       String :app_road
       Float :latitude
       Float :longitude
