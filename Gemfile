@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-# group :production do
-#   gem 'unicorn', '4.8.3'
-# end
+group :production do
+  gem 'unicorn', '4.8.3'
+end
 
 gem 'padrino', '0.12.4'
 
