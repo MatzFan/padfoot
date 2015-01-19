@@ -7,7 +7,9 @@ module Padfoot
     enable :sessions
 
     register Padrino::Sprockets
-    sprockets minify: (Padrino.env == :production)
+    sprockets minify: (Padrino.env == :production), paths: [
+      File.join(PADRINO_ROOT, 'vendor/assets/bower_components')
+    ]
 
     set :delivery_method, smtp: {
       address: 'smtp.gmail.com',
