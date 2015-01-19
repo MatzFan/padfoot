@@ -1,3 +1,3 @@
 padfoot
 =======
-Padrino app using Sequel, Postgres, HAML and SASS.
+Node/Padrino app using Sequel, Postgres & bower for packaging asset dependencies :)
