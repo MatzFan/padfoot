@@ -1,5 +1,4 @@
-#filter-bar
-%table.table.table-striped.table-condensed{"data-toggle" => "table", "data-toolbar" => "#filter-bar", "data-show-toggle" => "true", "data-show-columns" => "true", "data-show-filter" => "true"}
+%table.table.table-striped.table-condensed{"data-toggle" => "table", "data-show-columns" => "true", "data-pagination" =>"true"}
   %thead
     %tr
       - @titles[1..-1].each do |col| # [1..-1] hides :order column
@@ -7,9 +6,4 @@
   - @apps.each do |row|
     %tr
       - row[1..-1].each do |data|
-        %td= data
-
-:javascript
-  $(function() {
-    $('#filter-bar').bootstrapTableFilter
-  });
+        %td= data.class == Date ? data.strftime("%d/%m/%y") : data

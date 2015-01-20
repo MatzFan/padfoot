@@ -7,4 +7,4 @@ vendor/gems/*
 db/*.db
 .*.sw*
 node_modules
-app/assets/bower_components
+**/bower_components

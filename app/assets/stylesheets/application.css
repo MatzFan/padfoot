@@ -1,9 +1,6 @@
 /*
  * This is a manifest file that'll automatically include all the stylesheets ...
  * ...
- *
  *= require_self
- *= require bootstrap/dist/css/bootstrap.min
- *= require bootstrap-table/dist/bootstrap-table.min
  *= require site
 */
