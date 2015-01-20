@@ -1,26 +1,39 @@
-.panel.panel-primary.filterable
-  .panel-heading
-    %h3.panel-title Applications
-    .pull-right
-      %button.btn.btn-default.btn-xs.btn-filter
-        %span.glyphicon.glyphicon-filter Search
-        -# removed "data-show-columns" => "true" from next line
-
-  %table#tbl.table.table-striped.table-condensed{"data-toggle" => "table", "data-pagination" =>"true"}
-    %thead
-      -# include filters class in new tr tag
-      %tr.filters
-        - @titles[1..-1].each do |col| # [1..-1] hides :order column
-          -# %th{"data-field" => col, "data-sortable" => "true"}= col
-          %th
-            -# new input tag
-            %input.form-control{:disabled => "", :placeholder => col, :type => "text"}
+%table#example.table.table-striped.table-condensed{"data-toggle" => "table"}
+  %thead
+    - @titles[1..-1].each do |col| # [1..-1] hides :order column
+      %th{"data-field" => col, "data-sortable" => "true"}= col
+  %tfoot
+    - @titles[1..-1].each do |col| # [1..-1] hides :order column
+      %th col
+  %tbody
     - @apps.each do |row|
       %tr
         - row[1..-1].each do |data|
           %td= data.class == Date ? data.strftime("%d/%m/%y") : data
 
 :javascript
-  $(function(){
-    FilterPanel();
+  $(function() {
+    $('#example').dataTable();
+  });
+
+:javascript
+  $(function() {
+    // Setup - add a text input to each footer cell
+    $('#example tfoot th').each( function () {
+      var title = $('#example thead th').eq( $(this).index() ).text();
+       $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    });
+
+    // DataTable
+    var table = $('#example').DataTable();
+
+    // Apply the search
+    table.columns().eq( 0 ).each( function ( colIdx ) {
+      $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
+        table
+          .column( colIdx )
+          .search( this.value )
+          .draw();
+      });
+    });
   });

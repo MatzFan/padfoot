@@ -28,3 +28,9 @@ h1 {
 .table {
   font-size: 12px;
 }
+
+tfoot input {
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+}
