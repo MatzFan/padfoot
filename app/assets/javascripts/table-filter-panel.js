@@ -1,23 +1,25 @@
 function FilterPanel() {
-    $('.filterable .btn-filter').click(function(){
-      var $panel = $(this).parents('.filterable'),
-      $filters = $panel.find('.filters input'),
-      $tbody = $panel.find('.table tbody');
-      if ($filters.prop('disabled') == true) {
-        $filters.prop('disabled', false);
-        $filters.first().focus();
-      }
-      else {
-        $filters.val('').prop('disabled', true);
-        $tbody.find('.no-result').remove();
-        $tbody.find('tr').show();
-      }
-    });
+  $('.filterable .btn-filter').click(function(){
+    var $panel = $(this).parents('.filterable'),
+    $filters = $panel.find('.filters input'),
+    $tbody = $panel.find('.table tbody');
+    if ($filters.prop('disabled') == true) {
+      $filters.prop('disabled', false);
+      $filters.first().focus();
+    }
+    else {
+      $filters.val('').prop('disabled', true);
+      $tbody.find('.no-result').remove();
+      $tbody.find('tr').show();
+    }
+  });
 
-    $('.filterable .filters input').keyup(function(e){
-      /* Ignore tab key */
-      var code = e.keyCode || e.which;
-      if (code == '9') return;
+  $('.filterable .filters input').keyup(function(e){
+    var code = e.keyCode || e.which;
+    /* Ignore tab key */
+    if (code == '9') return;
+    /* when 'enter' pressed */
+    if (code == '13') {
       /* Useful DOM data and selectors */
       var $input = $(this),
       inputContent = $input.val().toLowerCase(),
@@ -39,5 +41,6 @@ function FilterPanel() {
       if ($filteredRows.length === $rows.length) {
           $table.find('tbody').prepend($('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length +'">No result found</td></tr>'));
       }
-    });
-  }
+    }
+  });
+}
