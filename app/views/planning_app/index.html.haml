@@ -1,9 +1,26 @@
-%table.table.table-striped.table-condensed{"data-toggle" => "table", "data-show-columns" => "true", "data-pagination" =>"true"}
-  %thead
-    %tr
-      - @titles[1..-1].each do |col| # [1..-1] hides :order column
-        %th{"data-field" => col, "data-sortable" => "true"}= col
-  - @apps.each do |row|
-    %tr
-      - row[1..-1].each do |data|
-        %td= data.class == Date ? data.strftime("%d/%m/%y") : data
+.panel.panel-primary.filterable
+  .panel-heading
+    %h3.panel-title Applications
+    .pull-right
+      %button.btn.btn-default.btn-xs.btn-filter
+        %span.glyphicon.glyphicon-filter Search
+        -# removed "data-show-columns" => "true" from next line
+
+  %table#tbl.table.table-striped.table-condensed{"data-toggle" => "table", "data-pagination" =>"true"}
+    %thead
+      -# include filters class in new tr tag
+      %tr.filters
+        - @titles[1..-1].each do |col| # [1..-1] hides :order column
+          -# %th{"data-field" => col, "data-sortable" => "true"}= col
+          %th
+            -# new input tag
+            %input.form-control{:disabled => "", :placeholder => col, :type => "text"}
+    - @apps.each do |row|
+      %tr
+        - row[1..-1].each do |data|
+          %td= data.class == Date ? data.strftime("%d/%m/%y") : data
+
+:javascript
+  $(function(){
+    FilterPanel();
+  });
