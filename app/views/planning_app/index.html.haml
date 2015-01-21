@@ -1,7 +1,7 @@
 %table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
   %thead
     - @titles[1..-1].each do |col| # [1..-1] hides :order column
-      %th{"data-field" => col, "data-sortable" => "true"}= col
+      %th{"data-field" => col}= col
   %tfoot
     - @titles[1..-1].each do |col| # [1..-1] hides :order column
       %th col
@@ -13,8 +13,9 @@
 
 :javascript
   $(function() {
-    $('#tbl').dataTable( {
-      "ordering": false,
+    $('#tbl').dataTable({
+      "order": [], // disable INITIAL sort order
+      "sDom": 'lrtip' // remove 'filtering element' - see: https://datatables.net/reference/option/dom
     });
   });
 
