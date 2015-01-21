@@ -9,12 +9,31 @@ describe AppRefsScraper do
     expect(scraper.json_for_page(1)).to include('Scroll down to view')
   end
 
-  it '#num_apps' do
-    expect(scraper.num_apps).to eq(1449)
+  context '#num_apps' do
+    it 'should return correct number of apps for a valid year - e.g. 2013' do
+      expect(scraper.num_apps).to eq(1449)
+    end
+
+    it 'should return 0 for an invalid year - e.g. 9999' do
+      expect(AppRefsScraper.new(9999).num_apps).to eq(0)
+    end
   end
 
-  it '#num_pages' do
-    expect(AppRefsScraper.new(2014).num_pages).to eq(161)
+  context '#num_pages' do
+    it 'should correctly identify number apps / 10 rounded up' do
+      allow(scraper).to receive(:num_apps) { 1605 }
+      expect(scraper.num_pages).to eq(161)
+    end
+
+    it 'should correctly deal with 0' do
+      allow(scraper).to receive(:num_apps) { 0 }
+      expect(scraper.num_pages).to eq(0)
+    end
+
+    it 'should correctly deal with a round number like 2,000' do
+      allow(scraper).to receive(:num_apps) { 2000 }
+      expect(scraper.num_pages).to eq(200)
+    end
   end
 
   it '#app_refs_array' do

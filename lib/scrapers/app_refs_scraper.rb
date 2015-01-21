@@ -43,7 +43,7 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
   def num_pages
-    num_apps/10 + 1
+    (num_apps/10.0).ceil
   end
 
   def delimiter
