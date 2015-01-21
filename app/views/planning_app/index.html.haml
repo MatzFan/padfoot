@@ -1,4 +1,4 @@
-%table#example.table.table-striped.table-condensed{"data-toggle" => "table"}
+%table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
   %thead
     - @titles[1..-1].each do |col| # [1..-1] hides :order column
       %th{"data-field" => col, "data-sortable" => "true"}= col
@@ -13,19 +13,21 @@
 
 :javascript
   $(function() {
-    $('#example').dataTable();
+    $('#tbl').dataTable( {
+      "ordering": false,
+    });
   });
 
 :javascript
   $(function() {
     // Setup - add a text input to each footer cell
-    $('#example tfoot th').each( function () {
-      var title = $('#example thead th').eq( $(this).index() ).text();
+    $('#tbl tfoot th').each( function () {
+      var title = $('#tbl thead th').eq( $(this).index() ).text();
        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
     });
 
     // DataTable
-    var table = $('#example').DataTable();
+    var table = $('#tbl').DataTable();
 
     // Apply the search
     table.columns().eq( 0 ).each( function ( colIdx ) {
