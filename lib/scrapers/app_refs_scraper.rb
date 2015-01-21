@@ -25,13 +25,13 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
   def refs
-    refs_arr = []
+    refs = []
     (1..num_pages).collect do |page_num|
       logger.info "Getting apps for page: #{page_num}"
-      refs_arr += app_refs_on_page(page_num)
-      return refs_arr if refs_arr.any? { |ref| ref =~ /\/#{@latest_app_num}$/ }
+      refs += app_refs_on_page(page_num)
+      return refs if refs.any? { |r| r =~ /\/#{year}\/#{@latest_app_num}$/ }
     end
-    refs_arr
+    refs
   end
 
   def app_refs_on_page(page)

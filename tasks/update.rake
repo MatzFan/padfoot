@@ -1,7 +1,7 @@
 namespace :sq do
   namespace :apps do
     desc "Update applications in database for given year (default: current year)"
-    task :update, [:year, :ref] do |t, args|
+    task :update, [:year] do |t, args|
       args.with_defaults(year: Time.now.year)
       refs = AppRefsScraper.new(args.year).refs
       bar = RakeProgressbar.new(refs.count)
