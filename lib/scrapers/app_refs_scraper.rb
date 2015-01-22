@@ -17,7 +17,7 @@ class AppRefsScraper # scrapes app refs for a given year
 
   def initialize(year = Time.now.year, start_page = 1)
     @year = year.to_s
-    @start_page = start_page
+    @start_page = start_page.to_i
     @latest_app_num = latest_app_num
   end
 
