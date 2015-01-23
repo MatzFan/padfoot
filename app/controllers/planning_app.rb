@@ -7,6 +7,14 @@ Padfoot::App.controllers :planning_app do
                :app_description, :app_applicant, :app_agent]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @apps = PlanningApp.order(:order).reverse.select_map(columns) # desc. order
+  #   case content_type
+  #   when :json
+  #     PlanningApp.to_json(root: true, only: columns)
+  # # @apps = PlanningApp.to_json(root: true, only: columns)
+  #   when :html
+  #     render :index
+  #   else
+  #   end
     render :index
   end
 

@@ -17,14 +17,14 @@ gem 'bcrypt-ruby', '3.1.5', require: 'bcrypt'
 gem 'mechanize', '2.7.2' # 2.7.3 conflicts with Padrino re mime-types 1.0/2.0
 
 # Optional JSON codec (faster performance)
-# gem 'oj'
+# gem 'oj', '2.11.4', require: 'oj'
 
 # Component requirements
 gem 'sass', '3.4.9'
 gem 'haml', '4.0.6'
 gem 'pg', '0.17.1'
-gem 'sequel_pg', '1.6.11', require: 'sequel'
 gem 'sequel', '4.17.0'
+gem 'sequel_pg', '1.6.11', require: 'sequel'
 
 group :test do
   gem 'rspec', '3.1.0'
