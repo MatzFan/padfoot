@@ -4,16 +4,16 @@ namespace :sq do
     task :update, [:year, :start_page] do |t, args|
       args.with_defaults(year: Time.now.year, start_page: 1)
       refs = AppRefsScraper.new(args.year, args.start_page).refs
-      # bar = RakeProgressbar.new(refs.count)
+      bar = RakeProgressbar.new(refs.count)
       refs.each do |ref|
         s = AppDetailsScraper.new(ref)
         if s.has_valid_ref
           app_ref = s.data_hash[:app_ref]
           PlanningApp.create(s.data_hash) if !PlanningApp.find(app_ref: app_ref)
         end
-        # bar.inc
+        bar.inc
       end
-      # bar.finished
+      bar.finished
     end
   end
 end
