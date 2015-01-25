@@ -1,21 +1,18 @@
-function drawTable(appData) {
-  $('#table-placeholder').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tbl"></table>' );
+function drawTable(data) {
+  var columns = data.columns;
+  var appData = data.app_data;
+  $('#table-placeholder').html( "<table class='table table-striped table-condensed' data-toggle='table' id='tbl'></table>" );
   $('#tbl').dataTable({
-    // "deferRender": true, // for speed
+    "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
     "data": appData,
-    "columns": [
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-      { "title": "1" },
-    ]
+    "columns": columns,
+    "columnDefs": [{
+      "targets": [ 0 ], // hide 'order' column
+      "visible": false,
+      "searchable": false
+    }]
   });
 
   $('#tbl tfoot th').each( function () {
