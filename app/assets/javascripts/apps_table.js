@@ -1,7 +1,7 @@
 function drawTable(data) {
   var columns = data.columns;
   var appData = data.app_data;
-  $('#table-placeholder').html( "<table class='table table-striped table-condensed' data-toggle='table' id='tbl'></table>" );
+  // $('#table-placeholder').html( "<table class='table table-striped table-condensed' data-toggle='table' id='tbl'></table>" );
   $('#tbl').dataTable({
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order

@@ -1,16 +1,17 @@
-#table-placeholder
--# %table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
--#   %thead
--#     - @titles[1..-1].each do |col| # [1..-1] hides :order column
--#       %th{"data-field" => col}= col
--#   %tfoot
--#     - @titles[1..-1].each do |col| # [1..-1] hides :order column
--#       %th col
--#   %tbody
--#     - @apps.each do |row|
--#       %tr
--#         - row[1..-1].each do |data|
--#           %td= data.class == Date ? data.strftime("%d/%m/%y") : data
+-# #table-placeholder
+%table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
+  %thead
+    - @titles.each do |col| # [1..-1] hides :order column
+      %th{"data-field" => col} =col
+  %tfoot
+    - @titles.each do |col| # [1..-1] hides :order column
+      %th =col
+  %tbody
+    - @apps.each do |row|
+      %tr
+        - row.each do |data|
+          %td
+            -# = data.class == Date ? data.strftime("%d/%m/%y") : data
 
 :javascript
   $.get( "index.json", function( data ) {
