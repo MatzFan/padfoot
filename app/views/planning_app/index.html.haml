@@ -6,11 +6,11 @@
   %tfoot
     - @titles.each do |col| # [1..-1] hides :order column
       %th =col
-  %tbody
-    - @apps.each do |row|
-      %tr
-        - row.each do |data|
-          %td
+  -# %tbody
+    -# - @apps.each do |row|
+    -#   %tr
+    -#     - row.each do |data|
+    -#       %td
             -# = data.class == Date ? data.strftime("%d/%m/%y") : data
 
 :javascript
