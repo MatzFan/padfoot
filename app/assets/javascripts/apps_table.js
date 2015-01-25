@@ -1,29 +1,23 @@
-function drawTable() {
-// $(function() {
-  // alert('ok');
+function drawTable(appData) {
+  $('#table-placeholder').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tbl"></table>' );
   $('#tbl').dataTable({
+    // "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
-    "sDom": 'lrtip', // remove 'filtering element' - see: https://datatables.net/reference/option/dom
-    // "ajax": {
-    //   "url": "applications/index",
-    //   "type": "GET"
-    // },
-    // "dataSrc": "planning_apps",
-    // "columns": [
-    //       { "data": "order" },
-    //       { "data": "app_ref" },
-    //       { "data": "app_code" },
-    //       { "data": "app_status" },
-    //       { "data": "app_address" },
-    //       { "data": "app_description" },
-    //       { "data": "app_agent" }
-    //   ]
+    "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
+    "data": appData,
+    "columns": [
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+      { "title": "1" },
+    ]
   });
-// });
 
-
-// $(function() {
-  // Setup - add a text input to each footer cell
   $('#tbl tfoot th').each( function () {
     var title = $('#tbl thead th').eq( $(this).index() ).text();
      $(this).html( '<input type="text" placeholder="'+title+'" />' );
