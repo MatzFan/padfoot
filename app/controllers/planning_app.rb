@@ -12,7 +12,8 @@ Padfoot::App.controllers :planning_app do
       # PlanningApp.to_json(only: columns, root: true)
       { columns: @titles.map { |t| { title: t } }, app_data: @apps }.to_json
     when :html
-      flash[:notice] = 'Page loading, please be patient.'
+      msg =  ' Page loading, please be patient.'
+      flash[:notice] ? flash[:notice] << msg : flash[:notice] = msg
       render :index
     else
     end
