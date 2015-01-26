@@ -2,6 +2,10 @@
  * This is a manifest file that'll automatically include all the stylesheets ...
  * ...
  *= require_self
+ *= require bootstrap.min.css
+ *= require bootstrap-theme.min.css
+ *= require bootstrap-table.min.css
+ *= require dataTables.bootstrap.css
  *= require jquery.dataTables.css
  *= require site
 */

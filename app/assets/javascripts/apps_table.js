@@ -1,7 +1,7 @@
 function drawTable(data, callback) {
   var columns = data.columns;
   var appData = data.app_data;
-  $('#tbl').dataTable({
+  var table = $('#tbl').dataTable({
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
@@ -14,6 +14,9 @@ function drawTable(data, callback) {
       "searchable": false
     }]
   });
+  // http://datatables.net/extensions/colvis/api
+  var colvis = new $.fn.dataTable.ColVis( table );
+  $( colvis.button() ).insertAfter('#table-controls');
 
   $('#tbl tfoot th').each( function () {
     var title = $('#tbl thead th').eq( $(this).index() ).text();
