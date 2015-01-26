@@ -16,10 +16,10 @@
       - if flash[:notice]
         #flash.row
           .span9.offset3.alert.alert-success
-            = flash[:notice] # use jquery
+            = flash[:notice] # uses jquery
           :javascript
             $(function(){
-                $("#flash").fadeOut(2000);
+              $("#flash").fadeOut(5000);
             });
       .row
         =partial "layouts/navigation"
