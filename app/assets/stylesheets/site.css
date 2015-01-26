@@ -34,3 +34,7 @@ tfoot input {
   padding: 3px;
   box-sizing: border-box;
 }
+
+.loadable {
+  display: none;
+}

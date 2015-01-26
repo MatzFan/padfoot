@@ -1,15 +1,14 @@
-function drawTable(data) {
+function drawTable(data, callback) {
   var columns = data.columns;
   var appData = data.app_data;
-  // $('#table-placeholder').html( "<table class='table table-striped table-condensed' data-toggle='table' id='tbl'></table>" );
   $('#tbl').dataTable({
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
     "data": appData,
     "columns": columns,
-    "columnDefs": [{
-      "targets": [ 0 ], // hide 'order' column
+    "columnDefs": [{ // hide 'order' column
+      "targets": [ 0 ],
       "visible": false,
       "searchable": false
     }]
@@ -30,4 +29,5 @@ function drawTable(data) {
         .draw();
     });
   });
+  callback();
 }

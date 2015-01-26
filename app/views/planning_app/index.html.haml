@@ -1,19 +1,14 @@
--# #table-placeholder
-%table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
+%table#tbl.loadable.table.table-striped.table-condensed{"data-toggle" => "table"}
   %thead
-    - @titles.each do |col| # [1..-1] hides :order column
+    - @titles.each do |col|
       %th{"data-field" => col} =col
   %tfoot
-    - @titles.each do |col| # [1..-1] hides :order column
+    - @titles.each do |col|
       %th =col
-  -# %tbody
-    -# - @apps.each do |row|
-    -#   %tr
-    -#     - row.each do |data|
-    -#       %td
-            -# = data.class == Date ? data.strftime("%d/%m/%y") : data
 
 :javascript
   $.get( "index.json", function( data ) {
-      drawTable( data );
+      drawTable( data, function() {
+        $('#tbl').removeClass('loadable');
+      });
     });
