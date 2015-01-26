@@ -5,6 +5,7 @@ function drawTable(data, callback) {
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
+    "stateSave": true, // so user can navigate back to same view :)
     "data": appData,
     "columns": columns,
     "columnDefs": [{ // hide 'order' column
@@ -29,5 +30,5 @@ function drawTable(data, callback) {
         .draw();
     });
   });
-  callback();
+  callback(); // removes .loading class to show table after function completes
 }
