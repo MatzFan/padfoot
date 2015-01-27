@@ -1,11 +1,14 @@
-function drawTable(data, callback) {
+function drawTable(data) {
   var columns = data.columns;
   var appData = data.app_data;
   var table = $('#tbl').dataTable({
+    "drawCallback": function() {
+      $('#tbl').removeClass('loadable'); // ensures html rendered after table draw
+    },
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
-    "stateSave": true, // so user can navigate back to same view :)
+    // "stateSave": true, // so user can navigate back to same view :)
     "data": appData,
     "columns": columns,
     "columnDefs": [{ // hide 'order' column
@@ -33,5 +36,5 @@ function drawTable(data, callback) {
         .draw();
     });
   });
-  callback(); // removes .loading class to show table after function completes
+  // callback(); // removes .loading class to show table after function completes
 }

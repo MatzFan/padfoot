@@ -9,7 +9,5 @@
 
 :javascript
   $.get( "index.json", function( data ) {
-      drawTable( data, function() {
-        $('#tbl').removeClass('loadable');
-      });
+      drawTable( data );
     });
