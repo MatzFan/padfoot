@@ -22,7 +22,7 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
   def latest_app_num
-    PlanningApp.where(app_year: year).order(:order).last[:app_number].to_s.rjust(4, "0") rescue '0000'
+    PlanningApp.latest_app_num_for(year).to_s.rjust(4, "0") rescue '0000'
   end
 
   def refs

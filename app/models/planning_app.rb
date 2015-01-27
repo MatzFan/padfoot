@@ -68,4 +68,8 @@ class PlanningApp < Sequel::Model
                   :appeal_date,
                  ]
 
+  def self.latest_app_num_for(year)
+    self.where(app_year: year).order(:order).last[:app_number]
+  end
+
 end
