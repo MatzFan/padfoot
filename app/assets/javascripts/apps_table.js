@@ -11,11 +11,9 @@ function drawTable(data) {
     // "stateSave": true, // so user can navigate back to same view :)
     "data": appData,
     "columns": columns,
-    "columnDefs": [{ // hide 'order' column
-      "targets": [ 0 ],
-      "visible": false,
-      "searchable": false
-    }]
+    "columnDefs": [
+      { "targets": [ 0 ], "visible": false, "searchable": false} // hide 'order'
+    ]
   });
   // http://datatables.net/extensions/colvis/api
   var colvis = new $.fn.dataTable.ColVis( table );
@@ -36,5 +34,4 @@ function drawTable(data) {
         .draw();
     });
   });
-  // callback(); // removes .loading class to show table after function completes
 }

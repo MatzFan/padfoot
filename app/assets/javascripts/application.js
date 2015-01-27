@@ -7,4 +7,5 @@
 //= require jquery.dataTables.min.js
 //= require dataTables.bootstrap.js
 //= require dataTables.colVis.js
+//= require dataTables.scroller.js
 //= require_tree .

@@ -8,5 +8,6 @@
  *= require jquery.dataTables.css
  *= require dataTables.bootstrap.css
  *= require dataTables.colVis.css
+ *= require dataTables.scroller.css
  *= require site
 */
