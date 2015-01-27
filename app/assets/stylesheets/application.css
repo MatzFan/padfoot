@@ -5,7 +5,8 @@
  *= require bootstrap.min.css
  *= require bootstrap-theme.min.css
  *= require bootstrap-table.min.css
- *= require dataTables.bootstrap.css
  *= require jquery.dataTables.css
+ *= require dataTables.bootstrap.css
+ *= require dataTables.colVis.css
  *= require site
 */
