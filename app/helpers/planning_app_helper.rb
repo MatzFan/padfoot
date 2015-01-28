@@ -1,6 +1,10 @@
 module PlanningAppHelper
 
-  def fixed_height_div_wrap(txt, lines, options = {})
+  def div_wrap_strings_in(app, lines) # returns a hash
+    app.map { |e| e.class == String ? fix_height_div_wrap(e,lines) : e }
+  end
+
+  def fix_height_div_wrap(txt, lines, options = {})
     options = defaults.merge(options)
     font, hght, pad = options[:font], options[:line_height], options[:padding]
     pixels = ((lines - 1)*hght*font + font + 2*pad).ceil

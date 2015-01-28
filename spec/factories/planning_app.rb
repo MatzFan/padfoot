@@ -1,7 +1,7 @@
 FactoryGirl.define do
 
   factory :planning_app do
-    # app_ref 'RW/2014/0548'
+    valid_date DateTime.parse(Time.now.to_s).to_date
     app_category 'RW'
     sequence(:app_ref, 2013) { |n| "#{app_category}/#{n}/#{n - 2000}" }
     app_status 'APPEAL'
