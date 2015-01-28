@@ -1,5 +1,3 @@
-# Helper methods defined here can be ACCESSED IN ANY CONTROLLER OR VIEW
-
 module SessionsHelper
 
   def current_user=(user)

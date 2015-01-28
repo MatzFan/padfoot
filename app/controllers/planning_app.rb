@@ -10,11 +10,8 @@ Padfoot::App.controllers :planning_app do
     @apps = PlanningApp.order(:order).reverse.select_map(columns) # desc. order
     case content_type
     when :json
-      # PlanningApp.to_json(only: columns, root: true)
       { columns: @titles.map { |t| { title: t } }, app_data: @apps }.to_json
     when :html
-      msg =  ' Page loading, please be patient.'
-      flash[:notice] ? flash[:notice] << msg : flash[:notice] = msg
       render :index
     else
     end

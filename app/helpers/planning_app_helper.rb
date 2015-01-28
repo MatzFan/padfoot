@@ -1,13 +1,16 @@
-# Helper methods defined here can be accessed in any controller or view in the application
+module PlanningAppHelper
 
-module Padfoot
-  class App
-    module PlanningAppHelper
-      # def simple_helper_method
-      # ...
-      # end
-    end
-
-    helpers PlanningAppHelper
+  def fixed_height_div_wrap(txt, lines, options = {})
+    options = defaults.merge(options)
+    font, hght, pad = options[:font], options[:line_height], options[:padding]
+    pixels = ((lines - 1)*hght*font + font + 2*pad).ceil
+    "<div style='height:#{pixels}px; overflow:scroll'>#{txt}</div>"
   end
-end
+
+  def defaults
+    {font: 12, line_height: 1.42857143, padding: 2}
+  end
+
+end # of PlanningAppHelper
+
+Padfoot::App.helpers PlanningAppHelper

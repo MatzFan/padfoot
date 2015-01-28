@@ -31,6 +31,7 @@ group :test do
   gem 'rack-test', '0.6.2', require: 'rack/test'
   gem 'factory_girl', '4.5.0'
   gem 'database_cleaner', '1.3.0'
+  gem 'faker', '1.4.3'
 end
 
 group :test, :development do

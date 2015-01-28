@@ -1,13 +1,21 @@
-require 'spec_helper'
+describe PlanningAppHelper do
 
-RSpec.describe "Padfoot::App::PlanningAppHelper" do
-  pending "add some examples to (or delete) #{__FILE__}" do
-    let(:helpers){ Class.new }
-    before { helpers.extend Padfoot::App::PlanningAppHelper }
-    subject { helpers }
+  before do
+    class PlanningAppHelperClass
+      include PlanningAppHelper
+    end
+    @app_helper = PlanningAppHelperClass.new
+  end
+  string = Faker::Lorem.paragraph
+  let(:lines) { 4 }
+  let(:div_string) {
+    "<div style='height:68px; overflow:scroll'>#{string}</div>"
+  }
 
-    it "should return nil" do
-      expect(subject.foo).to be_nil
+  context '#fixed_height_div_wrap' do
+    it "should wrap provided string in a fixed-height, scrollable div" do
+      expect(@app_helper.fixed_height_div_wrap(string, 4)).to eq(div_string)
     end
   end
+
 end
