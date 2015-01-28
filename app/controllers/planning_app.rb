@@ -8,9 +8,9 @@ Padfoot::App.controllers :planning_app do
       :app_description, :app_applicant, :app_agent, :app_officer]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = PlanningApp.order(:order).reverse.select_map(columns) # 2D array
-
-    @app_arr.map! { |app| div_wrap_strings_in(app, 4) } # sets 4 line row height
-
+    # wrap txt in <div>s and add class to app_description for css formatting
+    classes_to_add = columns.map { |c| 'long-text' if c == :app_description }
+    @app_arr.map! { |app| div_wrap_strings_in(app, classes_to_add) }
     case content_type
     when :json
       { columns: @titles.map { |t| { title: t } }, app_data: @app_arr }.to_json

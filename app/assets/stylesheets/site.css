@@ -38,3 +38,13 @@ tfoot input {
 .loadable {
   display: none;
 }
+
+td div {
+  height: 68px;
+  overflow: scroll;
+  text-overflow: ellipsis;
+}
+
+td div.long-text {
+  max-width: 700px
+}
