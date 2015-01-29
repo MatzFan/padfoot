@@ -1,4 +1,4 @@
-%nav#navigation.navbar.navbar-static-top
+%nav#navigation.navbar.navbar-default.navbar-fixed-top
   .container-fluid
     / Brand and toggle get grouped for better mobile display
     .navbar-header
@@ -28,24 +28,7 @@
           %li
             = link_to 'Register', url(:users, :new)
       %ul.nav.navbar-nav.navbar-right
-        %form.navbar-form.navbar-left{:role => "search"}
-          .form-group
-            %input.form-control{:placeholder => "Search", :type => "text"}
-          %button.btn.btn-default{:type => "submit"} Submit
-        -# %li
-        -#   %a{:href => "#"} Link
-        -# %li.dropdown
-        -#   %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-        -#     Dropdown
-        -#     %span.caret
-        -#   %ul.dropdown-menu{:role => "menu"}
-        -#     %li
-        -#       %a{:href => "#"} Action
-        -#     %li
-        -#       %a{:href => "#"} Another action
-        -#     %li
-        -#       %a{:href => "#"} Something else here
-        -#     %li.divider
-        -#     %li
-        -#       %a{:href => "#"} Separated link
-
+        -# %form.navbar-form.navbar-left{:role => "search"}
+        -#   .form-group
+        -#     %input.form-control{:placeholder => "Search", :type => "text"}
+        -#   %button.btn.btn-default{:type => "submit"} Submit

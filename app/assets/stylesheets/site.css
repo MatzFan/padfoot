@@ -1,4 +1,5 @@
 body {
+  padding-top: 60px; /* so BS narbar doesn't overlap site! */
   font: 18.5px Palatino, 'Palatino Linotype', Helvetica, Arial, Verdana,
     sans-serif;
   text-align: justify;
@@ -40,7 +41,7 @@ tfoot input {
 }
 
 td div {
-  height: 68px;
+  height: 68px; /* magic number to allow 4 text lines at 12pt font with 2px padding and line-spacing of 1.42857143! */
   overflow: scroll;
   text-overflow: ellipsis;
 }
