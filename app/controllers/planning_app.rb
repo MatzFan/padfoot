@@ -5,7 +5,7 @@ Padfoot::App.controllers :planning_app do
   get :index, map: '/applications/index', provides: [:html, :json] do
     columns = [
       :order, :valid_date, :app_ref, :app_code, :app_status, :app_full_address,
-      :app_description, :app_applicant, :app_agent, :app_officer]
+      :app_description, :app_address_of_applicant, :app_agent, :app_officer]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = PlanningApp.order(:order).reverse.select_map(columns) # 2D array
     # wrap txt in <div>s and add class to app_description for css formatting

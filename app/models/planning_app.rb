@@ -8,8 +8,10 @@ class PlanningApp < Sequel::Model
   many_to_one :agent_aliases, key: :app_agent
 
   def before_create
+    # populate derivative fields
     code_year_number = self.app_ref.split('/')
     self.app_full_address = build_address
+    self.app_address_of_applicant = build_address_of_applicant
     self.app_code = code_year_number[0]
     self.app_year = code_year_number[1].to_i
     self.app_number = code_year_number[2].to_i
@@ -75,6 +77,10 @@ class PlanningApp < Sequel::Model
 
   def build_address
     [self.app_address, self.app_road, self.app_parish, self.app_postcode].join('<br/>')
+  end
+
+  def build_address_of_applicant
+    self.app_applicant.split(',').map { |s| s.strip }.join('<br/>')
   end
 
 end

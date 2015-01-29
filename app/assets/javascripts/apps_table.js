@@ -12,7 +12,8 @@ function drawTable(data) {
     "data": appData,
     "columns": columns,
     "columnDefs": [
-      { "targets": [ 0 ], "visible": false, "searchable": false} // hide 'order'
+      { "targets": [ 0 ], "visible": false, "searchable": false}, // hides 'order'
+      { "targets": [ 9 ], "visible": false} // hides 'officer'
     ]
   });
   // http://datatables.net/extensions/colvis/api
