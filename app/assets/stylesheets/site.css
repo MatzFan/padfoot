@@ -36,9 +36,13 @@ tfoot input {
   box-sizing: border-box;
 }
 
-/*.loadable {
-  display: none;
-}*/
+.obscure-while-loading {
+  z-index: 1;
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  height: 200px;
+}
 
 td div {
   height: 68px; /* magic number to allow 4 text lines at 12pt font with 2px padding and line-spacing of 1.42857143! */

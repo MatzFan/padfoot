@@ -2,9 +2,9 @@ function drawTable(data) {
   var columns = data.columns;
   var appData = data.app_data;
   var table = $('#tbl').dataTable({
-    // "drawCallback": function() {
-    //   $('#tbl').removeClass('loadable'); // ensures html rendered after table draw
-    // },
+    "drawCallback": function() {
+      $('.obscure-while-loading').removeClass('obscure-while-loading'); // ensures html rendered after table draw
+    },
     dom:         "frtiS", // add scroller
     scrollY:     440,
     scrollCollapse: true,
