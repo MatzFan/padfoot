@@ -80,7 +80,7 @@ class PlanningApp < Sequel::Model
   end
 
   def build_address_of_applicant
-    self.app_applicant.split(',').map { |s| s.strip }.join('<br/>')
+    self.app_applicant.split(',').map { |s| s.strip }.join('<br/>') if app_applicant
   end
 
 end
