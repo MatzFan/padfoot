@@ -2,9 +2,13 @@ function drawTable(data) {
   var columns = data.columns;
   var appData = data.app_data;
   var table = $('#tbl').dataTable({
-    "drawCallback": function() {
-      $('#tbl').removeClass('loadable'); // ensures html rendered after table draw
-    },
+    // "drawCallback": function() {
+    //   $('#tbl').removeClass('loadable'); // ensures html rendered after table draw
+    // },
+    dom:         "frtiS", // add scroller
+    scrollY:     440,
+    scrollCollapse: true,
+    // paging: false,
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order
     "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
@@ -20,8 +24,8 @@ function drawTable(data) {
   var colvis = new $.fn.dataTable.ColVis( table );
   $( colvis.button() ).insertAfter('#table-controls');
 
-  $('#tbl tfoot th').each( function () {
-    var title = $('#tbl thead th').eq( $(this).index() ).text();
+  $('.dataTables_scrollFoot tfoot th').each( function () { // remove '#tbl', add '.dataTbales_scrollFoot' for scroller
+    var title = $('.dataTables_scrollHead thead th').eq( $(this).index() ).text();  // remove '#tbl', add '.dataTables_scrollHead' for scroller
      $(this).html( '<input type="text" placeholder="'+title+'" />' );
   });
   // DataTable
