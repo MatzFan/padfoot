@@ -1,12 +1,12 @@
-.obscure-while-loading
 #table-controls
-%table#tbl.table.table-striped.table-condensed{"data-toggle" => "table"}
-  %thead
-    - @titles.each do |col|
-      %th{"data-field" => col} =col
-  %tfoot
-    - @titles.each do |col|
-      %th =col
+#table-placeholder
+-# %table#tbl.table.stripe.display{"data-toggle" => "table"}
+  -# %thead
+  -#   - @titles.each do |col|
+  -#     %th{"data-field" => col} =col
+  -# %tfoot
+  -#   - @titles.each do |col|
+  -#     %th =col
 
 :javascript
   $.get( "index.json", function( data ) {

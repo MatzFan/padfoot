@@ -11,12 +11,12 @@ class PlanningApp < Sequel::Model
     # populate derivative fields
     code_year_number = self.app_ref.split('/')
     self.app_full_address = build_address
-    self.app_address_of_applicant = build_address_of_applicant
+    self.app_address_of_applicant = breakify(split_csv(self.app_applicant))
     self.app_code = code_year_number[0]
     self.app_year = code_year_number[1].to_i
     self.app_number = code_year_number[2].to_i
     self.order = self.app_year * 10000 + self.app_number
-    # populate parent tables first if need be
+    # populate parent tables first if need be, so FK's linked
     AppCategory.find_or_create(code: self.app_category) if self.app_category
     AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
     AppStatus.find_or_create(name: self.app_status) if self.app_status
@@ -79,8 +79,12 @@ class PlanningApp < Sequel::Model
     [self.app_address, self.app_road, self.app_parish, self.app_postcode].join('<br/>')
   end
 
-  def build_address_of_applicant
-    self.app_applicant.split(',').map { |s| s.strip }.join('<br/>') if app_applicant
+  def split_csv(string)
+    string.split(',').map { |str| str.strip } if string
+  end
+
+  def breakify(string_arr)
+    string_arr.join('<br/>') if string_arr
   end
 
 end
