@@ -1,4 +1,3 @@
-#table-controls
 #table-placeholder
 -# %table#tbl.table.stripe.display{"data-toggle" => "table"}
   -# %thead
@@ -10,5 +9,9 @@
 
 :javascript
   $.get( "index.json", function( data ) {
-      drawTable( data );
+      drawTable( data, function() {
+        alert('in callback');
+        var table = $('#tbl').DataTable();
+        table.column( 0 ).visible( false );
+      });
     });
