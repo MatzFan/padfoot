@@ -10,7 +10,6 @@
 :javascript
   $.get( "index.json", function( data ) {
       drawTable( data, function() {
-        alert('in callback');
         var table = $('#tbl').DataTable();
         table.column( 0 ).visible( false );
       });
