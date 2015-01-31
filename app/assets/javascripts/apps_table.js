@@ -28,7 +28,20 @@ function drawTable(data, callback) {
     // }
     tableTools: {
       "sRowSelect": "multi",
-      "aButtons": [ "select_all", "select_none" ]
+      "aButtons": [
+        "select_all",
+        "select_none",
+        {
+          "sExtends": "ajax",
+          "sButtonText": "View on map",
+          "sAjaxUrl": "map", // used POST
+          "fnCellRender": function ( sValue, iColumn, nTr, iDataIndex ) {
+            if ( iColumn === 2 ) {
+              return sValue;
+            }
+          }
+        }
+      ]
     }
   });
 

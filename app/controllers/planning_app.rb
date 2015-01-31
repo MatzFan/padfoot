@@ -20,7 +20,8 @@ Padfoot::App.controllers :planning_app do
     end
   end
 
-  get :map, map: 'applications/map' do
+  post :map, map: 'applications/map' do
+    p params
     render :map
   end
 
