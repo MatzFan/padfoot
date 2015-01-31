@@ -8,4 +8,5 @@
 //= require dataTables.bootstrap.js
 //= require dataTables.colVis.js
 //= require dataTables.scroller.js
+//= require dataTables.tableTools.js
 //= require_tree .

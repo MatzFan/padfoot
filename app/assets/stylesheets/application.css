@@ -9,5 +9,6 @@
  *= require dataTables.bootstrap.css
  *= require dataTables.colVis.css
  *= require dataTables.scroller.css
+ *= require dataTables.tableTools.css
  *= require site
 */

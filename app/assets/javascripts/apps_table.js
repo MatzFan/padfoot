@@ -6,13 +6,13 @@ function drawTable(data, callback) {
   }).get().join('');
   $("#table-placeholder").html("<table id='tbl' class='table stripe table-bordered' data-toggle='table'><tfoot>" + thDivs + "</tfoot></table>");
   var table = $('#tbl').dataTable({
-    dom:         "rtiS", // add scroller, remove 'f' at front to hide filtering element
+    // dom:         'rtiS', // add scroller, remove 'f' at front to hide filtering element
     scrollY:     440,
     scrollCollapse: true,
     // paging: false,
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order - for speed
-    "sDom": "lrtip", // remove 'filtering element' - see: https://datatables.net/reference/option/dom
+    "sDom": 'T<"clear">lrtip', // remove 'filtering element' - see: https://datatables.net/reference/option/dom
     // "stateSave": true, // so user can navigate back to same view :)
     "data": appData,
     "columns": columns,
@@ -26,6 +26,10 @@ function drawTable(data, callback) {
     //     $(this).html( '<input type="text" placeholder="'+columns[index].title+'" />' );
     //   });
     // }
+    tableTools: {
+      "sRowSelect": "multi",
+      "aButtons": [ "select_all", "select_none" ]
+    }
   });
 
   // http://datatables.net/extensions/colvis/api

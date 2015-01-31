@@ -23,7 +23,7 @@ h1 {
 
 .site {
   padding: 20px;
-  line-height: 1.8em;
+  /*line-height: 1.8em;*/
 }
 
 .table {
@@ -38,6 +38,10 @@ tfoot input {
 
 div.ColVis {
   margin-bottom: 0em; /* override DT 1em value */
+}
+
+div.DTTT_container {
+  margin-bottom: 0em; /* override DTTT 1em value */
 }
 
 td div {
