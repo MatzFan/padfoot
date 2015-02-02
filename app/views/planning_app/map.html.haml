@@ -1,15 +1,6 @@
-%body{:onload => "GetMap();"}
-  #mapDiv{style: "position:relative; width:1300px; height:700px;"}
-
-=javascript_include_tag 'https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1'
+#mapDiv{style: "position:relative; width:1300px; height:700px;"}
 
 :javascript
-  function GetMap() {
-    var mapOptions = {
-      credentials:'AutjcX00ethCZF2CQURexruteEwuFxvWJ6BVywEvyDv5BIaOO3vfhrH59O_rnLFd',
-      center: new Microsoft.Maps.Location(49.21042016382462, -2.1445659365234615),
-      zoom: 12,
-      mapTypeId: Microsoft.Maps.MapTypeId.aerial
-    };
-    var map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions);
-  };
+  $(function() {
+    GetMap(gon.data);
+  });

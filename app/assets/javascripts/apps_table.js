@@ -31,14 +31,28 @@ function drawTable(data, callback) {
       "aButtons": [
         "select_all",
         "select_none",
+        // {
+        //   "sExtends": "ajax",
+        //   "sButtonText": "View on map",
+        //   "bHeader": false,
+        //   "sAjaxUrl": "map.json", // uses POST
+        //   "mColumns": [ 2 ],
+        //   "fnAjaxComplete": function (XMLHttpRequest, textStatus) {
+        //     alert('Ajax complete');
+        //   }
+        // }
         {
-          "sExtends": "ajax",
+          "sExtends": "text",
           "sButtonText": "View on map",
-          "sAjaxUrl": "map", // used POST
-          "fnCellRender": function ( sValue, iColumn, nTr, iDataIndex ) {
-            if ( iColumn === 2 ) {
-              return sValue;
-            }
+          "fnClick": function ( nButton, oConfig, oFlash ) {
+            oConfig.bHeader = false;
+            oConfig.mColumns = [2];
+            var sData = this.fnGetTableData(oConfig); // selected data
+            var token = $('meta[name="csrf-token"]').attr("content");
+            $('<form action="map" method="POST">' +
+              '<input type="hidden" name="tableData" value="' + sData + '">' +
+              '<input type="hidden" name="authenticity_token" value="' + token + '">' +
+              '</form>').submit();
           }
         }
       ]

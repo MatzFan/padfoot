@@ -3,6 +3,7 @@ module Padfoot
     register SassInitializer
     register Padrino::Mailer
     register Padrino::Helpers
+    register Gon::Sinatra
 
     enable :sessions
 

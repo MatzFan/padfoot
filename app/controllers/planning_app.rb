@@ -21,7 +21,11 @@ Padfoot::App.controllers :planning_app do
   end
 
   post :map, map: 'applications/map' do
-    p params
+    @refs = params[:tableData].split("\r\n") if params[:tableData]
+    latitudes = @refs.map { |ref| PlanningApp[ref][:latitude] }
+    longitudes = @refs.map { |ref| PlanningApp[ref][:longitude] }
+    @locations = latitudes.zip(longitudes)
+    gon.data = @locations
     render :map
   end
 

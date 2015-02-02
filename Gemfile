@@ -15,6 +15,7 @@ gem 'uglifier', '2.6.0' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
 gem 'bcrypt-ruby', '3.1.5', require: 'bcrypt'
 gem 'mechanize', '2.7.2' # 2.7.3 conflicts with Padrino re mime-types 1.0/2.0
+gem 'gon-sinatra', '0.1.2'
 
 # Optional JSON codec (faster performance)
 # gem 'oj', '2.11.4', require: 'oj'
