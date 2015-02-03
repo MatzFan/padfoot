@@ -22,9 +22,8 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @refs = params[:tableData].split("\r\n") if params[:tableData]
-    latitudes = @refs.map { |ref| PlanningApp[ref][:latitude] }
-    longitudes = @refs.map { |ref| PlanningApp[ref][:longitude] }
-    @locations = latitudes.zip(longitudes)
+    applications = PlanningApp.where(app_ref: @refs)
+    @locations = applications.select_map([:latitude, :longitude])
     gon.data = @locations
     render :map
   end
