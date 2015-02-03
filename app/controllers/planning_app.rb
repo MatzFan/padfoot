@@ -22,7 +22,7 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @refs = params[:tableData].split("\r\n") if params[:tableData]
-    applications = PlanningApp.where(app_ref: @refs)
+    applications = PlanningApp.where(:mapped, app_ref: @refs)
     @locations = applications.select_map([:latitude, :longitude])
     gon.data = @locations
     render :map
