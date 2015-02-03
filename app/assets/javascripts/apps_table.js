@@ -44,6 +44,7 @@ function drawTable(data, callback) {
         {
           "sExtends": "text",
           "sButtonText": "View on map",
+          "bSelectedOnly": "true", // ensures only selected apps are mapped
           "fnClick": function ( nButton, oConfig, oFlash ) {
             oConfig.bHeader = false;
             oConfig.mColumns = [2];
