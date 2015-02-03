@@ -1,4 +1,4 @@
-function GetMap(locations, refs, descriptions) {
+function GetMap(locations, colours, letters, refs, descriptions) {
 
   var pinLayer = new Microsoft.Maps.EntityCollection();
   var infoboxLayer = new Microsoft.Maps.EntityCollection();
@@ -15,8 +15,8 @@ function GetMap(locations, refs, descriptions) {
     var lat = locations[i][0]; var lng = locations[i][1];
     var loc = new Microsoft.Maps.Location(lat, lng);
     var pushpinOptions = {
-      icon: '../assets/marker_red.png',
-      text: 'P', // to change to codes
+      icon: "../assets/marker_" +colours[i]+ ".png",
+      text: letters[i],
       textOffset: new Microsoft.Maps.Point(3, 3)
     };
     var pin = new Microsoft.Maps.Pushpin(loc, pushpinOptions);
