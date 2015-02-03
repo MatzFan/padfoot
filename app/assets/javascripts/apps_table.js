@@ -48,6 +48,7 @@ function drawTable(data, callback) {
             oConfig.bHeader = false;
             oConfig.mColumns = [2];
             var sData = this.fnGetTableData(oConfig); // selected data
+            alert(sData.length);
             var token = $('meta[name="csrf-token"]').attr("content");
             $('<form action="map" method="POST">' +
               '<input type="hidden" name="tableData" value="' + sData + '">' +

@@ -22,9 +22,7 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
-    logger.info @all_refs.count
     apps = PlanningApp.where(:mapped, app_ref: @all_refs)
-    logger.info app.count
     gon.locations = apps.select_map([:latitude, :longitude])
     gon.refs = apps.select_map(:app_ref)
     gon.descrips = apps.select_map(:app_description).map { |t| trunc(t, 20) }
