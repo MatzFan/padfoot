@@ -29,22 +29,18 @@ function drawTable(data, callback) {
     tableTools: {
       "sRowSelect": "multi",
       "aButtons": [
-        "select_all",
         "select_none",
-        // {
-        //   "sExtends": "ajax",
-        //   "sButtonText": "View on map",
-        //   "bHeader": false,
-        //   "sAjaxUrl": "map.json", // uses POST
-        //   "mColumns": [ 2 ],
-        //   "fnAjaxComplete": function (XMLHttpRequest, textStatus) {
-        //     alert('Ajax complete');
-        //   }
-        // }
+        {
+          "sExtends": "select_all",
+          "sButtonText": "Select all",
+          "fnClick": function (nButton, oConfig, oFlash) {
+            var oTT = TableTools.fnGetInstance('tbl');
+            oTT.fnSelectAll(true); //True = Select only filtered rows (true). Optional - default false.
+          }
+        },
         {
           "sExtends": "text",
           "sButtonText": "View on map",
-          "bSelectedOnly": "true", // ensures only selected apps are mapped
           "fnClick": function ( nButton, oConfig, oFlash ) {
             oConfig.bHeader = false;
             oConfig.mColumns = [2];
