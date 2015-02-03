@@ -11,6 +11,10 @@ module PlanningAppHelper
     "<div#{placeholder}>#{txt}</div>"
   end
 
+  def trunc(t, n)
+    t.split.size > 20 ? "#{t.split(/\s+/, n + 1)[0...n].join(' ')}..." : t
+  end
+
 end # of PlanningAppHelper
 
 Padfoot::App.helpers PlanningAppHelper

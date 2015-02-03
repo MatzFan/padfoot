@@ -21,10 +21,11 @@ Padfoot::App.controllers :planning_app do
   end
 
   post :map, map: 'applications/map' do
-    @refs = params[:tableData].split("\r\n") if params[:tableData]
-    applications = PlanningApp.where(:mapped, app_ref: @refs)
-    @locations = applications.select_map([:latitude, :longitude])
-    gon.data = @locations
+    @all_refs = params[:tableData].split("\r\n") if params[:tableData]
+    apps = PlanningApp.where(:mapped, app_ref: @all_refs)
+    gon.locations = apps.select_map([:latitude, :longitude])
+    gon.refs = apps.select_map(:app_ref)
+    gon.descrips = apps.select_map(:app_description).map { |t| trunc(t, 20) }
     render :map
   end
 
