@@ -13,7 +13,7 @@ function drawTable(data, callback) {
     "deferRender": true, // for speed
     "order": [], // disable INITIAL sort order - for speed
     "sDom": 'T<"clear">lrtip', // remove 'filtering element' - see: https://datatables.net/reference/option/dom
-    // "stateSave": true, // so user can navigate back to same view :)
+    "stateSave": true, // so user can navigate back to same view :)
     "data": appData,
     "columns": columns,
     // "columnDefs": [
@@ -43,13 +43,20 @@ function drawTable(data, callback) {
           "sButtonText": "View on map",
           "fnClick": function ( nButton, oConfig, oFlash ) {
             oConfig.bHeader = false;
-            oConfig.mColumns = [2];
-            var sData = this.fnGetTableData(oConfig); // selected data
+            oConfig.mColumns = [2]; // refs column only - FRAGILE
             var token = $('meta[name="csrf-token"]').attr("content");
-            $('<form action="map" method="POST">' +
-              '<input type="hidden" name="tableData" value="' + sData + '">' +
-              '<input type="hidden" name="authenticity_token" value="' + token + '">' +
-              '</form>').submit();
+            var sData = this.fnGetTableData(oConfig); // selected data
+            var numSelected = TableTools.fnGetInstance('tbl').fnGetSelected().length;
+            if(numSelected == 0) { // ALL 30,000 are plotted without this guard!!!!!!!
+              alert("Select one or more applications by clicking on the row(s), or use 'Select all'.");
+            } else {
+              if(confirm(numSelected + " applications selected, do you want to plot these?") == true){
+                $('<form action="map" method="POST">' +
+                '<input type="hidden" name="tableData" value="' + sData + '">' +
+                '<input type="hidden" name="authenticity_token" value="' + token + '">' +
+                '</form>').submit();
+              }
+            }
           }
         }
       ]
