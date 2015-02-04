@@ -12,18 +12,18 @@ Padfoot::App.controllers :users do
   end
 
   post :create do
-    @user = User.new(params[:user])
-    if @user.save
-      deliver(:registration, :registration_email, @user.name, @user.email)
-      deliver(:confirmation, :confirmation_email,
-            @user.name,
-            @user.email,
-            @user.id,
-            @user.confirmation_code) unless @user.confirmation # check confirmed
-      redirect('/')
-    else
-      render :new # refresh the page (with warnings)
-    end
+    # @user = User.new(params[:user])
+    # if @user.save
+    #   deliver(:registration, :registration_email, @user.name, @user.email)
+    #   deliver(:confirmation, :confirmation_email,
+    #         @user.name,
+    #         @user.email,
+    #         @user.id,
+    #         @user.confirmation_code) unless @user.confirmation # check confirmed
+    #   redirect('/')
+    # else
+    #   render :new # refresh the page (with warnings)
+    # end
   end
 
   get :confirm, map: '/confirm/:id/:code' do

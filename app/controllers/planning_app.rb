@@ -23,9 +23,11 @@ Padfoot::App.controllers :planning_app do
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
     apps = PlanningApp.where(:mapped, app_ref: @all_refs)
+    statuses = AppStatus.to_hash(:name, :colour)
+    categories = AppCategory.to_hash(:code, :letter)
+    gon.colours = apps.select_map(:app_status).map { |s| statuses[s] }
+    gon.letters = apps.select_map(:app_category).map { |c| categories[c] }
     gon.locations = apps.select_map([:latitude, :longitude])
-    gon.colours = apps.select_map(:app_status).map { |s| AppStatus.where(name: s).first.colour }
-    gon.letters = apps.select_map(:app_category).map { |l| AppCategory.where(code: l).first.letter }
     gon.refs = apps.select_map(:app_ref)
     gon.descrips = apps.select_map(:app_description).map { |t| trunc(t, 20) }
     render :map
