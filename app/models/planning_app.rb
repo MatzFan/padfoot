@@ -17,9 +17,10 @@ class PlanningApp < Sequel::Model
     self.app_full_address = build_address
     self.app_address_of_applicant = breakify(split_csv(self.app_applicant))
     self.mapped = self.latitude && self.longitude
+    super
   end
 
-  def before_create
+  def before_save
     # populate parent tables first if need be, so FK's linked
     AppCategory.find_or_create(code: self.app_category) if self.app_category
     AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
