@@ -7,7 +7,7 @@ class PlanningApp < Sequel::Model
   many_to_one :parish_aliases, key: :app_parish
   many_to_one :agent_aliases, key: :app_agent
 
-  def before_create
+  def before_validation
     # populate derivative fields
     code_year_number = self.app_ref.split('/')
     self.app_code = code_year_number[0]
@@ -17,6 +17,9 @@ class PlanningApp < Sequel::Model
     self.app_full_address = build_address
     self.app_address_of_applicant = breakify(split_csv(self.app_applicant))
     self.mapped = self.latitude && self.longitude
+  end
+
+  def before_create
     # populate parent tables first if need be, so FK's linked
     AppCategory.find_or_create(code: self.app_category) if self.app_category
     AppOfficer.find_or_create(name: self.app_officer) if self.app_officer

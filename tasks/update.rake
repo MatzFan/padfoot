@@ -1,19 +1,18 @@
 namespace :sq do
   namespace :apps do
-    desc "Update applications in database for given year (default: current year) and from a given start page (default: 1)"
-    task :update, [:year, :start_page] do |t, args|
-      args.with_defaults(year: Time.now.year, start_page: 1)
-      refs = AppRefsScraper.new(args.year, args.start_page).refs
-      bar = RakeProgressbar.new(refs.count)
-      refs.each do |ref|
-        s = AppDetailsScraper.new(ref)
-        if s.has_valid_ref
-          app_ref = s.data_hash[:app_ref]
-          PlanningApp.create(s.data_hash) if !PlanningApp.find(app_ref: app_ref)
+    desc "Update all applicaitons with 'pending' status"
+    task :update do
+      apps = PlanningApp.where(app_status: 'Pending')
+      apps.all.each do |app|
+        new_app = PlanningApp.new(AppDetailsScraper.new(app.app_ref).data_hash)
+        if new_app.valid? && if app != new_app # valid? populates derivative fields
+            db_hash, new_hash = app.to_hash, new_app.to_hash
+            diffs = Hash[*(new_hash.to_a - db_hash.to_a).flatten]
+            diffs.each { |k,v| app.send("#{k}=", v) }
+            app.save
+          end
         end
-        bar.inc
       end
-      bar.finished
     end
   end
 end

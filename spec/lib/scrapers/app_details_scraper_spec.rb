@@ -12,7 +12,7 @@ describe AppDetailsScraper do
                    "St. Brelade",
                    "JE3 8EA",
                    "Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network",
-                   "" # no agent
+                   nil # no agent
                    ] }
   let(:dates) { ["2014-04-04", "2014-04-15", "2014-05-06", "",
                  "2014-08-15", "2014-10-14", "2014-06-18"
@@ -30,13 +30,13 @@ describe AppDetailsScraper do
                           :app_ref => 'RW/2014/0548',
                           :app_road => 'Le Mont Sohier',
                           :app_status => 'Upheld',
-                          # :app_agent => '', # no agent in this example
+                          :app_agent => nil, # no agent in this example
                           :latitude => 49.185511,
                           :longitude => -2.191882,
                           :valid_date => Date.parse('2014-04-04'),
                           :advertised_date => Date.parse('2014-04-15'),
                           :end_pub_date => Date.parse('2014-05-06'),
-                          # :site_visit_date => 'n/a', # no site visit date in this example
+                          :site_visit_date => nil, # no site visit date in this example
                           :committee_date => Date.parse('2014-08-15'),
                           :decision_date => Date.parse('2014-10-14'),
                           :appeal_date => Date.parse('2014-06-18'),
@@ -93,12 +93,6 @@ describe AppDetailsScraper do
   context '#data_hash' do
     it 'returns hash of field names and data' do
       expect(scraper.data_hash).to eq(app_data_hash)
-    end
-
-    it 'returns fewer items if parsing unsuccessful' do
-      bad_dates_table_titles = scraper.send(:details_table_titles)
-      allow(scraper).to receive(:dates_table_titles) { bad_dates_table_titles }
-      expect(scraper.data_hash.size).to eq(13)
     end
 
     it 'returns strings cleaned of leading, trailing & repeated spaces' do

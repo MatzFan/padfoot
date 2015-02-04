@@ -32,7 +32,9 @@ class AppDetailsScraper
   end
 
   def app_details
-    det_t_ok? ? (0..1).map { |n| details_table(n).map { |i| clean(i.text) } }.flatten : {}
+    det_t_ok? ? (0..1).map do |n|
+      details_table(n).map { |i| i.text.empty? ? nil : clean(i.text) }
+    end.flatten : {}
   end
 
   def clean(text)
@@ -40,7 +42,8 @@ class AppDetailsScraper
   end
 
   def details_hash
-    Hash[const(:DETAILS_FIELDS).zip(app_details)].reject { |k,v| v.empty? }
+    Hash[const(:DETAILS_FIELDS).zip(app_details)]
+    # .reject { |k,v| v.empty? }
   end
 
   def const(sym)
@@ -56,11 +59,13 @@ class AppDetailsScraper
   end
 
   def dates_hash
-    Hash[const(:DATES_FIELDS).zip(app_dates)].reject { |k,v| v.nil? }
+    Hash[const(:DATES_FIELDS).zip(app_dates)]
+    # .reject { |k,v| v.nil? }
   end
 
   def data_hash # hash of the application table_titles: data, less empty values
-    details_hash.merge(coords_hash).merge(dates_hash).reject { |k,v| v.nil? }
+    details_hash.merge(coords_hash).merge(dates_hash)
+    # .reject { |k,v| v.nil? }
   end
 
   def det_t_ok? # valid details table titles?
