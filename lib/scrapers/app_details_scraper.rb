@@ -67,7 +67,7 @@ class AppDetailsScraper
   end
 
   def data_hash_arr
-    (0..num_refs).map { |i| det_pages[i] && dat_pages[i] ? data_hash(i) : {} }
+    (0...num_refs).map { |i| det_pages[i] && dat_pages[i] ? data_hash(i) : {} }
   end
 
   def err(i, type)

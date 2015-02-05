@@ -115,26 +115,26 @@ describe AppDetailsScraper do
     expect(single.app_dates(0).map { |d| d.to_s }).to eq(dates)
   end
 
-  # it '#coords' do
-  #   expect(scraper.coords(ex_ref)).to eq(app_coords)
-  # end
+  it '#coords' do
+    expect(scraper.coords(0)).to eq(app_coords)
+  end
 
-  # context '#coords_hash' do
-  #   it 'should be empty if map is empty' do
-  #     ref = 'P/2012/0219'
-  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
-  #   end
+  context '#coords_hash' do
+    it 'should be empty if map is empty' do
+      ref = 'P/2012/0219'
+      expect(AppDetailsScraper.new(ref).coords_hash(0)).to eq({})
+    end
 
-  #   it '#coords_hash is empty if there is no map' do
-  #     ref = 'P/1997/2196'
-  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
-  #   end
+    it '#coords_hash is empty if there is no map' do
+      ref = 'P/1997/2196'
+      expect(AppDetailsScraper.new(ref).coords_hash(0)).to eq({})
+    end
 
-  #   it '#coords_hash is empty if coords are nonsense' do
-  #     ref = 'P/2000/2196'
-  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
-  #   end
-  # end
+    it '#coords_hash is empty if coords are nonsense' do
+      ref = 'P/2000/2196'
+      expect(AppDetailsScraper.new(ref).coords_hash(0)).to eq({})
+    end
+  end
 
   context '#data_hash' do
     it 'returns hash of field names and data' do
@@ -147,6 +147,11 @@ describe AppDetailsScraper do
   end
 
   context '#data_hash_arr' do
+    it 'returns an array of hashes the same size as the number of args provided' do
+      expect(scraper.data_hash_arr.size).to eq(2)
+      expect(single.data_hash_arr.size).to eq(1)
+    end
+
     it 'returns an array of hashes of field names and data for a valid ref' do
       expect(scraper.data_hash_arr[0]).to eq(app_data_hash)
     end
