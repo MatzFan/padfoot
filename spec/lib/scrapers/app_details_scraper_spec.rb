@@ -1,6 +1,13 @@
 describe AppDetailsScraper do
 
-  let(:scraper) { AppDetailsScraper.new('RW/2014/0548') }
+  ex_ref = 'RW/2014/0548'
+  bad_ref = 'A/bad/app_ref'
+  scraper = AppDetailsScraper.new([ex_ref, bad_ref])
+
+  let(:single) { AppDetailsScraper.new(ex_ref) }
+
+  let(:space) { 'S/2014/1979' }
+  let(:s_repeat_space) { AppDetailsScraper.new(space) }
   let(:details) { ["RW/2014/0548",
                    "RW",
                    "Upheld",
@@ -42,61 +49,110 @@ describe AppDetailsScraper do
                           :appeal_date => Date.parse('2014-06-18'),
                       } }
 
-  it '#initialize' do
-    expect(scraper).not_to be_nil
+  context '#initialize' do
+    it 'can be initialized with a single arguement' do
+      expect(AppDetailsScraper.new('RW/2014/0548')).not_to be_nil
+    end
+
+    it 'can be initialized with an array' do
+      expect(scraper).not_to be_nil
+    end
+
+    context '#det_pages' do
+      it 'scraper object stores Mechanizer::Page objects for valid app_refs' do
+        expect(single.det_pages[0].class).to eq(Mechanize::Page)
+      end
+
+      it 'scraper object stores nils for invalid app_refs' do
+        expect(scraper.det_pages[1]).to be_nil
+      end
+    end
   end
 
-  it '#has_valid_ref' do
-    expect(AppDetailsScraper.new('garbage_app_ref').has_valid_ref).to be false
-  end
+  context '#table_ok?' do
+    context "doesn't raise an error" do
+      it 'if the details table format is ok' do
+        expect(lambda {scraper.table_ok?(0, 'details')}).not_to raise_error
+      end
 
-  it '#det_t_ok?' do # validates details tables (2) format
-    expect(scraper.det_t_ok?).to be_truthy
-  end
+      it 'if the dates table format is ok' do
+        expect(lambda {scraper.table_ok?(0, 'dates')}).not_to raise_error
+      end
+    end
 
-  it '#dat_t_ok?' do # validates dates table format
-    expect(scraper.dat_t_ok?).to be_truthy
+    context "does raise an error" do
+      it 'if the details table format is bad' do
+        err = "Bad details table structure for #{ex_ref}"
+        dat_page = single.instance_variable_get(:@dat_pages)[0]
+        single.instance_variable_set(:@det_pages, [dat_page])
+        expect(lambda {single.table_ok?(0, 'details')}).to raise_error(err)
+      end
+
+      it 'if the dates table format is bad' do
+        err = "Bad dates table structure for #{ex_ref}"
+        det_page = single.instance_variable_get(:@det_pages)[0]
+        single.instance_variable_set(:@dat_pages, [det_page])
+        expect(lambda {single.table_ok?(0, 'dates')}).to raise_error(err)
+      end
+    end
   end
 
   it '#app_details' do
-    expect(scraper.app_details).to eq(details)
+    expect(scraper.app_details(0)).to eq(details)
   end
 
-  it '#format_date' do
-    expect(scraper.format_date('4th April 2014').class).to eq(Date)
-  end
+  context '#format_date' do
+    it 'should correctly format a valid date' do
+      expect(scraper.format_date('4th April 2014').class).to eq(Date)
+    end
 
-  it '#format_date for "n/a" returns nil' do
-    expect(scraper.format_date('n/a')).to be_nil
+    it 'should returns nil for "n/a"' do
+      expect(scraper.format_date('n/a')).to be_nil
+    end
   end
 
   it '#app_dates' do
-    expect(scraper.app_dates.map { |date| date.to_s }).to eq(dates)
+    expect(single.app_dates(0).map { |d| d.to_s }).to eq(dates)
   end
 
-  it '#coords' do
-    expect(scraper.coords).to eq(app_coords)
-  end
+  # it '#coords' do
+  #   expect(scraper.coords(ex_ref)).to eq(app_coords)
+  # end
 
-  it '#coords_hash is empty if map is empty' do
-    expect(AppDetailsScraper.new('P/2012/0219').coords_hash).to eq({})
-  end
+  # context '#coords_hash' do
+  #   it 'should be empty if map is empty' do
+  #     ref = 'P/2012/0219'
+  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
+  #   end
 
-  it '#coords_hash is empty if there is no map' do
-    expect(AppDetailsScraper.new('P/1997/2196').coords_hash).to eq({})
-  end
+  #   it '#coords_hash is empty if there is no map' do
+  #     ref = 'P/1997/2196'
+  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
+  #   end
 
-  it '#coords_hash is empty if coords are nonsense' do
-    expect(AppDetailsScraper.new('P/2000/2196').coords_hash).to eq({})
-  end
+  #   it '#coords_hash is empty if coords are nonsense' do
+  #     ref = 'P/2000/2196'
+  #     expect(AppDetailsScraper.new(ref).coords_hash(ref)).to eq({})
+  #   end
+  # end
 
   context '#data_hash' do
     it 'returns hash of field names and data' do
-      expect(scraper.data_hash).to eq(app_data_hash)
+      expect(scraper.data_hash(0)).to eq(app_data_hash)
     end
 
     it 'returns strings cleaned of leading, trailing & repeated spaces' do
-      expect(AppDetailsScraper.new('S/2014/1979').data_hash[:app_postcode]).to eq('JE3 3DA')
+      expect(s_repeat_space.data_hash(0)[:app_postcode]).to eq('JE3 3DA')
+    end
+  end
+
+  context '#data_hash_arr' do
+    it 'returns an array of hashes of field names and data for a valid ref' do
+      expect(scraper.data_hash_arr[0]).to eq(app_data_hash)
+    end
+
+    it 'returns an empty hash for an invalid ref' do
+      expect(scraper.data_hash_arr[1]).to eq({})
     end
   end
 

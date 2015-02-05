@@ -5,103 +5,106 @@ class AppDetailsScraper
   ROOT = 'https://www.mygov.je/'
   DETAILS_PAGE = 'Planning/Pages/PlanningApplicationDetail.aspx?s=1&r='
   DATES_PAGE = 'Planning/Pages/PlanningApplicationTimeline.aspx?s=1&r='
-  TABLE_CSS = ".//table[@class='pln-searchd-table']"
+  CSS = ".//table[@class='pln-searchd-table']"
+  TT = '_table_titles'
   ID_DELIM = 'ctl00_lbl'
   COORDS = [:Latitude, :Longitude]
+  LAT = 48.6 # minimum value for valid coords
 
-  attr_reader :agent, :app_ref, :details_page, :dates_page, :has_valid_ref
+  attr_reader :agent, :app_refs, :num_refs, :det_pages, :dat_pages
 
-  def initialize(app_ref)
+  def initialize(*app_refs)
     @agent = Mechanize.new
-    @app_ref = app_ref
-    @details_page = details_page
-    @dates_page = dates_page
-    @has_valid_ref = valid?(details_page) && valid?(dates_page)
+    @app_refs = app_refs.flatten # an array
+    @num_refs = @app_refs.length
+    @det_pages = pages('DETAILS_PAGE').map &validate
+    @dat_pages = pages('DATES_PAGE').map &validate
+    return if num_refs != det_pages.size or num_refs != dat_pages.size
   end
 
-  def valid?(page) # incorrect app refs yield 'error' in title
-    page.title.include?('Application')
+  def validate # invalid pages repalcedwith nil's
+    Proc.new { |page| page if page.title.include?('Application') }
   end
 
-  def details_page
-    agent.get(ROOT + DETAILS_PAGE + app_ref)
+  def pages(type)
+    app_refs.map { |ref| agent.get(ROOT + self.class.const_get(type) + ref) }
   end
 
-  def dates_page
-    agent.get(ROOT + DATES_PAGE + app_ref)
+  def app_details(i)
+    if table_ok?(i, 'details')
+     (0..1).map { |n| det_table(i, n).map { |e| get_text(e) } }.flatten
+    else
+      {}
+    end
   end
 
-  def app_details
-    det_t_ok? ? (0..1).map do |n|
-      details_table(n).map { |i| i.text.empty? ? nil : clean(i.text) }
-    end.flatten : {}
+  def get_text(e)
+    e.text.empty? ? nil : e.text.strip.squeeze(' ') # removes all repeated spaces :)
   end
 
-  def clean(text)
-    text.strip.squeeze(' ') # removes all repeated spaces :)
-  end
-
-  def details_hash
-    Hash[const(:DETAILS_FIELDS).zip(app_details)]
-    # .reject { |k,v| v.empty? }
+  def details_hash(i)
+    Hash[const(:DETAILS_FIELDS).zip(app_details(i))]
   end
 
   def const(sym)
     PlanningApp.const_get(sym)
   end
 
-  def app_dates # array of the 7 dates, formatted appropriately
-    dat_t_ok? ? dates_table.map { |i| format_date(i.text) } : {}
+  def app_dates(i) # array of the 7 dates, formatted appropriately
+    table_ok?(i, 'dates') ? dates_table(i).map { |e| format_date(e.text) } : {}
   end
 
   def format_date(string)
     DateTime.parse(string).to_date rescue nil # returns nil for non-dates
   end
 
-  def dates_hash
-    Hash[const(:DATES_FIELDS).zip(app_dates)]
-    # .reject { |k,v| v.nil? }
+  def dates_hash(i)
+    Hash[const(:DATES_FIELDS).zip(app_dates(i))]
   end
 
-  def data_hash # hash of the application table_titles: data, less empty values
-    details_hash.merge(coords_hash).merge(dates_hash)
-    # .reject { |k,v| v.nil? }
+  def data_hash(i) # hash of the application table_titles: data
+    details_hash(i).merge(coords_hash(i)).merge(dates_hash(i))
   end
 
-  def det_t_ok? # valid details table titles?
-    details_table_titles == const(:DETAILS_TABLE_TITLES)
+  def data_hash_arr
+    (0..num_refs).map { |i| det_pages[i] && dat_pages[i] ? data_hash(i) : {} }
   end
 
-  def dat_t_ok? # valid dates table titles?
-    dates_table_titles == const(:DATES_TABLE_TITLES)
+  def err(i, type)
+    "Bad #{type} table structure for #{app_refs[i]}"
   end
 
-  def details_table(n) # app details are split over 2 tables with same class
-    details_page.search(TABLE_CSS)[n].css('tr').css('td').css('span')
+  def table_ok?(i, type)
+    raise err(i, type) if send("#{type + TT}", i) != const("#{(type + TT).upcase}")
+    return true
   end
 
-  def dates_table
-    dates_page.search(TABLE_CSS).css('tr').css('td').css('span')
+  def det_table(i, n) # app details are split over 2 tables with same class
+    det_pages[i].search(CSS)[n].css('tr').css('td').css('span') rescue []
   end
 
-  def details_table_titles
-    (0..1).map { |n| details_table(n).map { |i| parse(i.attr('id')) } }.flatten
+  def dates_table(i)
+    dat_pages[i].search(CSS).css('tr').css('td').css('span') rescue []
   end
 
-  def dates_table_titles
-    dates_table.map { |i| parse(i.attr('id')) }
+  def details_table_titles(i)
+    (0..1).map { |n| det_table(i, n).map { |e| parse(e.attr('id')) } }.flatten
+  end
+
+  def dates_table_titles(i)
+    dates_table(i).map { |e| parse(e.attr('id')) }
   end
 
   def parse(text)
     text.split(ID_DELIM).last
   end
 
-  def coords
-    COORDS.map { |coord| parse_coord(details_page.body, coord.to_s).to_f }
+  def coords(i)
+    COORDS.map { |coord| parse_coord(det_pages[i].body, coord.to_s).to_f }
   end
 
-  def coords_hash # validates latitude
-    coords[0] > 48.6 ? Hash[COORDS.map { |c| c.downcase }.zip(coords)] : {}
+  def coords_hash(r) # validates latitude
+    coords(r)[0] > LAT ? Hash[COORDS.map { |c| c.downcase}.zip(coords(r))] : {}
   end
 
   def parse_coord(source, coord)
