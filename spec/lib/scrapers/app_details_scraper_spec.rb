@@ -146,18 +146,18 @@ describe AppDetailsScraper do
     end
   end
 
-  context '#data_hash_arr' do
+  context '#data' do
     it 'returns an array of hashes the same size as the number of args provided' do
-      expect(scraper.data_hash_arr.size).to eq(2)
-      expect(single.data_hash_arr.size).to eq(1)
+      expect(scraper.data.size).to eq(2)
+      expect(single.data.size).to eq(1)
     end
 
     it 'returns an array of hashes of field names and data for a valid ref' do
-      expect(scraper.data_hash_arr[0]).to eq(app_data_hash)
+      expect(scraper.data[0]).to eq(app_data_hash)
     end
 
     it 'returns an empty hash for an invalid ref' do
-      expect(scraper.data_hash_arr[1]).to eq({})
+      expect(scraper.data[1]).to eq({})
     end
   end
 

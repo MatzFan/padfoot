@@ -66,7 +66,7 @@ class AppDetailsScraper
     details_hash(i).merge(coords_hash(i)).merge(dates_hash(i))
   end
 
-  def data_hash_arr
+  def data
     (0...num_refs).map { |i| det_pages[i] && dat_pages[i] ? data_hash(i) : {} }
   end
 

@@ -3,10 +3,15 @@ namespace :sq do
     desc "Get new applications for given year (default: current year) and from a given start page (default: 1)"
     task :new, [:year, :start_page] do |t, args|
       args.with_defaults(year: Time.now.year, start_page: 1)
-      refs = AppRefsScraper.new(args.year, args.start_page).refs
-      AppDetailsScraper.new(refs).data_hash_arr.each do |hash| # each a tranc
-        PlanningApp.create(hash) if !PlanningApp.find(app_ref: hash[:app_ref])
-      end
+      scraped = AppRefsScraper.new(args.year, args.start_page).refs
+      in_db = PlanningApp.where(app_ref: scraped).select_map(:app_ref)
+      # begin
+        app_data = AppDetailsScraper.new(scraped - in_db).data # filter first
+      # rescue PageStructureChanged
+      # end
+      DB.transaction do # transaction more efficient
+        app_data.each { |hash| PlanningApp.create(hash) }
+      end unless app_data.empty?
     end
   end
 end

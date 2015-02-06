@@ -21,12 +21,13 @@ class PlanningApp < Sequel::Model
   end
 
   def before_save
-    # populate parent tables first if need be, so FK's linked
-    AppCategory.find_or_create(code: self.app_category) if self.app_category
-    AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
-    AppStatus.find_or_create(name: self.app_status) if self.app_status
-    ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
-    AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
+    DB.transaction do # populate parent tables first if need be, so FK's linked
+      AppCategory.find_or_create(code: self.app_category) if self.app_category
+      AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
+      AppStatus.find_or_create(name: self.app_status) if self.app_status
+      ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
+      AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
+    end
     super
   end
 
