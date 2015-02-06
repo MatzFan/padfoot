@@ -75,9 +75,9 @@ module Padfoot
     #     render 'errors/404'
     #   end
     #
-    #   error 500 do
-    #     render 'errors/500'
-    #   end
+    error 503 do
+      render 'errors/503'
+    end
     #
   end
 end
