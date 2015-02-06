@@ -1,8 +1,10 @@
 namespace :sq do
   namespace :apps do
-    desc "Update all applicaitons with 'pending' status"
-    task :update do
-      old_apps = PlanningApp.where(app_status: 'Pending')
+    desc "Update all applications of a given status-type (default: 'Pending')"
+    task :update, [:type] do |t, args|
+      args.with_defaults(type: 'Pending')
+      t = Time.now
+      old_apps = PlanningApp.where(app_status: args.type)
       new_data = AppDetailsScraper.new(old_apps.select_map(:app_ref)).data
       new_apps = new_data.map { |hash| PlanningApp.new(hash) }
       new_apps.each &:valid? # needed to update derivative field values
@@ -15,7 +17,7 @@ namespace :sq do
           end
         end
       end
-      puts "#{count} applications updated"
+      puts "#{count} applications updated in #{(Time.now - t).to_i/60} minutes"
     end
   end
 end
