@@ -4,7 +4,7 @@ namespace :sq do
     task :addresses do
       PlanningApp.all.each do |app|
         app.app_full_address = app.build_address
-        app.app_address_of_applicant = app.build_address_of_applicant
+        app.app_address_of_applicant = breakify(split_csv(app))
         app.save
       end
     end
