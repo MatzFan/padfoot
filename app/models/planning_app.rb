@@ -15,7 +15,7 @@ class PlanningApp < Sequel::Model
     self.app_number = code_year_number[2].to_i
     self.order = self.app_year * 10000 + self.app_number
     self.app_full_address = build_address
-    self.app_address_of_applicant = breakify(splitify(self.app_applicant))
+    self.app_address_of_applicant = build_address_of_applicant
     self.mapped = self.latitude && self.longitude
     super
   end
@@ -84,6 +84,10 @@ class PlanningApp < Sequel::Model
   def build_address
     arr = [self.app_address, self.app_road, self.app_parish, self.app_postcode]
     breakify(arr)
+  end
+
+  def build_address_of_applicant
+    breakify(splitify(self.app_applicant))
   end
 
   def splitify(string)
