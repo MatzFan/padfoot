@@ -1,6 +1,7 @@
 class Parish < Sequel::Model
 
   unrestrict_primary_key
+  one_to_many :parish_aliases, key: :number
 
   NAMES = [
     'Grouville',
