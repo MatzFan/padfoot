@@ -6,6 +6,7 @@ class PlanningApp < Sequel::Model
   many_to_one :app_statuses, key: :app_status
   many_to_one :parish_aliases, key: :app_parish
   many_to_one :agent_aliases, key: :app_agent
+  one_to_many :planning_app_constraints, key: :app_ref
 
   def before_validation
     # populate derivative fields
@@ -29,6 +30,13 @@ class PlanningApp < Sequel::Model
       AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
     end
     super
+  end
+
+  def after_save # populate constraints after, as app_ref FK in join table
+    all_constraints.each do |c|
+      Constraint.find_or_create(name: c) # before populating join table
+      DB[:planning_app_constraints].insert(name: c, app_ref: self.app_ref)
+    end if self.app_constraints
   end
 
   DETAILS_TABLE_TITLES = ['Reference',
@@ -79,6 +87,10 @@ class PlanningApp < Sequel::Model
 
   def self.latest_app_num_for(year)
     self.where(app_year: year).order(:order).last[:app_number]
+  end
+
+  def all_constraints
+    splitify(self.app_constraints)
   end
 
   def build_address

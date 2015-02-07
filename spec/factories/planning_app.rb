@@ -7,5 +7,6 @@ FactoryGirl.define do
     app_status 'APPEAL'
     app_officer 'Richard Greig'
     app_parish 'St. Brelade'
+    app_constraints Faker::Lorem.words.join(', ')
   end
 end
