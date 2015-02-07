@@ -32,13 +32,8 @@ class PlanningApp < Sequel::Model
     super
   end
 
-  def after_save # populate constraints after, as app_ref FK in join table
-    all_constraints.each do |c|
-      Constraint.find_or_create(name: c) # before populating join table
-      attributes = { name: c, app_ref: self.app_ref }
-      num_records = DB[:planning_app_constraints].where(attributes).count
-      DB[:planning_app_constraints].insert(attributes) if num_records == 0
-    end if self.app_constraints
+  def after_save
+    add_constraints
   end
 
   DETAILS_TABLE_TITLES = ['Reference',
@@ -91,10 +86,6 @@ class PlanningApp < Sequel::Model
     self.where(app_year: year).order(:order).last[:app_number]
   end
 
-  def all_constraints
-    splitify(self.app_constraints)
-  end
-
   def build_address
     arr = [self.app_address, self.app_road, self.app_parish, self.app_postcode]
     breakify(arr)
@@ -110,6 +101,19 @@ class PlanningApp < Sequel::Model
 
   def breakify(string_arr)
     string_arr.join('<br/>') if string_arr
+  end
+
+  def all_constraints
+    splitify(self.app_constraints)
+  end
+
+  def add_constraints # populate constraints after, as app_ref FK in join table
+    all_constraints.each do |c|
+      Constraint.find_or_create(name: c) # before populating join table
+      attributes = { name: c, app_ref: self.app_ref }
+      num_records = DB[:planning_app_constraints].where(attributes).count
+      DB[:planning_app_constraints].insert(attributes) if num_records == 0
+    end if self.app_constraints
   end
 
 end
