@@ -5,7 +5,7 @@ Sequel.migration do
       String :name, primary_key: true #PK
     end
 
-    create_table(:planning_app_constraints) do
+    create_table(:constraints_planning_apps) do # alphabetical & plural
       foreign_key :name, :constraints, null: false, type: String
       foreign_key :app_ref, :planning_apps, null: false, type: String
       primary_key [:name, :app_ref]

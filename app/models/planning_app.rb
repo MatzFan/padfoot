@@ -8,6 +8,8 @@ class PlanningApp < Sequel::Model
   many_to_one :agent_aliases, key: :app_agent
   one_to_many :planning_app_constraints, key: :app_ref
 
+  many_to_many :constraints, left_key: :app_ref, right_key: :name
+
   def before_validation
     # populate derivative fields
     code_year_number = self.app_ref.split('/')
@@ -111,8 +113,8 @@ class PlanningApp < Sequel::Model
     all_constraints.each do |c|
       Constraint.find_or_create(name: c) # before populating join table
       attributes = { name: c, app_ref: self.app_ref }
-      num_records = DB[:planning_app_constraints].where(attributes).count
-      DB[:planning_app_constraints].insert(attributes) if num_records == 0
+      num_records = DB[:constraints_planning_apps].where(attributes).count
+      DB[:constraints_planning_apps].insert(attributes) if num_records == 0
     end if self.app_constraints
   end
 
