@@ -1,13 +1,13 @@
 class PlanningApp < Sequel::Model
 
   unrestrict_primary_key
-  many_to_one :app_categories, key: :app_category
-  many_to_one :app_officers, key: :app_officer
-  many_to_one :app_statuses, key: :app_status
-  many_to_one :parish_aliases, key: :app_parish
-  many_to_one :agent_aliases, key: :app_agent
-  one_to_many :planning_app_constraints, key: :app_ref
+  many_to_one :category, key: :app_category
+  many_to_one :officer, key: :app_officer
+  many_to_one :status, key: :app_status
+  many_to_one :agent_alias, key: :app_agent
+  many_to_one :parish_alias, key: :app_parish
 
+  one_to_many :planning_app_constraints, key: :app_ref
   many_to_many :constraints, left_key: :app_ref, right_key: :name
 
   def before_validation
@@ -25,9 +25,9 @@ class PlanningApp < Sequel::Model
 
   def before_save
     DB.transaction do # populate parent tables first if need be, so FK's linked
-      AppCategory.find_or_create(code: self.app_category) if self.app_category
-      AppOfficer.find_or_create(name: self.app_officer) if self.app_officer
-      AppStatus.find_or_create(name: self.app_status) if self.app_status
+      Category.find_or_create(code: self.app_category) if self.app_category
+      Officer.find_or_create(name: self.app_officer) if self.app_officer
+      Status.find_or_create(name: self.app_status) if self.app_status
       ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
       AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
     end
