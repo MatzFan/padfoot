@@ -6,7 +6,8 @@ Padfoot::App.controllers :planning_app do
     apps = all_apps_ordered
     columns = [
       :order, :valid_date, :app_ref, :app_code, :app_status, :app_full_address,
-      :app_description, :app_address_of_applicant, :app_agent, :app_officer, :parish]
+      :app_description, :app_address_of_applicant, :app_agent, :app_officer,
+      :parish, :list_app_constraints]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = apps.select_map(columns) # 2D array
     # wrap txt in <div>s and add class to app_description for css formatting

@@ -20,6 +20,7 @@ class PlanningApp < Sequel::Model
     self.app_full_address = build_address
     self.app_address_of_applicant = build_address_of_applicant
     self.mapped = self.latitude && self.longitude
+    self.list_app_constraints = breakify(all_constraints)
     super
   end
 
