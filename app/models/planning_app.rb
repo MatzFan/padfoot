@@ -30,6 +30,7 @@ class PlanningApp < Sequel::Model
       Status.find_or_create(name: self.app_status) if self.app_status
       ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
       AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
+      self.parish = parish_alias.parish.name if parish_alias && parish_alias.parish
     end
     super
   end
@@ -116,10 +117,6 @@ class PlanningApp < Sequel::Model
       num_records = DB[:constraints_planning_apps].where(attributes).count
       DB[:constraints_planning_apps].insert(attributes) if num_records == 0
     end if self.app_constraints
-  end
-
-  def parish
-    self.parish_alias.parish.name if self.parish_alias
   end
 
 end

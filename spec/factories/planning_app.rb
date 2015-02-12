@@ -1,5 +1,4 @@
 FactoryGirl.define do
-
   factory :planning_app do
     valid_date DateTime.parse(Time.now.to_s).to_date
     app_category 'RW'

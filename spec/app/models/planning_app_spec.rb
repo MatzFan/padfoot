@@ -17,8 +17,8 @@ describe PlanningApp do
   end
 
   context '#all_constraints' do
-    it 'returns an array of the constraints in the app_constraints field' do
-      expect(app.all_constraints).to eq(app.app_constraints.split(', '))
+    it 'returns a sorted array of the constraints in the app_constraints field' do
+      expect(app.all_constraints).to eq(app.app_constraints.split(', ').sort)
     end
   end
 

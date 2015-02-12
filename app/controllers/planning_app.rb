@@ -4,15 +4,11 @@ Padfoot::App.controllers :planning_app do
 
   get :index, map: '/applications/index', provides: [:html, :json] do
     apps = all_apps_ordered
-    parishes = []
-    DB.transaction { parishes = apps.map &:parish }
     columns = [
       :order, :valid_date, :app_ref, :app_code, :app_status, :app_full_address,
-      :app_description, :app_address_of_applicant, :app_agent, :app_officer]
+      :app_description, :app_address_of_applicant, :app_agent, :app_officer, :parish]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = apps.select_map(columns) # 2D array
-    @titles << 'Parish'
-    @app_arr.each_with_index { |arr, i| arr = arr << parishes[i] }
     # wrap txt in <div>s and add class to app_description for css formatting
     classes_to_add = columns.map { |c| 'long-text' if c == :app_description }
     @app_arr.map! { |app| div_wrap_strings_in(app, classes_to_add) }
