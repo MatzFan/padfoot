@@ -32,6 +32,9 @@ function drawTable(data, callback) {
         .appendTo( $(column.footer()).empty() )
         .on( 'change', function () {
           var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+          val = val.substring(5, (val.length - 7)); // removes <div>...<\/div> tags..
+
           column.search( val ? '^'+val+'$' : '', true, false ).draw();
         });
         column.data().unique().sort().each( function ( d, j ) {
