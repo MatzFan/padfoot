@@ -36,6 +36,10 @@ tfoot input {
   box-sizing: border-box;
 }
 
+table.dataTable tfoot th {
+  padding: 0px;
+}
+
 div.ColVis {
   margin-bottom: 0em; /* override DT 1em value */
 }
@@ -48,8 +52,10 @@ td div {
   height: 68px; /* magic number to allow 4 text lines at 12pt font with 2px padding and line-spacing of 1.42857143! */
   overflow: scroll;
   text-overflow: ellipsis;
+  text-align: left;
 }
 
 td div.long-text {
-  max-width: 700px
+  max-width: 700px;
+  text-align: justify;
 }

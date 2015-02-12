@@ -106,7 +106,7 @@ class PlanningApp < Sequel::Model
   end
 
   def all_constraints
-    splitify(self.app_constraints)
+    splitify(self.app_constraints).sort rescue nil
   end
 
   def add_constraints # populate constraints after, as app_ref FK in join table
@@ -116,6 +116,10 @@ class PlanningApp < Sequel::Model
       num_records = DB[:constraints_planning_apps].where(attributes).count
       DB[:constraints_planning_apps].insert(attributes) if num_records == 0
     end if self.app_constraints
+  end
+
+  def parish
+    self.parish_alias.parish.name if self.parish_alias
   end
 
 end

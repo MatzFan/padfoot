@@ -7,7 +7,7 @@ function drawTable(data, callback) {
   $("#table-placeholder").html("<table id='tbl' class='table stripe table-bordered' data-toggle='table'><tfoot>" + thDivs + "</tfoot></table>");
   var table = $('#tbl').dataTable({
     // dom:         'rtiS', // add scroller, remove 'f' at front to hide filtering element
-    scrollY:     440,
+    scrollY:     440, // pixels
     scrollCollapse: true,
     // paging: false,
     "deferRender": true, // for speed
@@ -21,11 +21,26 @@ function drawTable(data, callback) {
     //   { "targets": [ 9 ], "visible": false} // hides 'officer'
     // ],
 
-    // "footerCallback": function(tfoot, data, start, end, display) {
-    //   $('tfoot td').each( function (index, value) {
-    //     $(this).html( '<input type="text" placeholder="'+columns[index].title+'" />' );
-    //   });
-    // }
+
+    initComplete: function () { // dropdown list for column rows defined in indexArray
+      var api = this.api();
+      var indexArray = [3,4,10];
+      // api.columns().indexes().flatten().each( function (i) {
+      $.each(indexArray, function (i, index) {
+        var column = api.column(index);
+        var select = $('<select><option value=""></option></select>')
+        .appendTo( $(column.footer()).empty() )
+        .on( 'change', function () {
+          var val = $.fn.dataTable.util.escapeRegex($(this).val());
+          column.search( val ? '^'+val+'$' : '', true, false ).draw();
+        });
+        column.data().unique().sort().each( function ( d, j ) {
+          select.append( '<option value="'+d+'">'+d+'</option>' )
+        });
+      });
+    },
+
+
     tableTools: {
       "sRowSelect": "multi",
       "aButtons": [
@@ -67,9 +82,12 @@ function drawTable(data, callback) {
   var colvis = new $.fn.dataTable.ColVis( table );
   $( colvis.button() ).insertAfter('#tbl_length');
 
-  $('.dataTables_scrollFoot tfoot th').each( function () { // remove '#tbl', add '.dataTbales_scrollFoot' for scroller
-    var title = $('thead th').eq( $(this).index() ).text();  // remove '#tbl', add '.dataTables_scrollHead' for scroller
-     $(this).html( '<input type="text" placeholder="'+title+'" />' );
+  $('.dataTables_scrollFoot tfoot th').each( function () {
+    var title = $('thead th').eq( $(this).index() ).text();
+    var lovs = ['Code', 'Status', 'Parish']
+    if($.inArray(title, lovs) === -1){
+      $(this).html( '<input type="text" placeholder="'+title+'" />' );
+    }
   });
 
   // DataTable
