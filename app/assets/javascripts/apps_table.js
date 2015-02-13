@@ -14,6 +14,7 @@ function drawTable(data, callback) {
     "order": [], // disable INITIAL sort order - for speed
     "sDom": 'T<"clear">lrtip', // remove 'filtering element' - see: https://datatables.net/reference/option/dom
     "stateSave": true, // so user can navigate back to same view :)
+    "search": {"smart": false}, // disable smart search
     "data": appData,
     "columns": columns,
     // "columnDefs": [
@@ -24,7 +25,7 @@ function drawTable(data, callback) {
 
     initComplete: function () { // dropdown list for column rows defined in indexArray
       var api = this.api();
-      var indexArray = [3,4,10];
+      var indexArray = [3,4,10,11]; // HARD CODED HERE
       // api.columns().indexes().flatten().each( function (i) {
       $.each(indexArray, function (i, index) {
         var column = api.column(index);
@@ -33,11 +34,25 @@ function drawTable(data, callback) {
         .on( 'change', function () {
           var val = $.fn.dataTable.util.escapeRegex($(this).val());
 
-          val = val.substring(5, (val.length - 7)); // removes <div>...<\/div> tags..
 
-          column.search( val ? '^'+val+'$' : '', true, false ).draw();
+          if(val.substring(0,5) === '<div>') {
+            val = val.substring(5, (val.length - 7)); // removes <div>...<\/div> tags..
+          }
+
+
+          if(index === 11) {
+            column.search( val ? '' +val+ '' : '', true, false ).draw(); // search across all lines for constraints
+          } else {
+            column.search( val ? '^' +val+ '$' : '', true, false ).draw();
+          }
         });
-        column.data().unique().sort().each( function ( d, j ) {
+        var dataList = column.data();
+        if(index === 11) { // constraints
+          dataList = dataList.map(function(data) {
+            return $(data.split('<br/>').join(',')).text().split(','); // replace <br/> with , then extract text before splitting..
+          }).flatten();
+        }
+        dataList.unique().sort().each( function ( d, j ) {
           select.append( '<option value="'+d+'">'+d+'</option>' )
         });
       });
@@ -87,7 +102,7 @@ function drawTable(data, callback) {
 
   $('.dataTables_scrollFoot tfoot th').each( function () {
     var title = $('thead th').eq( $(this).index() ).text();
-    var lovs = ['Code', 'Status', 'Parish']
+    var lovs = ['Code', 'Status', 'Parish', 'Constraints'] // HARD CODED HERE
     if($.inArray(title, lovs) === -1){
       $(this).html( '<input type="text" placeholder="'+title+'" />' );
     }
