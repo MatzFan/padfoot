@@ -29,6 +29,7 @@ function drawTable(data, callback) {
       // api.columns().indexes().flatten().each( function (i) {
       $.each(indexArray, function (i, index) {
         var column = api.column(index);
+        var title = $(column.header()).text();
         var select = $('<select><option value=""></option></select>')
         .appendTo( $(column.footer()).empty() )
         .on( 'change', function () {
@@ -40,16 +41,24 @@ function drawTable(data, callback) {
           }
 
 
-          if(index === 11) {
-            column.search( val ? '' +val+ '' : '', true, false ).draw(); // search across all lines for constraints
+          if(val === 'null') {
+            column.search('^$', true, false).draw();
           } else {
-            column.search( val ? '^' +val+ '$' : '', true, false ).draw();
+            if(title === 'Constraints') {
+              column.search( val ? '(' +val+ ')' : '', true, false ).draw(); // search across all lines for constraints
+            } else {
+              column.search( val ? '^(' +val+ ')$' : '', true, false ).draw();
+            }
           }
         });
-        var dataList = column.data();
-        if(index === 11) { // constraints
-          dataList = dataList.map(function(data) {
-            return $(data.split('<br/>').join(',')).text().split(','); // replace <br/> with , then extract text before splitting..
+        var dataList = column.data(); // may contain nulls
+        if(title === 'Constraints') {
+          dataList = dataList.map(function(element) {
+            if(element) { // check for nulls (no constraints)
+              return $(element.split('<br/>').join(',')).text().split(','); // replace <br/> with , then extract text before splitting..
+            } else {
+              return null
+            }
           }).flatten();
         }
         dataList.unique().sort().each( function ( d, j ) {
