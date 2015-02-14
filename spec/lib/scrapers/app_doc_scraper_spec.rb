@@ -1,7 +1,7 @@
 describe AppDocScraper do
 
   scraper = AppDocScraper.new
-  let(:doc_types) { ['A', 'M'] }
+  let(:doc_types) { ['Agenda', 'Minutes'] }
   let(:meet_types) { ['PAP', 'MM'] }
 
   context '#new' do
@@ -49,10 +49,8 @@ describe AppDocScraper do
   end
 
   context '#upload' do
-    it 'should upload a pdf file to S3 and return a pre-signed URL to read it' do
-      n = S3.list_objects(bucket: BUCKET).contents.count
+    it 'should upload a pdf file to S3 and return a pre-signed URL' do
       expect(lambda { URI.parse(scraper.upload(0)) }).not_to raise_error
-      expect(S3.list_objects(bucket: BUCKET).contents.count - n).to eq(1)
     end
   end
 

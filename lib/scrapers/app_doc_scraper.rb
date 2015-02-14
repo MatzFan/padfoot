@@ -34,7 +34,7 @@ class AppDocScraper
   end
 
   def doc_types
-    doc_names.map { |name| name.include?('agenda') ? 'A' : 'M' }
+    doc_names.map { |name| name.include?('agenda') ? 'Agenda' : 'Minutes' }
   end
 
   def doc_dates
@@ -54,7 +54,7 @@ class AppDocScraper
   end
 
   def key(n)
-    doc_dates[n].strftime("%y%m%d") + '_' + meet_types[n] + '_' + doc_types[n]
+    "#{doc_dates[n].strftime("%y%m%d")}_#{meet_types[n]}_#{doc_types[n][0]}" # [0] = first letter
   end
 
   def upload(n)
