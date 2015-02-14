@@ -58,7 +58,9 @@ class AppDocScraper
   end
 
   def upload(n)
-    open(uris[n]) { |file| s3_object(key(n)).upload_file(file) } # closes stream :)
+    obj = s3_object(key(n))
+    open(uris[n]) { |file| obj.upload_file(file) } # closes stream :)
+    obj.presigned_url(:get)
   end
 
   def s3_object(object_key)

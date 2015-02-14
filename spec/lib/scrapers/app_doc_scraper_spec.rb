@@ -49,9 +49,9 @@ describe AppDocScraper do
   end
 
   context '#upload' do
-    it 'should upload a pdf file to S3' do
+    it 'should upload a pdf file to S3 and return a pre-signed URL to read it' do
       n = S3.list_objects(bucket: BUCKET).contents.count
-      scraper.upload(0)
+      expect(lambda { URI.parse(scraper.upload(0)) }).not_to raise_error
       expect(S3.list_objects(bucket: BUCKET).contents.count - n).to eq(1)
     end
   end
