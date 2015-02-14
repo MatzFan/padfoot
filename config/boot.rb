@@ -12,7 +12,7 @@ Padrino::Logger::Config[:development][:log_level] = :devel
 
 credentials = Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])
 S3 = Aws::S3::Client.new(credentials: credentials, region: ENV['AWS_REGION'])
-S3_BUCKET = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+BUCKET = 'padfoot'
 
 # Padrino::Logger::Config[:development][:log_static] = true
 #

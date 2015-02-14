@@ -1,8 +1,8 @@
 describe AppDocScraper do
 
-  let(:scraper) { AppDocScraper.new }
-  let(:doc_types) { ['Agenda', 'Minutes'] }
-  let(:meet_types) { ['Panel', 'Ministerial'] }
+  scraper = AppDocScraper.new
+  let(:doc_types) { ['A', 'M'] }
+  let(:meet_types) { ['PAP', 'MM'] }
 
   context '#new' do
     it 'should return an instance of the class' do
@@ -16,9 +16,9 @@ describe AppDocScraper do
     end
   end
 
-  context "#doc_links" do
+  context "#links" do
     it 'should return the links to pdf downloads' do
-      scraper.doc_links.each do |link|
+      scraper.links.each do |link|
         expect(link.uri.to_s[-4..-1]).to eq('.pdf')
       end
     end
@@ -36,16 +36,23 @@ describe AppDocScraper do
     end
   end
 
-  context '#meeting_types' do
+  context '#meet_types' do
     it 'should return an array only of correct meeting types' do
-      expect(scraper.meeting_types.all? { |type| meet_types.any? { |m| type == m } }).to be_truthy
+      expect(scraper.meet_types.all? { |type| meet_types.any? { |m| type == m } }).to be_truthy
     end
   end
 
-  context '#upload_to_s3' do
+  context '#key' do
+    it 'should create a key of format: yymmdd_[PAP/MM]_[A/M]' do
+      expect(scraper.key(0)) =~ /^\d{6}_(PAP|MM)_(A|M)$/
+    end
+  end
+
+  context '#upload' do
     it 'should upload a pdf file to S3' do
-      scraper.upload_to_s3
-      expect(S3.list_objects(bucket: 'padfoot', max_keys: 1)).not_to be_nil
+      n = S3.list_objects(bucket: BUCKET).contents.count
+      scraper.upload(0)
+      expect(S3.list_objects(bucket: BUCKET).contents.count - n).to eq(1)
     end
   end
 
