@@ -9,12 +9,16 @@ class AppDocScraper
   PAP_TEXT = ['PAP', 'Panel'] # text in url which determines doc type is PAP
   MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
 
-  attr_reader :agent, :page, :uris
+  attr_reader :agent, :page, :uris, :num_docs, :doc_types, :meet_types, :doc_dates
 
   def initialize
     @agent = Mechanize.new
     @page = page
     @uris = uris
+    @num_docs = uris.count
+    @doc_types = doc_types
+    @meet_types = meet_types
+    @doc_dates = doc_dates
   end
 
   def page
@@ -53,18 +57,12 @@ class AppDocScraper
     MH_TEXT.any? { |text| File.basename(uri).include?(text) }
   end
 
-  def key(n)
-    "#{doc_dates[n].strftime("%y%m%d")}_#{meet_types[n]}_#{doc_types[n][0]}" # [0] = first letter
+  def file_names
+    (0...num_docs).map { |n| file_name(n) }
   end
 
-  def upload(n)
-    obj = s3_object(key(n))
-    open(uris[n]) { |file| obj.upload_file(file) } # closes stream :)
-    obj.presigned_url(:get)
-  end
-
-  def s3_object(object_key)
-    Aws::S3::Object.new(bucket_name: BUCKET, key: object_key)
+  def file_name(n)
+    "#{@doc_dates[n].strftime("%y%m%d")}_#{@meet_types[n]}_#{@doc_types[n][0]}" # [0] = first letter
   end
 
 end

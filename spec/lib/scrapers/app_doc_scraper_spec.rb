@@ -42,15 +42,9 @@ describe AppDocScraper do
     end
   end
 
-  context '#key' do
-    it 'should create a key of format: yymmdd_[PAP/MM]_[A/M]' do
-      expect(scraper.key(0)) =~ /^\d{6}_(PAP|MM)_(A|M)$/
-    end
-  end
-
-  context '#upload' do
-    it 'should upload a pdf file to S3 and return a pre-signed URL' do
-      expect(lambda { URI.parse(scraper.upload(0)) }).not_to raise_error
+  context '#file_names' do
+    it 'returns an array of strings of format: yymmdd_[PAP/MM]_[A/M]' do
+      expect(scraper.file_names.all? { |s| s =~ /^\d{6}_(PAP|MM)_(A|M)$/ }).to be_truthy
     end
   end
 
