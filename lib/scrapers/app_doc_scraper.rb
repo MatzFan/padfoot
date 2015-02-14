@@ -49,4 +49,11 @@ class AppDocScraper
     MH_TEXT.any? { |text| File.basename(uri).include?(text) }
   end
 
+  def upload_to_s3
+    file_path = '/Users/me/Desktop/ex.pdf'
+    key = File.basename(file_path)
+    obj = Aws::S3::Object.new(bucket_name: 'padfoot', key: key)
+    obj.upload_file(file_path)
+  end
+
 end

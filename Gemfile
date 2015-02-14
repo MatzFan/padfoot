@@ -25,6 +25,9 @@ gem 'haml', '4.0.6'
 gem 'pg', '0.17.1'
 gem 'sequel', '4.17.0'
 gem 'sequel_pg', '1.6.11', require: 'sequel'
+gem 'aws-sdk', '2.0.24', require: 'aws-sdk'
+# gem 'mongo', '1.12.0'
+# gem 'bson_ext', '1.12.0'
 
 group :test do
   gem 'rspec', '3.1.0'

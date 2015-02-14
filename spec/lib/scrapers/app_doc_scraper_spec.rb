@@ -42,4 +42,11 @@ describe AppDocScraper do
     end
   end
 
+  context '#upload_to_s3' do
+    it 'should upload a pdf file to S3' do
+      scraper.upload_to_s3
+      expect(S3.list_objects(bucket: 'padfoot', max_keys: 1)).not_to be_nil
+    end
+  end
+
 end
