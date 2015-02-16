@@ -9,27 +9,16 @@ describe AppDocProcessor do
     end
   end
 
-  context '#s3_files' do
-    it 'should return an array of the keys of existing S3 files' do
-      expect(processor.s3_files.class).to eq(Array)
+  context '#scraped_doc_data' do
+    it 'returns a 2D array of document data' do
+      expect(processor.scraped_doc_data[0].class).to eq(Array)
     end
   end
 
-  context '#new_file_indices' do
-    it 'returns an array of integers' do
-      expect(processor.new_file_indices.all? { |e| e.kind_of?(Fixnum) }).to be_truthy
-    end
-  end
-
-  context '#s3_object' do
-    it 'should return an instance of Aws::S3::Object class' do
-      expect(processor.s3_object('some_key').class).to eq(Aws::S3::Object)
-    end
-  end
-
-  xcontext '#upload' do
-    it 'should upload a file to S3 and return a pre-signed URL' do
-      expect(lambda { URI.parse(processor.upload(0)) }).not_to raise_error
+  context '#new_doc_data' do
+    it 'returns a 2D array of data for new documents (not yet in S3)' do
+      pp processor.new_doc_data
+      expect(processor.new_doc_data.count).to eq(26)
     end
   end
 
