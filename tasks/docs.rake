@@ -2,11 +2,9 @@ namespace :sq do
   namespace :apps do
     desc "Uploads any new planning application meeting documents to S3"
     task :docs do
-      DB.transaction do
-        AppDocScraper.new.meet_data.each {|hash| Meeting.find_or_create(hash) }
-      end
-      # new_docs = AppDocProcessor.new.new_doc_data
-
+      processor = AppDocProcessor.new
+      DB.transaction { processor.create_meetings } # so correct FK's can be assigned to new docs
+      DB.transaction { processor.create_docs } # uploads to S3 in the process :))
     end
   end
 end

@@ -1,8 +1,6 @@
-class S3Helper
+module S3Helper
 
-  def initialize; end
-
-  def s3_files
+  def s3_file_keys
     S3.list_objects(bucket: BUCKET).map { |r| r.contents.map(&:key) }.flatten #flatten for single file case
   end
 

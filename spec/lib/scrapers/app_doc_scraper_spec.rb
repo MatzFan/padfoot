@@ -1,4 +1,4 @@
-describe AppDocScraper do
+ describe AppDocScraper do
 
   scraper = AppDocScraper.new
   let(:doc_types) { ['Agenda', 'Minutes'] }
@@ -35,6 +35,18 @@ describe AppDocScraper do
     end
   end
 
+  context '#table_agenda_columns' do
+    it 'returns an array of the column number entitled "Agenda" in each table' do
+      expect(scraper.table_agenda_columns).to eq([2,1,1])
+    end
+  end
+
+  context '#table_minutes_columns' do
+    it 'returns an array of the column number entitled "Minutes" in each table, if any' do
+      expect(scraper.table_minutes_columns).to eq([nil,2,2])
+    end
+  end
+
   context '#table_types' do
     it 'returns an array of the table meeting type, if any' do
       expect(scraper.table_types).to eq(['?','PAP','MM'])
@@ -44,6 +56,12 @@ describe AppDocScraper do
   context '#links' do
     it 'returns an array of pdf links from each table' do
       expect(scraper.links.all? { |link| link[-4..-1] == '.pdf'}).to be_truthy
+    end
+  end
+
+  context '#link_columns' do
+    it 'returns an array of the column number each table link if found in' do
+      expect(scraper.link_columns.all? { |c| [1,2].any? { |n| c == n } }).to be_truthy
     end
   end
 
@@ -80,9 +98,25 @@ describe AppDocScraper do
   end
 
   context '#meet_data' do
-    it 'returns a 2D array of meetings data hashes: {type: xxx date: xxx}' do
-      expect(scraper.meet_data.all? do |arr|
-        meet_types.any? { |m| arr[:type] == m } && arr[:date].kind_of?(Date)
+    it 'returns an array of meetings data hashes: {type: xxx, date: xxx}' do
+      expect(scraper.meet_data.all? do |h|
+        meet_types.any? { |m| h[:type] == m } && h[:date].kind_of?(Date)
+      end).to be_truthy
+    end
+  end
+
+  context '#doc_data' do
+    it 'returns an array of documents data hashes: {type: xxx, name: xxx, url: xxx.pdf}' do
+      expect(scraper.doc_data.all? do |h|
+        doc_types.any? { |m| h[:type] == m } && h[:name].kind_of?(String) && h[:link][-4..-1] == '.pdf'
+      end).to be_truthy
+    end
+  end
+
+  context '#data_pairs' do
+    it 'returns a 2D array of [document hash, meeting hash] pairs' do
+      expect(scraper.data_pairs.all? do |arr|
+        arr[0].class == Hash && arr[1].class == Hash
       end).to be_truthy
     end
   end

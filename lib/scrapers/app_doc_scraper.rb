@@ -10,13 +10,14 @@ class AppDocScraper
   PAP_TEXT = ['PAP', 'Panel'] # text in url which determines doc type is PAP
   MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
 
-  attr_reader :agent, :page, :table_years, :table_types, :table_links, :links,
+  attr_reader :agent, :page, :tables, :table_years, :table_types, :table_links, :links,
   :num_docs, :table_link_names, :doc_types, :meet_types, :doc_dates
 
   def initialize
     @agent = Mechanize.new
     @page = page
     verify_structure
+    @tables = tables
     @table_years = table_years
     @table_types = table_types
     @table_links = table_links
@@ -44,6 +45,23 @@ class AppDocScraper
     page.search('table')
   end
 
+  def table_agenda_columns
+    tables.map do |t|
+      t.css('thead tr').map { |tr| column_with('Agenda', tr) }
+    end.flatten
+  end
+
+  def table_minutes_columns
+    tables.map do |t|
+      t.css('thead tr').map { |tr| column_with('Minutes', tr) }
+    end.flatten
+  end
+
+  def column_with(str, tr)
+    tr.css('th').each_with_index { |e, i| return i if e.text.include?(str) }
+    nil
+  end
+
   def verify_structure
     raise error unless table_titles.count == tables.count
   end
@@ -64,6 +82,21 @@ class AppDocScraper
     table_links.flatten
   end
 
+  def link_columns
+    @links.map do |link|
+      @tables.map do |t|
+        t.css('tbody tr').map { |tr| column_with_link(link, tr) }.compact
+      end
+    end.flatten
+  end
+
+  def column_with_link(link, tr)
+    tr.css('td').each_with_index do |e, i|
+      return i if !e.css('a').empty? && (ROOT + e.css('a').attr('href').value) == link
+    end
+    nil
+  end
+
   def meet_types
     @table_links.each_with_index.map do |t, i|
       @table_types[i] == '?' ? t.map { |e| type(e) } : t.map { |e| @table_types[i] }
@@ -74,7 +107,7 @@ class AppDocScraper
     pap?(link) ? PAP : (mm?(link) ? MM : '?')
   end
 
-  def table_link_names
+  def table_link_names # returns 2D array
     tables.map { |t| t.css('a').map { |link| link.text.encode } }
   end
 
@@ -94,7 +127,17 @@ class AppDocScraper
   end
 
   def meet_data
-    meet_types.zip(doc_dates).uniq.map { |e| [[:type, e[0]], [:date, e[1]]].to_h }
+    meet_types.zip(doc_dates).map { |e| [[:type, e[0]], [:date, e[1]]].to_h }
+  end
+
+  def doc_data
+    doc_types.zip(file_names).zip(links).map(&:flatten).map do |e|
+      [[:type, e[0]], [:name, e[1]], [:link, e[2]]].to_h
+    end
+  end
+
+  def data_pairs
+    doc_data.zip(meet_data)
   end
 
   def pap?(uri)

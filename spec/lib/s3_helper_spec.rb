@@ -1,18 +1,13 @@
 describe S3Helper do
 
-  uri = AppDocScraper.new.uris[0]
-  let(:helper) { S3Helper.new }
+  includer = class Includer; include S3Helper; end
+  uri = 'http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20%20PAP%2020140724.pdf'
+  let(:helper) { Includer.new }
   let(:example_key) { '140724_PAP_M'}
 
-  context '#new' do
-    it 'should return an instance of the class' do
-      expect(helper.class).to eq(S3Helper)
-    end
-  end
-
-  context '#s3_files' do
+  context '#s3_file_keys' do
     it 'should return an array of the keys of existing S3 files' do
-      expect(helper.s3_files.class).to eq(Array)
+      expect(helper.s3_file_keys.class).to eq(Array)
     end
   end
 
