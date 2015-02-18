@@ -10,23 +10,29 @@ class AppDocScraper
   PAP_TEXT = ['PAP', 'Panel'] # text in url which determines doc type is PAP
   MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
 
-  attr_reader :agent, :page, :tables, :table_years, :table_types, :table_links, :links,
-  :num_docs, :table_link_names, :doc_types, :meet_types, :doc_dates
+  attr_reader :agent, :page, :tables, :table_agenda_columns, :table_minutes_columns,
+  :table_years, :table_types, :table_links, :table_link_columns, :links, :num_docs,
+  :table_link_names, :doc_part_numbers, :doc_types, :meet_types, :doc_dates, :file_names
 
   def initialize
     @agent = Mechanize.new
     @page = page
-    verify_structure
     @tables = tables
+    @table_agenda_columns = table_agenda_columns
+    @table_minutes_columns = table_minutes_columns
     @table_years = table_years
     @table_types = table_types
     @table_links = table_links
+    @table_link_columns = table_link_columns
     @links = links
     @num_docs = links.count
-    @table_link_names = table_link_names
     @doc_types = doc_types
+    @table_link_names = table_link_names
+    @doc_part_numbers = doc_part_numbers
     @meet_types = meet_types
     @doc_dates = doc_dates
+    @file_names = file_names
+    verify_structure
   end
 
   def page
@@ -63,7 +69,10 @@ class AppDocScraper
   end
 
   def verify_structure
-    raise error unless table_titles.count == tables.count
+    raise error if
+    table_titles.count != tables.count ||
+    links.count != doc_types.count ||
+    links.count != file_names.count
   end
 
   def table_years
@@ -78,23 +87,38 @@ class AppDocScraper
     tables.map { |t| t.css('a').map { |link| ROOT + link.attr('href') } }
   end
 
+  def table_link_columns
+    @table_links.each_with_index.map do |t_links, i|
+      t_links.map do |link|
+        @tables[i].css('tbody tr').map { |tr| column_with_link(link, tr) }.compact[0]
+      end
+    end
+  end
+
+  def doc_types
+    @table_link_columns.each_with_index.map do |t,i|
+      agenda, minutes = @table_agenda_columns[i], @table_minutes_columns[i]
+      t.map { |col| col == agenda ? 'Agenda' : col == minutes ? 'Minutes' : 'Unknown' }
+    end.flatten
+  end
+
   def links
     table_links.flatten
   end
 
-  def link_columns
-    @links.map do |link|
-      @tables.map do |t|
-        t.css('tbody tr').map { |tr| column_with_link(link, tr) }.compact
-      end
-    end.flatten
-  end
-
   def column_with_link(link, tr)
     tr.css('td').each_with_index do |e, i|
-      return i if !e.css('a').empty? && (ROOT + e.css('a').attr('href').value) == link
+      return i if !e.css('a').empty? && match_link(e.css('a'), link)
     end
     nil
+  end
+
+  def match_link(a_tag, link) # <a> tag may have more than one href
+    if a_tag.count > 1
+      a_tag.any? { |tag| (ROOT + tag.attr('href')) == link }
+    else
+    (ROOT + a_tag.attr('href').value) == link
+    end
   end
 
   def meet_types
@@ -111,8 +135,10 @@ class AppDocScraper
     tables.map { |t| t.css('a').map { |link| link.text.encode } }
   end
 
-  def doc_types
-    table_link_names.flatten.map { |name| name.include?('agenda') ? 'Agenda' : 'Minutes' }
+  def doc_part_numbers
+    @table_link_names.flatten.map do |name|
+      '_' + name.match(/Part\s(\d)/)[0][5..-1] if name.match(/Part\s(\d)/)
+    end
   end
 
   def doc_dates
@@ -121,7 +147,7 @@ class AppDocScraper
     end.flatten
   end
 
-  def doc_date(string, known_year = nil)
+  def doc_date(string, known_year = nil) # some are missing year which gets set to current year by strftime..
     date = Date.parse(string).strftime("%d/%m/%Y").to_date
     known_year ? Date.new(known_year, date.month, date.day) : date
   end
@@ -149,11 +175,11 @@ class AppDocScraper
   end
 
   def file_names
-    (0...num_docs).map { |n| file_name(n) }
+    (0...num_docs).map { |n| file_name(n) }.uniq
   end
 
   def file_name(n)
-    "#{@doc_dates[n].strftime("%y%m%d")}_#{@meet_types[n]}_#{@doc_types[n][0]}" # [0] = first letter
+    "#{@doc_dates[n].strftime("%y%m%d")}_#{@meet_types[n]}_#{@doc_types[n][0]}#{@doc_part_numbers[n]}" # [0] = first letter
   end
 
 end

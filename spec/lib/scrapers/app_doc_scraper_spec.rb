@@ -17,8 +17,18 @@
   end
 
   context '#verify_structure' do
-    it 'raises an error (in constructor) if page structure is not as expected' do
+    it "raises an error if number of tables doesn't match the number of table titles" do
       allow(scraper).to receive(:tables) { [] } # zero length array
+      expect(->{ scraper.verify_structure }).to raise_error
+    end
+
+    it "raises an error if number of links does not equal number of doc_types" do
+      allow(scraper).to receive(:links) { [] } # zero length array
+      expect(->{ scraper.verify_structure }).to raise_error
+    end
+
+    it "raises an error if number of links does not equal number of file names" do
+      allow(scraper).to receive(:file_names) { [] } # zero length array
       expect(->{ scraper.verify_structure }).to raise_error
     end
   end
@@ -59,9 +69,9 @@
     end
   end
 
-  context '#link_columns' do
-    it 'returns an array of the column number each table link if found in' do
-      expect(scraper.link_columns.all? { |c| [1,2].any? { |n| c == n } }).to be_truthy
+  context '#table_link_columns' do
+    it 'returns a 2D array of the column number each table link if found in, by table' do
+      expect(scraper.table_link_columns.flatten.all? { |c| [1,2].any? { |n| c == n } }).to be_truthy
     end
   end
 
@@ -72,10 +82,16 @@
   end
 
   context '#table_link_names' do
-    it 'should return an array document link-names' do
+    it 'should return a 2D array document link-names by table' do
       expect(scraper.table_link_names.all? do |t|
         t.all? { |s| s.include?('Download ') }
       end).to be_truthy
+    end
+  end
+
+  context '#doc_part_numbers' do
+    it 'returns an array of "underscore<part number>" for each document, if any' do
+      expect(scraper.doc_part_numbers.compact.all? { |e| e.split('_').last.to_i > 0 }).to be_truthy
     end
   end
 
@@ -93,7 +109,7 @@
 
   context '#file_names' do
     it 'returns an array of strings of format: yymmdd_[PAP/MM]_[A/M]' do
-      expect(scraper.file_names.all? { |s| s =~ /^\d{6}_(PAP|MM)_(A|M)$/ }).to be_truthy
+      expect(scraper.file_names.all? { |s| s =~ /^\d{6}_(PAP|MM)_(A|M)(_\d)?$/ }).to be_truthy
     end
   end
 

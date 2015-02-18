@@ -49,14 +49,4 @@ describe AppDocProcessor do
     end
   end
 
-  xcontext '#docs_with_urls' do
-    it 'uploads a document from a link' do
-
-    end
-
-    it 'returns document objects with :url set' do
-
-    end
-  end
-
 end
