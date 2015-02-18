@@ -9,6 +9,7 @@ class PlanningApp < Sequel::Model
 
   one_to_many :planning_app_constraints, key: :app_ref
   many_to_many :constraints, left_key: :app_ref, right_key: :name
+  many_to_many :documents, left_key: :app_ref, right_key: :id
 
   def before_validation
     # populate derivative fields
