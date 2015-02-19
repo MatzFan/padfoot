@@ -63,11 +63,11 @@ class AppDocProcessor
   end
 
   def create_doc_app_ref_links
-    Document.unlinked_docs.each { |doc| link_apps(doc, app_refs_in(doc)) }
+    Document.unlinked_docs.map { |doc| link_apps(doc, app_refs_in(doc)) }.reject { |e| e.class == PlanningApp }.flatten.compact
   end
 
   def link_apps(doc, refs)
-    refs.each { |r| doc.add_planning_app(PlanningApp[r]) if PlanningApp[r] }
+    refs.map { |r| PlanningApp[r] ? doc.add_planning_app(PlanningApp[r]) : r }
   end
 
   def app_refs_in(doc)
