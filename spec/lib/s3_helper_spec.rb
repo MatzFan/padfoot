@@ -18,8 +18,13 @@ describe S3Helper do
   end
 
   context '#upload' do
-    it 'should upload a file from a uri to S3 and return a pre-signed URL' do
-      expect(lambda { URI.parse(helper.upload(uri, example_key)) }).not_to raise_error
+    it "should upload a file from a uri to S3 and return a valid URL" do
+      expect(->{ URI.parse(helper.upload(uri, example_key)) }).not_to raise_error
+    end
+
+    it "the URL should be public-readable" do
+      url = helper.upload(uri, example_key)
+      expect(->{ open(url) { |file| } }).not_to raise_error
     end
   end
 

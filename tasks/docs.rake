@@ -5,6 +5,7 @@ namespace :sq do
       processor = AppDocProcessor.new
       DB.transaction { processor.create_meetings } # so correct FK's can be assigned to new docs
       DB.transaction { processor.create_docs } # uploads to S3 in the process :))
+      DB.transaction { create_doc_app_ref_links }
     end
   end
 end

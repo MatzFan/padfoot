@@ -5,9 +5,10 @@ module S3Helper
   end
 
   def upload(uri, key)
-    obj = s3_object(key)
+    obj, caller = s3_object(key), self
     open(uri) { |file| obj.upload_file(file) } # closes stream :)
-    obj.presigned_url(:get)
+    obj.acl.put(acl: 'public-read')
+    obj.public_url
   end
 
   def s3_object(object_key)

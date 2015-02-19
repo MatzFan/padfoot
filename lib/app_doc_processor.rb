@@ -1,4 +1,5 @@
 require_relative 's3_helper'
+require 'open-uri'
 
 class AppDocProcessor
   include S3Helper
@@ -59,6 +60,26 @@ class AppDocProcessor
 
   def create_docs
     docs_with_urls.each &:save
+  end
+
+  def create_doc_app_ref_links
+    Document.unlinked_docs.each { |doc| link_apps(doc, app_refs_in(doc)) }
+  end
+
+  def link_apps(doc, refs)
+    refs.each { |r| doc.add_planning_app(PlanningApp[r]) if PlanningApp[r] }
+  end
+
+  def app_refs_in(doc)
+    open('temp_pdf', 'wb') { |file| file << open(doc.url).read }
+    text = `pdftotext -enc UTF-8 temp_pdf -`
+    File.delete('temp_pdf')
+    parse_app_refs_from(text.split("\n"))
+  end
+
+  def parse_app_refs_from(arr)
+    nasty_regex = '^(?:\d{1,2}. )?([A-Z]{1,3}\/20\d{2}\/\d{4})$'
+    arr.map { |t| /#{nasty_regex}/.match(t)[1] rescue nil }.uniq.compact
   end
 
 end
