@@ -54,10 +54,26 @@ describe AppDocProcessor do
   end
 
   context '#link_apps' do
-    it 'links PlanningApp objects to a document' do
+    it 'links PlanningApp objects to a document if the apps exist in DB' do
       app1, app2 = create(:planning_app), create(:planning_app)
       processor.link_apps(doc, [app1.app_ref, app2.app_ref])
       expect(Document.first.planning_apps.count).to eq(2)
+    end
+
+    it "returns array of doc app refs for any refs that can't be scraped/created" do
+      app1, app2 = create(:planning_app), create(:planning_app)
+      app1.app_ref = 'Z/2123/9999'
+      expect(processor.link_apps(doc, [app1.app_ref, app2.app_ref])).to eq(['Z/2123/9999'])
+    end
+  end
+
+  context '#scrape_and_create_app' do
+    it 'returns nil if an app cannot be scraped and created from the given app ref' do
+      expect(processor.scrape_and_create_app('Z/2219/9999')).to be_nil
+    end
+
+    it 'returns the PlanningApp object if an app can be scraped and created from the given app ref' do
+      expect(processor.scrape_and_create_app('P/2013/0548').class).to eq(PlanningApp)
     end
   end
 

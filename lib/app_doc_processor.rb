@@ -63,11 +63,21 @@ class AppDocProcessor
   end
 
   def create_doc_app_ref_links
-    Document.unlinked_docs.map { |doc| link_apps(doc, app_refs_in(doc)) }.flatten.compact.reject { |e| e.class == PlanningApp }
+    Document.unlinked_docs.map do |doc|
+      link_apps(doc, app_refs_in(doc))
+    end.flatten
   end
 
   def link_apps(doc, refs)
-    refs.map { |r| PlanningApp[r] ? doc.add_planning_app(PlanningApp[r]) : r }
+    refs.map do |ref|
+      app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create if not in DB
+      app ? (doc.add_planning_app(app); nil) : ref # return ref if app can't be scraped/created
+    end.compact
+  end
+
+  def scrape_and_create_app(ref)
+    data = AppDetailsScraper.new([ref]).data[0]
+    data == {} ? nil : PlanningApp.create(data)
   end
 
   def app_refs_in(doc)
