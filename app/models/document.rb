@@ -10,6 +10,10 @@ class Document < Sequel::Model
     super
   end
 
+  def self.linked_docs
+    self.all.select(&:has_linked_apps?)
+  end
+
   def self.unlinked_docs
     self.all.reject(&:has_linked_apps?)
   end
