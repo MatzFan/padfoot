@@ -64,15 +64,25 @@ class AppDocProcessor
 
   def create_doc_app_ref_links
     Document.unlinked_docs.map do |doc|
-      link_apps(doc, app_refs_in(doc))
+      link_apps(doc, page_app_refs_in(doc))
     end.flatten
   end
 
-  def link_apps(doc, refs)
-    refs.map do |ref|
-      app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create if not in DB
-      app ? (doc.add_planning_app(app); nil) : ref # return ref if app can't be scraped/created
-    end.compact
+  def link_apps(doc, page_refs)
+    page_nums, refs = page_refs.map(&:first), page_refs.map(&:last) # refs is 2D array
+    page_nums.each_with_index.map do |page_num, i|
+      refs[i].map do |ref|
+        app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create if not in DB
+        app ? add_app_to_doc(app, doc, page_num) : ref # return ref if app can't be scraped/created
+      end
+    end.flatten.compact
+  end
+
+  def add_app_to_doc(app, doc, page_num)
+    if !doc.planning_apps.include?(app)
+      doc.add_planning_app(app, page_link: "#{doc.url}#page=#{page_num}")
+      nil
+    end
   end
 
   def scrape_and_create_app(ref)
@@ -80,16 +90,22 @@ class AppDocProcessor
     data == {} ? nil : PlanningApp.create(data)
   end
 
-  def app_refs_in(doc)
+  def page_app_refs_in(doc)
     open('temp_pdf', 'wb') { |file| file << open(doc.url).read }
     text = `pdftotext -enc UTF-8 temp_pdf -`
     File.delete('temp_pdf')
-    parse_app_refs_from(text.split("\n"))
+    parse_app_refs_from(text)
   end
 
-  def parse_app_refs_from(arr)
-    nasty_regex = '^(?:\d{1,2}. )?([A-Z]{1,3}\/20\d{2}\/\d{4})$'
-    arr.map { |t| /#{nasty_regex}/.match(t)[1] rescue nil }.uniq.compact
+  def parse_app_refs_from(doc_text)
+    doc_text.split("\u000C").each_with_index.map do |page_text, i|
+      [i + 1, refs_in_page(page_text)] # add 1 as pdf page links index from 1
+    end.reject { |arr| arr.last == [] }
+  end
+
+  def refs_in_page(text)
+    regex = '^(?:\d{1,2}. )?([A-Z]{1,3}\/20\d{2}\/\d{4})$'
+    text.split("\n").map { |t| /#{regex}/.match(t)[1] rescue nil }.uniq.compact
   end
 
 end

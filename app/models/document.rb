@@ -10,6 +10,10 @@ class Document < Sequel::Model
     super
   end
 
+  def _add_planning_app(app, opts = {}) # overide method, so page_link can be added via opts hash
+    DB[:documents_planning_apps].insert(opts.merge(app_ref: app.app_ref, id: self.id))
+  end
+
   def self.linked_docs
     self.all.select(&:has_linked_apps?)
   end

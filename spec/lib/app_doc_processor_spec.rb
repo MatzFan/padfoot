@@ -1,5 +1,7 @@
 describe AppDocProcessor do
 
+  S3_URL = 'https://s3.amazonaws.com/meetingdocs/141218_PAP_M'
+
   processor = AppDocProcessor.new
   date = Date.parse(Time.now.strftime("%y%m%d"))
   new_data = [[{type: "doc_type", name: "new_doc_name", link: "link_to_a.pdf"}, {type: "meet_type", date: date }]] # single doc & meeting
@@ -7,6 +9,14 @@ describe AppDocProcessor do
   scraper = processor.scraper
   meeting_hash = { type: 'MM', date: Date.new(2014,06,16) }
   let(:doc) { create(:document) }
+
+  def sample_doc_text
+    open('temp_pdf', 'wb') { |file| file << open(S3_URL).read }
+    text = `pdftotext -enc UTF-8 temp_pdf -`
+    File.delete('temp_pdf')
+    text
+  end
+
 
   context '#new' do
     it 'should return an instance of the class' do
@@ -56,14 +66,20 @@ describe AppDocProcessor do
   context '#link_apps' do
     it 'links PlanningApp objects to a document if the apps exist in DB' do
       app1, app2 = create(:planning_app), create(:planning_app)
-      processor.link_apps(doc, [app1.app_ref, app2.app_ref])
+      processor.link_apps(doc, [[1, [app1.app_ref]], [7, [app2.app_ref]]])
       expect(Document.first.planning_apps.count).to eq(2)
+    end
+
+    it 'adds the :page_link field to the join table' do
+      app1, app2 = create(:planning_app), create(:planning_app)
+      processor.link_apps(doc, [[1, [app1.app_ref]], [7, [app2.app_ref]]])
+      expect(DB[:documents_planning_apps].select_map(:page_link)).to eq(["#{doc.url}#page=1", "#{doc.url}#page=7"])
     end
 
     it "returns array of doc app refs for any refs that can't be scraped/created" do
       app1, app2 = create(:planning_app), create(:planning_app)
       app1.app_ref = 'Z/2123/9999'
-      expect(processor.link_apps(doc, [app1.app_ref, app2.app_ref])).to eq(['Z/2123/9999'])
+      expect(processor.link_apps(doc, [[1, [app1.app_ref]], [7, [app2.app_ref]]])).to eq(['Z/2123/9999'])
     end
   end
 
@@ -74,6 +90,12 @@ describe AppDocProcessor do
 
     it 'returns the PlanningApp object if an app can be scraped and created from the given app ref' do
       expect(processor.scrape_and_create_app('P/2013/0548').class).to eq(PlanningApp)
+    end
+  end
+
+  context '#parse_app_refs_from' do
+    it 'returns a 2D array of page numbers and any app refs found on each page' do
+      expect(processor.parse_app_refs_from(sample_doc_text)).to eq([[5, ["PP/2013/1288"]], [8, ["P/2014/1061"]]])
     end
   end
 
