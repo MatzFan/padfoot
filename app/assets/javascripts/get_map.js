@@ -5,7 +5,7 @@ function GetMap(locations, colours, letters, refs, descriptions) {
 
   var mapOptions = {
     credentials:'AutjcX00ethCZF2CQURexruteEwuFxvWJ6BVywEvyDv5BIaOO3vfhrH59O_rnLFd',
-    center: new Microsoft.Maps.Location(49.21042016382462, -2.1445659365234615),
+    center: new Microsoft.Maps.Location(49.225, -2.135),
     zoom: 13,
     mapTypeId: Microsoft.Maps.MapTypeId.aerial
   };
