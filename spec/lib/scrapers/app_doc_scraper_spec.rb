@@ -1,18 +1,20 @@
  describe AppDocScraper do
 
-  scraper = AppDocScraper.new
   let(:doc_types) { ['Agenda', 'Minutes'] }
   let(:meet_types) { ['PAP', 'MM'] }
 
-  context '#new' do
-    it 'should return an instance of the class' do
-      expect(scraper.class).to eq(AppDocScraper)
-    end
+  s = AppDocScraper.new
+  page = Mechanize.new.get('file://' + PADRINO_ROOT + '/spec/lib/scrapers/docs_page_example.html')
+
+  let(:scraper) do
+    dup = s.dup
+    dup.instance_variable_set(:@page, page)
+    dup
   end
 
   context '#page' do
     it "should return the agendas/minutes page source" do
-      expect(scraper.page.title).to include('Agendas and minutes')
+      expect(s.page.title).to include('Agendas and minutes')
     end
   end
 
@@ -71,7 +73,7 @@
 
   context '#table_link_columns' do
     it 'returns a 2D array of the column number each table link if found in, by table' do
-      expect(scraper.table_link_columns.flatten.all? { |c| [1,2].any? { |n| c == n } }).to be_truthy
+      expect(scraper.table_link_columns.flatten.all? { |c| [1,2,3].any? { |n| c == n } }).to be_truthy
     end
   end
 

@@ -4,12 +4,13 @@ require 'open-uri'
 class AppDocProcessor
   include S3Helper
 
-  attr_reader :scraper, :new_data, :new_doc_link_data
+  attr_reader :scraper, :new_data, :new_doc_link_data, :link_count
 
   def initialize
     @scraper = AppDocScraper.new
     @new_data = new_data
     @new_doc_link_data = new_doc_link_data
+    @link_count = []
   end
 
   def create_meetings
@@ -53,13 +54,13 @@ class AppDocProcessor
 
   def docs_with_urls
     docs_with_meeting_ids.each_with_index do |doc, i|
-      doc.url = upload(links[i], doc.name) # upload returns the pre-signed url
+      doc.url = upload(links[i], doc.name) # upload returns the public url
       doc
     end
   end
 
   def create_docs
-    docs_with_urls.each &:save
+    docs_with_urls.map &:save
   end
 
   def create_doc_app_ref_links
@@ -69,7 +70,8 @@ class AppDocProcessor
   end
 
   def link_apps(doc, page_refs)
-    page_nums, refs = page_refs.map(&:first), page_refs.map(&:last) # refs is 2D array
+    page_nums = page_refs.map(&:first)
+    refs = page_refs.map(&:last)  # refs is 2D array
     page_nums.each_with_index.map do |page_num, i|
       refs[i].map do |ref|
         app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create if not in DB
@@ -79,11 +81,11 @@ class AppDocProcessor
   end
 
   def add_app_to_doc(app, doc, page_num)
-    if !doc.planning_apps.include?(app)
+    # if !doc.planning_apps.include?(app) # not needed?
       doc.add_planning_app(app, page_link: "#{doc.url}#page=#{page_num}")
       app.save # needed to update :list_app_meetings field in PlanningApp
       nil
-    end
+    # end
   end
 
   def scrape_and_create_app(ref)
@@ -105,8 +107,10 @@ class AppDocProcessor
   end
 
   def refs_in_page(text)
-    regex = '^(?:\d{1,2}. )?([A-Z]{1,3}\/20\d{2}\/\d{4})$'
-    text.split("\n").map { |t| /#{regex}/.match(t)[1] rescue nil }.uniq.compact
+    regex = '(?:\d{1,2}. )?([A-Z]{1,3}\/(19|20)\d{2}\/\d{4})'
+    text.split("\n").map do |t|
+      t.scan(/#{regex}/).map(&:first) rescue nil
+    end.compact.flatten.uniq
   end
 
 end

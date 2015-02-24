@@ -96,8 +96,15 @@ class AppDocScraper
   def doc_types
     @table_link_columns.each_with_index.map do |t,i|
       agenda, minutes = @table_agenda_columns[i], @table_minutes_columns[i]
-      t.map { |col| col == agenda ? 'Agenda' : col == minutes ? 'Minutes' : 'Unknown' }
+      t.each_with_index.map do |col, index|
+        col == agenda ? 'Agenda' : col == minutes ? 'Minutes' :  type_from_table_link(i, index)
+      end
     end.flatten
+  end
+
+  def type_from_table_link(table_num, index)
+    name = table_link_names[table_num][index].downcase
+    name.include?('agenda') ? 'Agenda' : name.include?('minutes') ? 'Minutes' : 'Unknown'
   end
 
   def links
