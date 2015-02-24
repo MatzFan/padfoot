@@ -81,11 +81,11 @@ class AppDocProcessor
   end
 
   def add_app_to_doc(app, doc, page_num)
-    # if !doc.planning_apps.include?(app) # not needed?
+    if !doc.planning_apps.include?(app)
       doc.add_planning_app(app, page_link: "#{doc.url}#page=#{page_num}")
       app.save # needed to update :list_app_meetings field in PlanningApp
       nil
-    # end
+    end
   end
 
   def scrape_and_create_app(ref)
