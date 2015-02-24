@@ -33,6 +33,7 @@ class PlanningApp < Sequel::Model
       ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
       AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
       self.parish = parish_alias.parish.name if parish_alias && parish_alias.parish
+      self.list_app_meetings = breakify(doc_links) if doc_links
     end
     super
   end
@@ -119,6 +120,20 @@ class PlanningApp < Sequel::Model
       num_records = DB[:constraints_planning_apps].where(attributes).count
       DB[:constraints_planning_apps].insert(attributes) if num_records == 0
     end if self.app_constraints
+  end
+
+  def doc_links
+    doc_list.sort.reverse.map { |arr| linkify(arr[0], arr[1]) } if doc_list
+  end
+
+  def linkify(url, name)
+    "<a href='#{url}' target='_blank'>#{name}</a>"
+  end
+
+  def doc_list
+    self.documents.map do |doc|
+      [DB[:documents_planning_apps].where(id: doc.id).select_map(:page_link).first, doc.name]
+    end unless self.documents.empty?
   end
 
 end

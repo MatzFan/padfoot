@@ -7,7 +7,7 @@ Padfoot::App.controllers :planning_app do
     columns = [
       :order, :valid_date, :app_ref, :app_code, :app_status, :app_full_address,
       :app_description, :app_address_of_applicant, :app_agent, :app_officer,
-      :parish, :list_app_constraints]
+      :parish, :list_app_constraints, :list_app_meetings]
     @titles = columns.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = apps.select_map(columns) # 2D array
     classes_to_add = columns.map { |c| 'long-text' if c == :app_description }

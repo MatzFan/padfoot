@@ -81,6 +81,7 @@ class AppDocProcessor
   def add_app_to_doc(app, doc, page_num)
     if !doc.planning_apps.include?(app)
       doc.add_planning_app(app, page_link: "#{doc.url}#page=#{page_num}")
+      app.save # needed to update :list_app_meetings field in PlanningApp
       nil
     end
   end
