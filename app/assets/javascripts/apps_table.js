@@ -25,7 +25,7 @@ function drawTable(data, callback) {
 
     initComplete: function () { // dropdown list for column rows defined in indexArray
       var api = this.api();
-      var indexArray = [3,4,10,11]; // HARD CODED HERE
+      var indexArray = [3,4,10,11,12]; // HARD CODED HERE
       // api.columns().indexes().flatten().each( function (i) {
       $.each(indexArray, function (i, index) {
         var column = api.column(index);
@@ -52,7 +52,7 @@ function drawTable(data, callback) {
           }
         });
         var dataList = column.data(); // may contain nulls
-        if(title === 'Constraints') {
+        if(title === 'Constraints' || title === 'Meetings') {
           dataList = dataList.map(function(element) {
             if(element) { // check for nulls (no constraints)
               return $(element.split('<br/>').join(',')).text().split(','); // replace <br/> with , then extract text before splitting..
@@ -111,7 +111,7 @@ function drawTable(data, callback) {
 
   $('.dataTables_scrollFoot tfoot th').each( function () {
     var title = $('thead th').eq( $(this).index() ).text();
-    var lovs = ['Code', 'Status', 'Parish', 'Constraints'] // HARD CODED HERE
+    var lovs = ['Code', 'Status', 'Parish', 'Constraints', 'Meetings'] // HARD CODED HERE
     if($.inArray(title, lovs) === -1){
       $(this).html( '<input type="text" placeholder="'+title+'" />' );
     }
