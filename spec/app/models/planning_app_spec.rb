@@ -11,8 +11,12 @@ describe PlanningApp do
   end
 
   context '#create' do
-    it 'can be created' do
+    it 'an instance of the class can be created' do
       expect(app).not_to be_nil
+    end
+
+    it 'duplicate app numbers and years are permitted - eg: P/1995/0263 & D/1995/0263' do
+      expect(->{ PlanningApp.create(app_ref: 'P/1995/0263'); PlanningApp.create(app_ref: 'D/1995/0263')}).not_to raise_error
     end
   end
 
