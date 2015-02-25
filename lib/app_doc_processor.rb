@@ -106,11 +106,12 @@ class AppDocProcessor
     end.reject { |arr| arr.last == [] }
   end
 
-  def refs_in_page(text)
+  def refs_in_page(page_text)
     regex = '(?:\d{1,2}. )?([A-Z]{1,3}\/(19|20)\d{2}\/\d{4})'
-    text.split("\n").map do |t|
-      t.scan(/#{regex}/).map(&:first) rescue nil
-    end.compact.flatten.uniq
+    lines = page_text.split("\n")
+    first = lines.map { |t| t.scan(/^#{regex}/).map(&:first) rescue nil }.compact.flatten
+    last = lines.map { |t| t.scan(/#{regex}$/).map(&:first) rescue nil }.compact.flatten
+    (first + last).uniq
   end
 
 end
