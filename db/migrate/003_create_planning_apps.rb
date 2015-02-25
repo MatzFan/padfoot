@@ -26,7 +26,7 @@ Sequel.migration do
       Date :committee_date
       Date :decision_date
       Date :appeal_date
-      Integer :order, unique: true
+      Integer :order, unique: true # removed unique constraint in migration 18
     end
 
   end
