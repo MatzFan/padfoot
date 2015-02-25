@@ -16,7 +16,7 @@ namespace :sq do
         old_apps.each_with_index do |app, i|
           if app != new_apps[i]
             count += 1
-            app.update(new_data[i]) if (ref == new_apps[i][:app_ref])
+            app.update(new_data[i]) if (app.app_ref == new_apps[i][:app_ref])
           end
         end
       end
