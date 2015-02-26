@@ -132,7 +132,7 @@ class PlanningApp < Sequel::Model
 
   def doc_list
     self.documents.map do |doc|
-      [DB[:documents_planning_apps].where(id: doc.id).select_map(:page_link).first, doc.name]
+      [DB[:documents_planning_apps].where(id: doc.id, app_ref: self.app_ref).select_map(:page_link).first, doc.name]
     end unless self.documents.empty?
   end
 
