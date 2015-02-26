@@ -6,7 +6,7 @@ namespace :sq do
       DB.transaction { processor.create_meetings } # so correct FK's can be assigned to new docs
       DB.transaction { processor.create_docs } # uploads to S3 in the process :))
       apps_not_found = processor.create_doc_app_ref_links.uniq
-      pp apps_not_found if apps_not_found != []
+      puts "Can't find:-\n#{apps_not_found.join("\n")}" if apps_not_found != []
     end
   end
 end

@@ -12,6 +12,7 @@ namespace :sq do
       DB.transaction do # transaction more efficient
         app_data.each { |hash| PlanningApp.create(hash) }
       end unless app_data.empty?
+      puts "#{app_data.count} new applications added"
     end
   end
 end
