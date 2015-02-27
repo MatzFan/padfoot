@@ -3,7 +3,7 @@ def capture_stdout
     old_stdout = $stdout
     $stdout = StringIO.new
     yield
-    $stdout.string.strip
+    $stdout.string
   ensure
     $stdout = old_stdout
   end
