@@ -26,6 +26,22 @@ h1 {
   /*line-height: 1.8em;*/
 }
 
+.map_container{
+  position: relative;
+  width: 100%;
+  padding-bottom: 62.5%; /* Ratio 16:10 ( 100%/16*10 = 62.5% ) */
+}
+
+.map_container .map_canvas{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
 .table {
   font-size: 12px;
 }
