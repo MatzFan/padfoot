@@ -22,7 +22,7 @@ class AppDetailsScraper
     return if num_refs != det_pages.size or num_refs != dat_pages.size
   end
 
-  def validate # invalid pages repalcedwith nil's
+  def validate # invalid pages replaced with nil's
     Proc.new { |page| page if page.title.include?('Application') }
   end
 
