@@ -3,7 +3,7 @@ class Location < Sequel::Model
   unrestrict_primary_key
 
   def before_save
-    self.loc_lat, self.loc_long = coords(self.x, self.y)
+    self.loc_lat, self.loc_long = coords(self.x, self.y) if self.x && self.y
     super
   end
 
