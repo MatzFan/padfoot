@@ -7,6 +7,7 @@ describe AddressScraper do
   FORTYSEVEN = ['47', 'Keith Baal Gardens', 'La Colomberie', 'St. Helier', 'JERSEY', 'JE2 4GE']
   string = 'baal'
   scraper = AddressScraper.new(string)
+  long_add_scraper = AddressScraper.new('po box 603')
 
   context '#new' do
     it 'returns an instance of the class' do
@@ -19,7 +20,11 @@ describe AddressScraper do
       expect(scraper.num_addresses).to eq(82)
     end
 
-    it 'returns the 0 if no addresses are found' do
+    it 'returns 1 if 1 address is found' do
+      expect(long_add_scraper.num_addresses).to eq(1)
+    end
+
+    it 'returns 0 if no addresses are found' do
       expect(AddressScraper.new('qzxz').num_addresses).to eq(0)
     end
   end
@@ -33,8 +38,8 @@ describe AddressScraper do
       expect(scraper.raw_addresses.all? { |arr| arr.any? { |s| s.downcase.include?(string) } }).to be_truthy
     end
 
-    it 'returns arrays of maximum length 8' do
-      expect(scraper.raw_addresses.all? { |arr| arr.length < 9 }).to be_truthy
+    it 'returns arrays of maximum length 9' do
+      expect(long_add_scraper.raw_addresses[0].length).to eq(9)
     end
 
     it 'returns arrays of minimum length 5' do

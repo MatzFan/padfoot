@@ -28,7 +28,7 @@ class AddressScraper
 
   def num_addresses
     # source = source(0).force_encoding(Encoding::UTF_8)
-    num = source(0).match(/<h3>There are <span>(.*) results/)[1]
+    num = source(0).match(/<h3>There (are|is only) <span>(.*) result/)[2]
     num == 'no' ? 0 : num.to_i
   end
 
