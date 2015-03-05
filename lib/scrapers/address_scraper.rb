@@ -16,7 +16,7 @@ class AddressScraper
   def raw_addresses
     return [] if num_addresses == 0
     (0..(@num_addresses/100.0).ceil).inject([]) do |memo, i|
-      memo << get_addresses_on_page(i).map { |s| s.split(',').map(&:strip) }
+      memo << get_addresses_on_page(i).map { |s| s.split(', ').map(&:strip) } # note comma + space
     end.first
   end
 
@@ -40,16 +40,21 @@ class AddressScraper
     }).body_str.force_encoding(Encoding::UTF_8)
   end
 
-  def addresses # remove 'JERSEY' and formats first element to html address
-    @raw_addresses.map { |a| [htmlify(a), a[-4], a[-3], a[-1]] }
+  def addresses # remove 'JERSEY', separate road, parish and postcode
+    @raw_addresses.map { |arr| [htmlify(arr), arr[-4], arr[-3], arr[-1]] }
   end
 
-  def htmlify(arr) # arr is from 4 to 8 elements
-    s = arr[0]
-    (1..(arr.length - 4)).each do |i| # len must be 6 or more here
-      s += arr[i - 1].to_i.to_s == arr[i - 1] ? ' ' + arr[i] : '<br/>' + arr[i]
-    end
-    s + '<br/>' + arr[-3] + '<br/>' + arr[-1]
+  def htmlify(arr) # arr is from 4 to 9 elements
+    s, n = arr[0], (arr.length - 4)
+    (1..n).each { |i| s += int?(arr[i - 1]) ? ' ' + arr[i] : '<br/>' + arr[i] }
+    s + '<br/>' + arr[-3] + '<br/>' + arr[-1] # add parish and postcode
+  end
+
+  def int?(string)
+    string.to_i.to_s == string
   end
 
 end
+
+# s = AddressScraper.new('po box 235')
+# puts s.addresses

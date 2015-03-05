@@ -5,9 +5,12 @@ describe AddressScraper do
   CHEZ = ['Chez Jacques', '4', 'La Place Bisson', "Le Clos d'Avoine", 'La Rue Baal', 'St. Brelade', 'JERSEY', 'JE3 8HR']
   GOV = ['Governors House', '14', 'La Rue Baal', 'St. Brelade', 'JERSEY', 'JE3 8HQ']
   FORTYSEVEN = ['47', 'Keith Baal Gardens', 'La Colomberie', 'St. Helier', 'JERSEY', 'JE2 4GE']
+  PO_BOX_581 = ['Lempiere,Whittaker,Renouf', 'PO Box 581', 'Rutland House', 'Pitt Street', 'St. Helier', 'JERSEY', 'JE4 0YL']
   string = 'baal'
   scraper = AddressScraper.new(string)
-  long_add_scraper = AddressScraper.new('po box 603')
+  po_box_603_scraper = AddressScraper.new('po box 603')
+  po_box_581_scraper = AddressScraper.new('po box 581')
+  po_box_235_scraper = AddressScraper.new('po box 235')
 
   context '#new' do
     it 'returns an instance of the class' do
@@ -21,7 +24,7 @@ describe AddressScraper do
     end
 
     it 'returns 1 if 1 address is found' do
-      expect(long_add_scraper.num_addresses).to eq(1)
+      expect(po_box_603_scraper.num_addresses).to eq(1)
     end
 
     it 'returns 0 if no addresses are found' do
@@ -38,12 +41,16 @@ describe AddressScraper do
       expect(scraper.raw_addresses.all? { |arr| arr.any? { |s| s.downcase.include?(string) } }).to be_truthy
     end
 
-    it 'returns arrays of maximum length 9' do
-      expect(long_add_scraper.raw_addresses[0].length).to eq(9)
+    it 'can return an arrays of length 4 or more' do
+      expect(scraper.raw_addresses.all? { |arr| arr.length > 4 }).to be_truthy
     end
 
-    it 'returns arrays of minimum length 5' do
-      expect(scraper.raw_addresses.all? { |arr| arr.length > 4 }).to be_truthy
+    it 'can return an array of length 9' do
+      expect(po_box_603_scraper.raw_addresses[0].length).to eq(9)
+    end
+
+    it 'treats comma-separated text as one string (delimiter is ", ")' do
+      expect(po_box_581_scraper.raw_addresses[0]).to eq(PO_BOX_581)
     end
   end
 
@@ -56,8 +63,8 @@ describe AddressScraper do
       expect(scraper.addresses.all? { |a| a.length == 4 }).to be_truthy
     end
 
-    it 'returns arrays whose first element is the html formatted full address' do
-      expect(scraper.addresses.last[0]).to eq('47 Keith Baal Gardens<br/>La Colomberie<br/>St. Helier<br/>JE2 4GE')
+    it 'returns arrays whose first element is an address String' do
+      expect(scraper.addresses.last[0].class).to eq(String)
     end
 
     it 'returns arrays whose second element is the road name' do
