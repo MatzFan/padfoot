@@ -17,8 +17,8 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, { except: %w[spatial_ref_sys] }
-    DatabaseCleaner.clean_with(:truncation, { except: %w[spatial_ref_sys] })
+    DatabaseCleaner.strategy = :truncation, { except: %w[parishes spatial_ref_sys] }
+    DatabaseCleaner.clean_with(:truncation, { except: %w[parishes spatial_ref_sys] })
   end
 
   config.around(:each) do |example|
