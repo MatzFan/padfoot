@@ -1,6 +1,6 @@
 require 'mechanize'
 
-class LocationScraper
+class PropertyScraper
 
   ID = '19961'
   CODE = 'e6m6h6'
@@ -63,10 +63,10 @@ class LocationScraper
   end
 
   def addresses
-    (0...count).map { |i| postcode_and_parishify(address(i)) }
+    (0...count).map { |i| parse(address(i)) }
   end
 
-  def postcode_and_parishify(arr)
+  def parse(arr)
     [arr.join("<br/>"), parish(arr), (arr.last if arr.last =~ /^JE\d \d[A-Z]{2}$/)]
   end
 
@@ -89,3 +89,6 @@ class LocationScraper
   end
 
 end
+
+# s = PropertyScraper.new('fourneaux')
+# puts s.data

@@ -1,4 +1,4 @@
-describe LocationScraper do
+describe PropertyScraper do
 
   UPRNS = [69213704, 69213730, 69213735, 69115918, 69115917, 69115921,
            69200044, 69213705, 69213728, 69213733, 69213895, 69300127,
@@ -14,17 +14,17 @@ describe LocationScraper do
 
   string = 'crabbe'
   parish_num = 2
-  string_scraper = LocationScraper.new(string)
-  fourneaux = LocationScraper.new('fourneaux') # captures St. Brelade and St. Saviour
-  parish_scraper = LocationScraper.new('fourneaux', 11) # 11 is St. Saviour
+  string_scraper = PropertyScraper.new(string)
+  fourneaux = PropertyScraper.new('fourneaux') # captures St. Brelade and St. Saviour
+  parish_scraper = PropertyScraper.new('fourneaux', 11) # 11 is St. Saviour
 
   context '#new' do
     it 'returns an instance of the class with no parish number supplied' do
-      expect(string_scraper.class).to eq(LocationScraper)
+      expect(string_scraper.class).to eq(PropertyScraper)
     end
 
     it 'returns an instance of the class with a parish number supplied' do
-      expect(parish_scraper.class).to eq(LocationScraper)
+      expect(parish_scraper.class).to eq(PropertyScraper)
     end
   end
 
@@ -40,7 +40,7 @@ describe LocationScraper do
     end
 
     it 'returns 0 if no locations are found' do
-      expect(LocationScraper.new('qqqqzq').count).to eq(0)
+      expect(PropertyScraper.new('qqqqzq').count).to eq(0)
     end
   end
 
@@ -56,11 +56,11 @@ describe LocationScraper do
     end
   end
 
-  context '#postcode_and_parishify' do
+  context '#parse' do
     it 'returns a 3 element array: [html address string, parish number, postcode]' do
       add = ['line1', 'line2', 'Trinity', 'JE1 1BJ']
       arr = ['line1<br/>line2<br/>Trinity<br/>JE1 1BJ', 12, 'JE1 1BJ']
-      expect(string_scraper.postcode_and_parishify(add)).to eq(arr)
+      expect(string_scraper.parse(add)).to eq(arr)
     end
   end
 
