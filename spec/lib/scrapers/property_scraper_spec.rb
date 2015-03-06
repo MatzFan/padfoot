@@ -13,7 +13,7 @@ describe PropertyScraper do
                 ' Hougue Bie<br/>St. Saviour<br/>JE2 7BS', 'La Route de la'+
                 ' Hougue Bie', 11, 'JE2 7BS']]
 
-  ROADS = ['La Rue de la Corbiere', 'La Route de la Hougue Bie']
+  ALL_ROADS = ['La Rue de la Corbiere', 'La Route de la Hougue Bie']
 
   string = 'crabbe'
   parish_num = 2
@@ -91,7 +91,7 @@ describe PropertyScraper do
 
     it 'Address array element 1 is the road, or nil' do
       expect(fourneaux.data.all? do |e|
-        ROADS.any? { |road| e.last[1] == road }
+        ALL_ROADS.any? { |road| e.last[1] == road }
       end).to be_truthy
     end
 

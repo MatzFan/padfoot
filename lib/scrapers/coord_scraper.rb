@@ -26,8 +26,8 @@ class CoordScraper
 
   attr_reader :form
 
-  def initialize(uprns)
-    @uprns = uprns
+  def initialize(uprn)
+    @uprn = uprn
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser # not 'application/json'..??
     @form = form
@@ -45,12 +45,8 @@ class CoordScraper
   end
 
   def set_params
-    @form.fields[0].value = uprn_string
+    @form.fields[0].value = "UPRN=#{@uprn}"
     @form.field_with(name: 'f').options[1].select # for JSON
-  end
-
-  def uprn_string
-    CGI.escapeHTML(@uprns.map { |uprn| "UPRN=#{uprn}" }.join(' OR '))
   end
 
   def json
@@ -59,15 +55,7 @@ class CoordScraper
   end
 
   def x_y_coords
-    @json['features'].map { |e| e['geometry'] }.map(&:values)
-  end
-
-  def add1s
-    @json['features'].map { |e| e['attributes'] }.map(&:values).flatten
-  end
-
-  def data
-    add1s.zip(x_y_coords)
+    coords = @json['features'].map { |e| e['geometry'] }.map(&:values).flatten
   end
 
 end
