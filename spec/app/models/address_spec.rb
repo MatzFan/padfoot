@@ -31,6 +31,12 @@ describe Address do
       address.save
       expect(Address.first.parish.class).to eq(Parish)
     end
+
+    it 'will be nil if no parish was specified in object creation' do
+      address.parish = nil
+      address.save
+      expect(Address.first.parish).to be_nil
+    end
   end
 
   context '#postcode' do
