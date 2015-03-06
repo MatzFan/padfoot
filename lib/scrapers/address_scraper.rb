@@ -65,5 +65,5 @@ class AddressScraper
 
 end
 
-# s = AddressScraper.new('je1 1aa')
-# puts s.addresses.inspect
+# s = AddressScraper.new('baal')
+# s.addresses.map { |e| puts e[1] }
