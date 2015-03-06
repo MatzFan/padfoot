@@ -8,9 +8,10 @@ describe PropertyScraper do
            69213884, 69213951, 69387750]
 
   LENORD = [69115918, ["Le Nord<br/>La Rue de Crabbe<br/>St. Mary<br/>JE3 3AD",
-             8, 'JE3 3AD']]
+             'La Rue de Crabbe', 8, 'JE3 3AD']]
   FOURNEAUX = [69407485, ['Fourneaux<br/>Le Clos Du Hambye<br/>La Route de la'+
-                ' Hougue Bie<br/>St. Saviour<br/>JE2 7BS', 11, 'JE2 7BS']]
+                ' Hougue Bie<br/>St. Saviour<br/>JE2 7BS', 'La Route de la'+
+                ' Hougue Bie', 11, 'JE2 7BS']]
 
   ROADS = ['La Rue de la Corbiere', 'La Route de la Hougue Bie']
 
