@@ -12,6 +12,8 @@ describe PropertyScraper do
   FOURNEAUX = [69407485, ['Fourneaux<br/>Le Clos Du Hambye<br/>La Route de la'+
                 ' Hougue Bie<br/>St. Saviour<br/>JE2 7BS', 11, 'JE2 7BS']]
 
+  ROADS = ['La Rue de la Corbiere', 'La Route de la Hougue Bie']
+
   string = 'crabbe'
   parish_num = 2
   string_scraper = PropertyScraper.new(string)
@@ -35,12 +37,16 @@ describe PropertyScraper do
   end
 
   context '#count' do
-    it 'returns the number of locations found' do
+    it 'returns the number of properties found' do
       expect(string_scraper.count).to eq(33)
     end
 
-    it 'returns 0 if no locations are found' do
+    it 'returns 0 if no properties are found' do
       expect(PropertyScraper.new('qqqqzq').count).to eq(0)
+    end
+
+    it 'returns 50 (site limit) if 50 or more properties are found' do
+      expect(PropertyScraper.new('fliquet').count).to eq(50)
     end
   end
 
@@ -57,10 +63,19 @@ describe PropertyScraper do
   end
 
   context '#parse' do
-    it 'returns a 3 element array: [html address string, parish number, postcode]' do
-      add = ['line1', 'line2', 'Trinity', 'JE1 1BJ']
-      arr = ['line1<br/>line2<br/>Trinity<br/>JE1 1BJ', 12, 'JE1 1BJ']
-      expect(string_scraper.parse(add)).to eq(arr)
+    it 'returns a 4 element array with all elements non-nil if address has valid postcode and parish' do
+      add = ['line1', 'road', 'Trinity', 'JE1 1BJ']
+      expect(string_scraper.parse(add)).to eq(['line1<br/>road<br/>Trinity<br/>JE1 1BJ', 'road', 12, 'JE1 1BJ'])
+    end
+
+    it 'last element is nil if last line is not a postcode' do
+      add = ['line1', 'road', 'Trinity']
+      expect(string_scraper.parse(add)).to eq(['line1<br/>road<br/>Trinity', 'road', 12, nil])
+    end
+
+    it 'last 2 elements are nil if last line is not a postcode or parish' do
+      add = ['line1', 'road']
+      expect(string_scraper.parse(add)).to eq(['line1<br/>road', 'road', nil, nil])
     end
   end
 
@@ -73,15 +88,21 @@ describe PropertyScraper do
       expect(string_scraper.data[3].last[0]).to eq(LENORD.last[0])
     end
 
-    it 'Address array element 1 is the parish number, or nil' do
+    it 'Address array element 1 is the road, or nil' do
       expect(fourneaux.data.all? do |e|
-        [2, 11, nil].any? { |i| e.last[1] == i }
+        ROADS.any? { |road| e.last[1] == road }
       end).to be_truthy
     end
 
-    it 'Address array element 2 is a valid postcode, or nil' do
+    it 'Address array element 2 is the parish number, or nil' do
+      expect(fourneaux.data.all? do |e|
+        [2, 11, nil].any? { |i| e.last[2] == i }
+      end).to be_truthy
+    end
+
+    it 'Address array element 3 is a valid postcode, or nil' do
       expect(string_scraper.data.all? do |e|
-        e.last[2] =~ /^JE\d \d[A-Z]{2}$/ || e.last[2].nil?
+        e.last[3] =~ /^JE\d \d[A-Z]{2}$/ || e.last[3].nil?
       end).to be_truthy
     end
   end

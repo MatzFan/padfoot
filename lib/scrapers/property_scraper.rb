@@ -13,7 +13,7 @@ class PropertyScraper
   RESULTS_ID = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_lb_results'
   RESULTS_FIELD = '_ctl0:cphContent:CompanyDetail:lpi_contact_address:lb_results'
   ADD_ID = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_txt_address'
-  ADDRESS_COUNT = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_lbl_count'
+  COUNT = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_lbl_count'
   PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
 
   attr_reader :agent, :parishes
@@ -53,7 +53,8 @@ class PropertyScraper
   end
 
   def count
-    @results_page.search('#' + ADDRESS_COUNT).children.to_s.split(' ')[0].to_i
+    text = @results_page.search('#' + COUNT).children.to_s.split(' ')[0]
+    text == 'More' ? 50 : text.to_i
   end
 
   def uprns
@@ -67,7 +68,15 @@ class PropertyScraper
   end
 
   def parse(arr)
-    [arr.join("<br/>"), parish(arr), (arr.last if arr.last =~ /^JE\d \d[A-Z]{2}$/)]
+    postcode = postcode(arr[-1])
+    parish = parish(arr)
+    road = (postcode ? arr[-3] : (parish ? arr[-2] : arr[-1]))
+    [arr.join("<br/>"), road, parish, postcode]
+  end
+
+  def postcode(string)
+    postcode = /^JE\d \d[A-Z]{2}$/.match(string)
+    postcode ? postcode.to_s : nil
   end
 
   def parish(arr)
