@@ -59,7 +59,7 @@ class CoordScraper
 
   def set_params
     @form.fields[0].value = query_string # SQL 'WHERE' clause
-    @form.fields[6].value = 'UPRN' # output fields
+    @form.fields[6].value = KEYS.join(',') # output fields
     @form.fields[10].value = 'UPRN' # order by field
     @form.field_with(name: 'f').options[1].select # for JSON
   end
