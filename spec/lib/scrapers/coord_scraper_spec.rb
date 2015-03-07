@@ -1,13 +1,26 @@
 describe CoordScraper do
 
-  FIELDS = ['Field No. 320', 'Field No. 97']
-  DATA = [['Field No. 320', [34911, 72269.80000000075]], ['Field No. 97', [44319.40000000037, 63360.40000000037]]]
+  ORDERED_UPRNS = [69127646, 69140406, 69387657]
+
+  COORDS3 = [[33431, 64910.800000000745],
+             [33355.799999999814, 64893.400000000373],
+             [33483, 64866]]
 
   let(:scraper) { CoordScraper.new(69003083) }
+  let(:scraper3) { CoordScraper.new(ORDERED_UPRNS) }
 
   context '#new' do
-    it 'returns an instance of the class' do
-      expect(scraper.class).to eq(CoordScraper)
+    it 'can be instantiated with a single uprn' do
+      expect(scraper.class).not_to be_nil
+    end
+
+    it 'can be instantiated with an ordered array of uprns' do
+      expect(scraper3.class).not_to be_nil
+    end
+
+    it 'raises ArguementError if supplied UPRN array is not ordered' do
+      NOT_ORDERED = ORDERED_UPRNS.reverse
+      expect(->{ CoordScraper.new(NOT_ORDERED) }).to raise_error(ArgumentError)
     end
   end
 
@@ -23,6 +36,12 @@ describe CoordScraper do
     end
   end
 
+  context '#query_string' do
+    it 'returns an SQL query to obtain all UPRNs, order by UPRN' do
+      expect(scraper3.query_string).to eq('UPRN=69127646 OR UPRN=69140406 OR UPRN=69387657')
+    end
+  end
+
   context '#json' do
     it 'returns a JSON-parsed hash object' do
       expect(scraper.json.class).to eq(Hash)
@@ -30,8 +49,26 @@ describe CoordScraper do
   end
 
   context '#x_y_coords' do
-    it 'returns an array of x & y GIS coords' do
-      expect(scraper.x_y_coords).to eq([42035.15699999966, 65219.985874999315])
+    it 'returns a 2D array of x & y GIS coords if provided with a single uprn' do
+      expect(scraper.x_y_coords).to eq([[42035.15699999966, 65219.985874999315]])
+    end
+
+    it 'returns a 2D array of x & y GIS coords if provided with an array of uprns' do
+      expect(scraper3.x_y_coords).to eq(COORDS3)
+    end
+
+    it 'raises UprnsDontMatchError if found UPRNs are differnt from those supplied' do
+      expect(->{ CoordScraper.new(ORDERED_UPRNS << 69999999).x_y_coords }).to raise_error(UprnsDontMatchError)
+    end
+  end
+
+  context '#out_uprns' do
+    it 'returns an array of output uprns if provided with a single uprn' do
+      expect(scraper.out_uprns).to eq([69003083])
+    end
+
+    it 'returns an ordered array of output uprns, if an array provided' do
+      expect(scraper3.out_uprns).to eq([69127646, 69140406, 69387657])
     end
   end
 
