@@ -62,13 +62,13 @@ describe CoordScraper do
     end
   end
 
-  context '#out_uprns' do
+  context '#uprns' do
     it 'returns an array of output uprns if provided with a single uprn' do
-      expect(scraper.out_uprns).to eq([69003083])
+      expect(scraper.uprns).to eq([69003083])
     end
 
     it 'returns an ordered array of output uprns, if an array provided' do
-      expect(scraper3.out_uprns).to eq([69127646, 69140406, 69387657])
+      expect(scraper3.uprns).to eq([69127646, 69140406, 69387657])
     end
   end
 

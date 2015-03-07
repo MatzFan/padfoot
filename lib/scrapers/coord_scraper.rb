@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'linguistics'
 
 class JSONParser < Mechanize::File
   attr_reader :json
@@ -9,39 +10,41 @@ class JSONParser < Mechanize::File
   end
 end
 
-class Hash
-  def geometry; self['geometry']; end
-  def attributes; self['attributes']; end
-  def x; self['x']; end
-  def y; self['y']; end
-  def uprns; self['UPRN']; end
-end
-
 class UprnsDontMatchError < StandardError; end
 
 ###############################################################################
 
 class CoordScraper
 
+  Linguistics.use(:en) # for plural method
+
   URL = 'https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'
+
+  KEYS = %w(OBJECTID Shape guid_ logicalstatus Add1 Add2 Add3 Add4 Parish Postcode Island UPRN USRN Property_Type Address1 Easting Northing Vingtaine Updated)
+
   FIELDS = ['where', 'text', 'objectIds', 'time', 'inSR', 'relationParam',
     'outFields', 'maxAllowableOffset', 'geometryPrecision', 'outSR',
     'orderByFields', 'groupByFieldsForStatistics', 'gdbVersion', 'geometry',
     'outStatistics', 'geometryType', 'spatialRel', 'f']
+
   RADIOS = ['returnGeometry', 'returnGeometry' ,'returnIdsOnly',
     'returnIdsOnly', 'returnCountOnly','returnCountOnly', 'returnZ', 'returnZ',
     'returnM', 'returnM', 'returnDistinctValues', 'returnDistinctValues']
 
   attr_reader :form
 
-  def initialize(*uprns)
-    @uprns = uprns.flatten
-    raise ArgumentError unless @uprns.dup.sort == @uprns
+  def initialize(*uprn_list)
+    @uprn_list = uprn_list.flatten
+    raise ArgumentError unless @uprn_list.dup.sort == @uprn_list
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser # not 'application/json'..??
     @form = form
     @json = json
-    @out_uprns = out_uprns
+    setup_hash_key_methods
+    setup_accessor_methods
+    @features = features
+    @atts = atts
+    @geometry = geometry
     validate
   end
 
@@ -62,7 +65,7 @@ class CoordScraper
   end
 
   def query_string
-    @uprns.map { |uprn| "UPRN=#{uprn}" }.join(' OR ')
+    @uprn_list.map { |uprn| "UPRN=#{uprn}" }.join(' OR ')
   end
 
   def json
@@ -70,25 +73,37 @@ class CoordScraper
     @form.submit(@form.buttons[0]).json
   end
 
+  def setup_hash_key_methods
+    (KEYS + %w(features attributes geometry x y)).each do |key|
+      Hash.send(:define_method, key.downcase) { self[key] }
+    end
+  end
+
+  def setup_accessor_methods # meta program accessor methods for all KEY fields
+    KEYS.map(&:downcase).each do |key|
+      self.class.send(:define_method, key.en.plural) { @atts.map(&key.to_sym) }
+    end
+  end
+
+  def hash_key(key) # monkey patch Hash for each JSON key required
+    Hash.send(:define_method, key.downcase) { self[key] }
+  end
+
+  def features
+    @json['features']
+  end
+
+  def atts
+    @features.map(&:attributes)
+  end
+
+  def geometry
+    @features.map(&:geometry)
+  end
+
   def x_y_coords
-    raise UprnsDontMatchError if out_uprns != @uprns
-    x_coords.zip(y_coords)
-  end
-
-  def x_coords
-    @json['features'].map(&:geometry).map(&:x)
-  end
-
-  def y_coords
-    @json['features'].map(&:geometry).map &:y
-  end
-
-  def out_uprns
-    @json['features'].map(&:attributes).map(&:uprns)
-  end
-
-  def data
-
+    raise UprnsDontMatchError if uprns != @uprn_list
+    @geometry.map(&:x).zip(@geometry.map(&:y))
   end
 
 end
