@@ -14,7 +14,7 @@ class UprnsDontMatchError < StandardError; end
 
 ###############################################################################
 
-class PropertyScraper
+class OldPropertyScraper
 
   Linguistics.use(:en) # for plural method
 

@@ -1,4 +1,4 @@
-describe PropertyScraper do
+describe OldPropertyScraper do
 
   ORDERED_UPRNS = [69127646, 69140406, 69387657]
 
@@ -6,12 +6,12 @@ describe PropertyScraper do
              [33355.799999999814, 64893.400000000373],
              [33483, 64866]]
 
-  let(:scraper) { PropertyScraper.new(69003083) }
-  let(:scraper3) { PropertyScraper.new(ORDERED_UPRNS) }
+  let(:scraper) { OldPropertyScraper.new(69003083) }
+  let(:scraper3) { OldPropertyScraper.new(ORDERED_UPRNS) }
 
   context '#new' do
     it 'can be instantiated with no args' do
-      expect(PropertyScraper.new.class).not_to be_nil
+      expect(OldPropertyScraper.new.class).not_to be_nil
     end
 
     it 'can be instantiated with a single uprn' do
@@ -24,7 +24,7 @@ describe PropertyScraper do
 
     it 'raises ArguementError if supplied UPRN array is not ordered' do
       NOT_ORDERED = ORDERED_UPRNS.reverse
-      expect(->{ PropertyScraper.new(NOT_ORDERED) }).to raise_error(ArgumentError)
+      expect(->{ OldPropertyScraper.new(NOT_ORDERED) }).to raise_error(ArgumentError)
     end
   end
 
@@ -68,7 +68,7 @@ describe PropertyScraper do
     end
 
     it 'raises UprnsDontMatchError if found UPRNs are differnt from those supplied' do
-      expect(->{ PropertyScraper.new(ORDERED_UPRNS << 69999999).x_y_coords }).to raise_error(UprnsDontMatchError)
+      expect(->{ OldPropertyScraper.new(ORDERED_UPRNS << 69999999).x_y_coords }).to raise_error(UprnsDontMatchError)
     end
   end
 
