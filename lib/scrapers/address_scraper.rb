@@ -4,7 +4,6 @@ class AddressScraper
 
   PC_URL = "http://www.jerseypost.com/tools/postcode-address-finder/"
   CLICK = "Click here for address information"
-  PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
 
   attr_reader :addresses, :address_arrays
 

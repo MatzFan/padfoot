@@ -19,6 +19,8 @@ JMTPROJ4 = '+proj=tmerc +lat_0=49.225 +lon_0=-2.135 +k=0.9999999000000001 '+
 JTM_FACTORY = RGeo::Cartesian.factory(srid: 3109, proj4: JMTPROJ4)
 WGS84_FACTORY = RGeo::Geographic.spherical_factory(srid: 4326)
 
+PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
+
 # Padrino::Logger::Config[:development][:log_static] = true
 #
 # ## Configure your I18n

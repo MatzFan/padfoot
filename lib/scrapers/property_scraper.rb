@@ -10,7 +10,7 @@ class JSONParser < Mechanize::File
   end
 end
 
-class UprnsDontMatchError < StandardError; end
+class IdsDontMatchError < StandardError; end
 
 ###############################################################################
 
@@ -18,9 +18,12 @@ class PropertyScraper
 
   Linguistics.use(:en) # for plural method
 
-  URL = 'https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'
 
-  KEYS = %w(OBJECTID Shape guid_ logicalstatus Add1 Add2 Add3 Add4 Parish Postcode Island UPRN USRN Property_Type Address1 Easting Northing Vingtaine Updated)
+  DOMAIN = 'https://gps.digimap.gg/'
+  URL = 'arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'
+
+  KEYS = ['OBJECTID', 'guid_', 'Add1', 'Add2', 'Add3', 'Add4', 'Parish',
+          'Postcode', 'UPRN', 'USRN', 'Property_Type', 'Address1', 'Vingtaine']
 
   FIELDS = ['where', 'text', 'objectIds', 'time', 'inSR', 'relationParam',
     'outFields', 'maxAllowableOffset', 'geometryPrecision', 'outSR',
@@ -33,9 +36,9 @@ class PropertyScraper
 
   attr_reader :form
 
-  def initialize(*uprn_list)
-    @uprn_list = uprn_list.flatten
-    raise ArgumentError unless @uprn_list.dup.sort == @uprn_list
+  def initialize(lower_id = 0, upper_id = 0)
+    @lower_id, @upper_id = lower_id, upper_id
+    @id_array = (@lower_id..@upper_id).to_a
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser # not 'application/json'..??
     @form = form
@@ -44,10 +47,11 @@ class PropertyScraper
     setup_hash_key_methods
     setup_accessor_methods
     @features = features
+    @atts = atts
   end
 
   def num_props
-    form = Mechanize.new.get(URL).forms.first
+    form = Mechanize.new.get(DOMAIN + URL).forms.first
     form.fields[0].value = "UPRN > 0"
     form.radiobuttons[4].check # count only true
     parse_count(form.submit(form.buttons[1]).body)
@@ -65,18 +69,18 @@ class PropertyScraper
   end
 
   def form
-    @agent.get(URL).forms.first
+    @agent.get(DOMAIN + URL).forms.first
+  end
+
+  def query_string
+    "OBJECTID >= #{@lower_id} AND OBJECTID <= #{@upper_id}"
   end
 
   def set_query_params
     @form.fields[0].value = query_string # SQL 'WHERE' clause
     @form.fields[6].value = KEYS.join(',') # output fields
-    @form.fields[10].value = 'UPRN' # order by field
+    # @form.fields[10].value = 'UPRN' # order by field
     @form.field_with(name: 'f').options[1].select # for JSON
-  end
-
-  def query_string
-    @uprn_list.map { |uprn| "UPRN=#{uprn}" }.join(' OR ')
   end
 
   def json
@@ -92,8 +96,11 @@ class PropertyScraper
 
   def setup_accessor_methods # meta program accessor methods for all KEY fields
     KEYS.map(&:downcase).each do |key|
-      self.class.send(:define_method, key.en.plural) { atts.map(&key.to_sym) }
+      self.class.send(:define_method, key.en.plural) { @atts.map(&key.to_sym) }
     end
+    # and for geometry - :xs, :ys
+    self.class.send(:define_method, 'xes') { geometry.map &:x }
+    self.class.send(:define_method, 'yes') { geometry.map &:y }
   end
 
   def hash_key(key) # monkey patch Hash for each JSON key required
@@ -112,9 +119,37 @@ class PropertyScraper
     @features.map(&:geometry)
   end
 
-  def x_y_coords
-    raise UprnsDontMatchError if uprns != @uprn_list
-    geometry.map(&:x).zip(geometry.map(&:y))
+  def coords
+    xes.map { |x| Hash[x: x] }.zip(yes.map { |y| Hash[y: y] })
+  end
+
+  def data
+    coords.zip(array_of_hashes).map(&:flatten).map { |arr| arr.inject &:merge }
+  end
+
+  def array_of_hashes
+    KEYS[1..-1].inject(hashy(KEYS[0])) { |m, e| m.zip(hashy e) }.map &:flatten
+  end
+
+  def hashy(key)
+    self.send(key.downcase.en.plural.to_sym).map do |e|
+      Hash[dcase(key) => (e ? process(key, e) : nil)]
+    end
+  end
+
+  def dcase(string)
+    string.downcase.to_sym
+  end
+
+  def process(k, d) # data may be String or Fixnum
+    return d if d.kind_of? Numeric
+    return parish_num(d) if k == 'Parish'
+    d.strip.empty? ? nil : d.strip
+  end
+
+  def parish_num(s)
+    num = PARISHES.index(s.downcase.split(' ').map(&:capitalize).join(' '))
+    num + 1 if num
   end
 
 end

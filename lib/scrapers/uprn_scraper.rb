@@ -14,7 +14,6 @@ class UprnScraper
   RESULTS_FIELD = '_ctl0:cphContent:CompanyDetail:lpi_contact_address:lb_results'
   ADD_ID = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_txt_address'
   COUNT = '_ctl0_cphContent_CompanyDetail_lpi_contact_address_lbl_count'
-  PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
 
   attr_reader :agent, :parishes
 
