@@ -25,6 +25,9 @@ class PropertyScraper
   KEYS = ['OBJECTID', 'guid_', 'Add1', 'Add2', 'Add3', 'Add4', 'Parish',
           'Postcode', 'UPRN', 'USRN', 'Property_Type', 'Address1', 'Vingtaine']
 
+  COLUMNS = [:object_id, :guid, :add1, :add2, :add3, :add4, :parish_num,
+          :p_code, :uprn, :usrn, :property_type, :address1, :vingtaine]
+
   FIELDS = ['where', 'text', 'objectIds', 'time', 'inSR', 'relationParam',
     'outFields', 'maxAllowableOffset', 'geometryPrecision', 'outSR',
     'orderByFields', 'groupByFieldsForStatistics', 'gdbVersion', 'geometry',
@@ -37,6 +40,7 @@ class PropertyScraper
   attr_reader :form
 
   def initialize(lower_id = 0, upper_id = 0)
+    @keys = keys
     @lower_id, @upper_id = lower_id, upper_id
     @id_array = (@lower_id..@upper_id).to_a
     @agent = Mechanize.new
@@ -48,6 +52,10 @@ class PropertyScraper
     setup_accessor_methods
     @features = features
     @atts = atts
+  end
+
+  def keys
+    KEYS.zip(COLUMNS).map { |arr| Hash[*arr] }.inject({}) { |m, e| m.merge(e) }
   end
 
   def num_props
@@ -133,13 +141,13 @@ class PropertyScraper
 
   def hashy(key)
     self.send(key.downcase.en.plural.to_sym).map do |e|
-      Hash[dcase(key) => (e ? process(key, e) : nil)]
+      Hash[@keys[key] => (e ? process(key, e) : nil)]
     end
   end
 
-  def dcase(string)
-    string.downcase.to_sym
-  end
+  # def dcase(string)
+  #   string.downcase.to_sym
+  # end
 
   def process(k, d) # data may be String or Fixnum
     return d if d.kind_of? Numeric

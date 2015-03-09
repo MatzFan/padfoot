@@ -8,13 +8,13 @@ describe PropertyScraper do
                      [{:x=>42035.15699999966}, {:y=>65219.985874999315}],
                      [{:x=>42035.500500000082}, {:y=>65219.92775000073}]]
 
-  ARRAY_OF_HASHES1 = [[{objectid: 29727}, {guid_: 10593}, {add1: "25 Pier Road"}, {add2: nil}, {add3: nil}, {add4: nil}, {parish: 4}, {postcode: "JE2 4XW"}, {uprn: 69003083}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}]]
+  ARRAY_OF_HASHES1 = [[{object_id: 29727}, {guid: 10593}, {add1: "25 Pier Road"}, {add2: nil}, {add3: nil}, {add4: nil}, {parish_num: 4}, {p_code: "JE2 4XW"}, {uprn: 69003083}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}]]
 
-  ARRAY_OF_HASHES3 = [[{objectid: 29726}, {guid_: 38053}, {add1: "Field No. 45"}, {add2: "La Rue de Sorel"}, {add3: nil}, {add4: nil}, {parish: 5}, {postcode: nil}, {uprn: 69211091}, {usrn: 40000884}, {property_type: "Agricultural"}, {address1: "FIELD NO. 45,LA RUE DE SOREL,"}, {vingtaine: "Douet"}],
-                      [{objectid: 29727}, {guid_: 10593}, {add1: "25 Pier Road"}, {add2: nil}, {add3: nil}, {add4: nil}, {parish: 4}, {postcode: "JE2 4XW"}, {uprn: 69003083}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}],
-                      [{objectid: 29728}, {guid_: 31331}, {add1: "Digimap (Jersey) Limited"}, {add2: "25 Pier Road"}, {add3: nil}, {add4: nil}, {parish: 4}, {postcode: "JE2 4XW"}, {uprn: 69305388}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "DIGIMAP (JERSEY) LIMITED,25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}]]
+  ARRAY_OF_HASHES3 = [[{object_id: 29726}, {guid: 38053}, {add1: "Field No. 45"}, {add2: "La Rue de Sorel"}, {add3: nil}, {add4: nil}, {parish_num: 5}, {p_code: nil}, {uprn: 69211091}, {usrn: 40000884}, {property_type: "Agricultural"}, {address1: "FIELD NO. 45,LA RUE DE SOREL,"}, {vingtaine: "Douet"}],
+                      [{object_id: 29727}, {guid: 10593}, {add1: "25 Pier Road"}, {add2: nil}, {add3: nil}, {add4: nil}, {parish_num: 4}, {p_code: "JE2 4XW"}, {uprn: 69003083}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}],
+                      [{object_id: 29728}, {guid: 31331}, {add1: "Digimap (Jersey) Limited"}, {add2: "25 Pier Road"}, {add3: nil}, {add4: nil}, {parish_num: 4}, {p_code: "JE2 4XW"}, {uprn: 69305388}, {usrn: 40002299}, {property_type: "Commercial"}, {address1: "DIGIMAP (JERSEY) LIMITED,25 PIER ROAD,"}, {vingtaine: "de Haut de la Ville"}]]
 
-  SCRAPER_DATA = [{x: 42035.15699999966, y: 65219.985874999315, objectid: 29727, guid_: 10593, add1: "25 Pier Road", add2: nil, add3: nil, add4: nil, parish: 4, postcode: "JE2 4XW", uprn: 69003083, usrn: 40002299, property_type: "Commercial", address1: "25 PIER ROAD,", vingtaine: "de Haut de la Ville"}]
+  SCRAPER_DATA = [{x: 42035.15699999966, y: 65219.985874999315, object_id: 29727, guid: 10593, add1: "25 Pier Road", add2: nil, add3: nil, add4: nil, parish_num: 4, p_code: "JE2 4XW", uprn: 69003083, usrn: 40002299, property_type: "Commercial", address1: "25 PIER ROAD,", vingtaine: "de Haut de la Ville"}]
 
   SCRAPER3_DATA =
 
