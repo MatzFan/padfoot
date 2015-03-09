@@ -8,6 +8,11 @@ describe Property do
       expect(Property.count).to eq(1)
     end
 
+    it 'an instance will have :type field set' do
+      prop.save
+      expect(Property.first.type).not_to be_nil
+    end
+
     it 'an instance will have :road field set' do
       prop.save
       expect(Property.first.road).not_to be_nil
@@ -33,6 +38,13 @@ describe Property do
     it 'returns the associated RoadName' do
       prop.save
       expect(Property.first.road_name.class).to eq(RoadName)
+    end
+  end
+
+  context '#property_type' do
+    it 'returns the associated PropertyType' do
+      prop.save
+      expect(Property.first.property_type.class).to eq(PropertyType)
     end
   end
 

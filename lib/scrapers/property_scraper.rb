@@ -26,7 +26,7 @@ class PropertyScraper
           'Postcode', 'UPRN', 'USRN', 'Property_Type', 'Address1', 'Vingtaine']
 
   COLUMNS = [:object_id, :guid, :add1, :add2, :add3, :add4, :parish_num,
-          :p_code, :uprn, :usrn, :property_type, :address1, :vingtaine]
+          :p_code, :uprn, :usrn, :type, :address1, :vingtaine]
 
   FIELDS = ['where', 'text', 'objectIds', 'time', 'inSR', 'relationParam',
     'outFields', 'maxAllowableOffset', 'geometryPrecision', 'outSR',
