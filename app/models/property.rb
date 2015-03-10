@@ -17,9 +17,14 @@ class Property < Sequel::Model
   end
 
   def coords(x, y)
-    gis_pt = JTM_FACTORY.point(x, y)
-    wgs_pt = RGeo::Feature.cast(gis_pt, factory: WGS84_FACTORY, project: true)
-    [wgs_pt.y.round(6), wgs_pt.x.round(6)]
+    res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(#{x}, #{y}), 3109), 4326))"]
+    JSON.parse(res.first[:st_asgeojson])['coordinates'].reverse.map { |c| c.round(6) }
   end
+
+  # def coords(x, y)
+  #   gis_pt = JTM_FACTORY.point(x, y)
+  #   wgs_pt = RGeo::Feature.cast(gis_pt, factory: WGS84_FACTORY, project: true)
+  #   [wgs_pt.y.round(6), wgs_pt.x.round(6)]
+  # end
 
 end
