@@ -14,10 +14,10 @@ credentials = Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACC
 S3 = Aws::S3::Client.new(credentials: credentials, region: ENV['AWS_REGION'])
 BUCKET = 'meetingdocs'
 
-JMTPROJ4 = '+proj=tmerc +lat_0=49.225 +lon_0=-2.135 +k=0.9999999000000001 '+
-             '+x_0=40000 +y_0=70000 +ellps=GRS80 +units=m +no_defs'
-JTM_FACTORY = RGeo::Cartesian.factory(srid: 3109, proj4: JMTPROJ4)
-WGS84_FACTORY = RGeo::Geographic.spherical_factory(srid: 4326)
+# JMTPROJ4 = '+proj=tmerc +lat_0=49.225 +lon_0=-2.135 +k=0.9999999000000001 '+
+#              '+x_0=40000 +y_0=70000 +ellps=GRS80 +units=m +no_defs'
+# JTM_FACTORY = RGeo::Cartesian.factory(srid: 3109, proj4: JMTPROJ4)
+# WGS84_FACTORY = RGeo::Geographic.spherical_factory(srid: 4326)
 
 PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
 

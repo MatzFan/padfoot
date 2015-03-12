@@ -12,7 +12,7 @@ gem 'rake', '10.4.2'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '2.6.0' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
-gem 'bcrypt-ruby', '3.1.5', require: 'bcrypt'
+gem 'bcrypt', '3.1.10', require: 'bcrypt'
 gem 'mechanize', '2.7.2' # 2.7.3 conflicts with Padrino re mime-types 1.0/2.0
 gem 'gon-sinatra', '0.1.2'
 
@@ -27,10 +27,7 @@ gem 'sequel', '4.17.0'
 gem 'sequel_pg', '1.6.11', require: 'sequel'
 gem 'aws-sdk', '2.0.24', require: 'aws-sdk'
 gem 'curb', '0.8.6'
-gem 'rgeo', '0.3.20'
 gem 'linguistics', '2.0.3'
-# gem 'mongo', '1.12.0'
-# gem 'bson_ext', '1.12.0'
 
 group :test do
   gem 'rspec', '3.1.0'
