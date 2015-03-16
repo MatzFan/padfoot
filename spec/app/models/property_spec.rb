@@ -1,8 +1,8 @@
 describe Property do
 
   let(:prop) { build(:property) }
-  let(:near_prop) { Property.create(uprn: 69127661, x: 33423.2999999998, y: 64858.1999999993) }
-  let(:far_prop) { Property.create(uprn: 69003083, x: 42035.15699999966, y: 65219.985874999315) }
+  let(:near_prop) { Property.create(uprn: 69127661, add1: 'near', x: 33423.2999999998, y: 64858.1999999993) }
+  let(:far_prop) { Property.create(uprn: 69003083, add1: 'far', x: 42035.15699999966, y: 65219.985874999315) }
 
   context '#new' do
     it 'can be created' do
@@ -25,9 +25,9 @@ describe Property do
       expect([Property.first.prop_lat, Property.first.prop_long]).to eq([49.165375, -2.032449])
     end
 
-    it 'fields prop_lat and prop_long are not set after saving, if x or y is missing' do
-      Property.new(uprn: 12345678, prop_html: 'an address').save
-      expect(Property.first.prop_lat && Property.first.prop_long).to be_nil
+    it 'raises Error if x or y is missing' do
+      prop = Property.new(uprn: 12345678, prop_html: 'an address')
+      expect(->{ prop.save }).to raise_error
     end
   end
 
@@ -61,17 +61,29 @@ describe Property do
   context '.within_x_meters_of' do
     it 'returns the properties within certain radius of a geographical point' do
       near_prop.save; far_prop.save
-      expect(Property.within_x_meters_of(2000, 49.178609, -2.224561)).to eq([near_prop])
+      expect(Property.within_x_meters_of(2000, 49.178609, -2.224561).map &:add1).to eq(['near'])
     end
 
     it 'returns no properties if radius is nil' do
       near_prop.save; far_prop.save
-      expect(Property.within_x_meters_of(0, 49.178609, -2.224561)).to eq([])
+      expect(Property.within_x_meters_of(0, 49.178609, -2.224561).count).to eq(0)
     end
 
     it 'returns all properties if radius is large' do
       near_prop.save; far_prop.save
-      expect(Property.within_x_meters_of(20000, 49.178609, -2.224561)).to eq([near_prop, far_prop])
+      expect(Property.within_x_meters_of(20000, 49.178609, -2.224561).count).to eq(2)
+    end
+  end
+
+  context '.nearest_to' do
+    it 'returns a single property object' do
+      near_prop.save; far_prop.save
+      expect(Property.nearest_to(33470.0999999996, 64844.5999999996).class).to eq(Property)
+    end
+
+    it 'returns the property nearest to a geographical point' do
+      near_prop.save; far_prop.save
+      expect(Property.nearest_to(33470.0999999996, 64844.5999999996).add1).to eq('near')
     end
   end
 
