@@ -16,6 +16,14 @@ class Property < Sequel::Model
     super
   end
 
+  def self.within_x_meters_of(x, lat, long)
+    DB["SELECT * FROM \"properties\" WHERE (ST_DWithin(ST_GeographyFromText(
+      'SRID=4326;POINT(
+      ' || properties.prop_long || ' ' || properties.prop_lat || ')'),
+      ST_GeographyFromText('SRID=4326;POINT(#{long} #{lat})'), #{x}))"
+    ].map { |h| Property.new(h) }
+  end
+
   def coords(x, y)
     res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(#{x}, #{y}), 3109), 4326))"]
     JSON.parse(res.first[:st_asgeojson])['coordinates'].reverse.map { |c| c.round(6) }
