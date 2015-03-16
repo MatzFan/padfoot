@@ -11,6 +11,8 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   }
   var map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions);
 
+  $(window).load(function() { addNavMenuButtons(); }); // add nav button when all DOM elements loaded
+
   for (var i=0,  len=locations.length; i < len; i++) {
     var lat = locations[i][0]; var lng = locations[i][1];
     var loc = new Microsoft.Maps.Location(lat, lng);
@@ -32,6 +34,21 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   }
   map.entities.push(pinLayer);
   map.entities.push(infoboxLayer);
+}
+
+function addNavMenuButtons() {
+  $('.NavBar_modeSelectorControlContainer').css('width', '220px'); // widen from 190 to fit buttons
+  $($('.NavBar_modeSelectorControlContainer')[0]).append(
+  $('<span>').addClass('NavBar_separator')).append(
+  $('<a>').attr('href', '#').addClass('NavBar_button').append(
+  $('<span>').html( 'Show/Hide menu').click(toggleMenuBar) ));
+}
+
+function toggleMenuBar() {
+  if($('body').css('padding-top') === '60px') {
+    $('body').css('padding-top', '0px');
+  } else { $('body').css('padding-top', '60px'); }
+  $('.navbar-fixed-top').toggle();
 }
 
 function createPin(location, title, description, pushpinOptions) {

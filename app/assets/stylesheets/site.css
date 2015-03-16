@@ -29,7 +29,7 @@ h1 {
 .map_container{
   position: relative;
   width: 100%;
-  padding-bottom: 62.5%; /* Ratio 16:10 ( 100%/16*10 = 62.5% ) */
+  padding-bottom: 55%; /* Ratio 16:10 ( 100%/16*10 = 62.5% ) */
 }
 
 .map_container .map_canvas{
