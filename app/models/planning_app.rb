@@ -21,6 +21,7 @@ class PlanningApp < Sequel::Model
     self.app_full_address = build_address
     self.app_address_of_applicant = build_address_of_applicant
     self.mapped = self.latitude && self.longitude
+    self.geom = set_geom(self.latitude, self.longitude) if mapped
     self.list_app_constraints = breakify(all_constraints)
     super
   end
@@ -87,6 +88,22 @@ class PlanningApp < Sequel::Model
                   :decision_date,
                   :appeal_date,
                  ]
+
+  def self.nearest_to(x, y)
+    PlanningApp.new(DB["SELECT * FROM planning_apps ORDER BY geom <-> '
+      SRID=3109;POINT(#{x} #{y})'::geometry LIMIT 1"].first)
+  end
+
+  def set_geom(lat, long)
+    x, y = coords(lat, long)
+    self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]
+  end
+
+  def coords(lat, long)
+    res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
+      #{long}, #{lat}), 4326), 3109))"].first[:st_asgeojson]
+    JSON.parse(res)['coordinates'].map { |c| c.round(6) }
+  end
 
   def self.latest_app_num_for(year)
     self.where(app_year: year).order(:order).last[:app_number]

@@ -1,6 +1,20 @@
 describe PlanningApp do
 
   let(:app) { create(:planning_app) }
+  let(:near_app) { PlanningApp.create(app_ref: 'P/2015/1234', latitude: 49.178731, longitude: -2.225203) }
+  let(:far_app) { PlanningApp.create(app_ref: 'A/2014/2345', latitude: 49.182016, longitude: -2.107085) }
+
+  context '.nearest_to' do
+    it 'returns a single PlanningApp object' do
+      near_app.save; far_app.save
+      expect(PlanningApp.nearest_to(49.178609, -2.224561).class).to eq(PlanningApp)
+    end
+
+    it 'returns the planning application nearest to a geographical point' do
+      near_app.save; far_app.save
+      expect(PlanningApp.nearest_to(49.178609, -2.224561).app_ref).to eq('P/2015/1234')
+    end
+  end
 
   context '.latest_app_num_for' do
     it 'returns the latest app number for the given year' do
@@ -23,6 +37,14 @@ describe PlanningApp do
   context '#all_constraints' do
     it 'returns a sorted array of the constraints in the app_constraints field' do
       expect(app.all_constraints).to eq(app.app_constraints.split(', ').sort)
+    end
+  end
+
+  context '#set_geom' do
+    it 'sets to geom field to a SRID 3109 x, y geometry point from lat, long' do
+      app = PlanningApp.new(app_ref: 'A/2013/1234', latitude: 49.182016, longitude: -2.107085)
+      app.valid?
+      expect(app.geom).to eq(DB["SELECT ST_SetSRID(ST_Point(42035.137027, 65219.966892),3109)::geometry"])
     end
   end
 

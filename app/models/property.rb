@@ -13,7 +13,7 @@ class Property < Sequel::Model
       Postcode.find_or_create(code: self.p_code) if self.p_code
     end
     self.prop_lat, self.prop_long = coords(self.x, self.y) if self.x && self.y
-    self.geom = DB["ST_SetSRID(ST_Point(#{self.x}, #{self.y}),3109)::geometry"]
+    self.geom = DB["SELECT ST_SetSRID(ST_Point(#{self.x}, #{self.y}),3109)::geometry"]
     super
   end
 
