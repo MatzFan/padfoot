@@ -30,4 +30,11 @@ Padfoot::App.controllers :planning_app do
     render :map
   end
 
+  get :nearest, map: 'applications/nearest', provides: :json do
+    lat, long = params[:latitude], params[:longitude]
+    app = PlanningApp.nearest_to(lat.to_f, long.to_f)
+    json = { app_ref: app.app_ref, lat: app.latitude, long: app.longitude,
+      description: app.app_description }.to_json
+  end
+
 end

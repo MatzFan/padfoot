@@ -89,17 +89,18 @@ class PlanningApp < Sequel::Model
                   :appeal_date,
                  ]
 
-  def self.nearest_to(x, y)
+  def self.nearest_to(lat, long)
+    x, y = coords(lat, long)
     PlanningApp.new(DB["SELECT * FROM planning_apps ORDER BY geom <-> '
       SRID=3109;POINT(#{x} #{y})'::geometry LIMIT 1"].first)
   end
 
   def set_geom(lat, long)
-    x, y = coords(lat, long)
+    x, y = self.class.coords(lat, long)
     self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]
   end
 
-  def coords(lat, long)
+  def self.coords(lat, long)
     res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
       #{long}, #{lat}), 4326), 3109))"].first[:st_asgeojson]
     JSON.parse(res)['coordinates'].map { |c| c.round(6) }

@@ -27,7 +27,7 @@ function GetMap(locations, colours, letters, refs, descriptions) {
     pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {visible: false });
 
     Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
-    Microsoft.Maps.Events.addHandler(map, 'rightclick', addPin);
+    Microsoft.Maps.Events.addHandler(map, 'rightclick', nearestApp);
 
     pinLayer.push(pin);
     infoboxLayer.push(pinInfobox);
@@ -68,15 +68,19 @@ function hideInfobox(e) {
   pinInfobox.setOptions({ visible: false });
 }
 
-function addPin(e) {
+function nearestApp(e) {
   if (e.targetType == "map") {
     var map  = e.target;
     var point = new Microsoft.Maps.Point(e.getX(), e.getY());
-    var loc = e.target.tryPixelToLocation(point);
-    var pin = createPin(loc, 'Here', loc.latitude + ', ' + loc.longitude, null);
-    Microsoft.Maps.Events.addHandler(pin, 'rightclick', function(mouseEvent) {
-      map.entities.remove(mouseEvent.target);
+    var loc = map.tryPixelToLocation(point);
+    $.get( "nearest.json", { latitude: loc.latitude, longitude: loc.longitude } )
+      .done(function(data) {
+        var app_loc = new Microsoft.Maps.Location(data.lat, data.long);
+        var pin = createPin(app_loc, data.app_ref, data.description, null);
+        Microsoft.Maps.Events.addHandler(pin, 'rightclick', function(mouseEvent) {
+          map.entities.remove(mouseEvent.target);
+        });
+      map.entities.push(pin);
     });
-    map.entities.push(pin);
   }
 }
