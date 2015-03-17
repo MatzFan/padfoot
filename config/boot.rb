@@ -12,7 +12,7 @@ Padrino::Logger::Config[:development][:log_level] = :devel
 
 credentials = Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])
 S3 = Aws::S3::Client.new(credentials: credentials, region: ENV['AWS_REGION'])
-BUCKET = 'meetingdocs'
+BUCKET = 'meetingdocuments'
 
 # JMTPROJ4 = '+proj=tmerc +lat_0=49.225 +lon_0=-2.135 +k=0.9999999000000001 '+
 #              '+x_0=40000 +y_0=70000 +ellps=GRS80 +units=m +no_defs'
