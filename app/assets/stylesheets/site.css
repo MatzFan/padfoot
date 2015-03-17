@@ -15,6 +15,12 @@ body {
   padding-top: 20px;
 }
 
+.copyright {
+  padding-top: 20px;
+  font-size: 12px;
+}
+
+
 h1 {
   font-family: Lato;
   font-size: 30px;
