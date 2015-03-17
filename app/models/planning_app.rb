@@ -34,7 +34,7 @@ class PlanningApp < Sequel::Model
       ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
       AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
       self.parish = parish_alias.parish.name if parish_alias && parish_alias.parish
-      self.list_app_meetings = breakify(doc_links) if doc_links
+      self.list_app_meetings = (doc_links ? breakify(doc_links) : nil)
     end
     super
   end
