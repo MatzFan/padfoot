@@ -11,6 +11,17 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   }
   var map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions);
 
+  //Register and load the Drawing Tools Module
+  Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
+  Microsoft.Maps.loadModule("DrawingToolsModule", {
+    callback: function () {
+      alert('called');
+      var drawingTools = new DrawingTools.DrawingManager(map, {
+        toolbarContainer: document.getElementById('toolbarContainer')
+      });
+    }
+  });
+
   $(window).load(function() { addNavMenuButtons(); }); // add nav button when all DOM elements loaded
 
   for (var i=0,  len=locations.length; i < len; i++) {

@@ -9,4 +9,5 @@
 //= require dataTables.colVis.js
 //= require dataTables.scroller.js
 //= require dataTables.tableTools.js
+//= require DrawingToolsModule.js
 //= require_tree .

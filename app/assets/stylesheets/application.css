@@ -10,5 +10,6 @@
  *= require dataTables.colVis.css
  *= require dataTables.scroller.css
  *= require dataTables.tableTools.css
+ *= require DrawingToolsModule.css
  *= require site
 */
