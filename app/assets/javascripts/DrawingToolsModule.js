@@ -168,9 +168,9 @@ var DrawingTools = {
             pushpinOptions: {},
             /// <field type='Object(PolygonOptions)'></field>
             shapeOptions: {
-                strokeThickness: 3,
-                strokeColor: new Microsoft.Maps.Color(150, 0, 255, 0),
-                fillColor: new Microsoft.Maps.Color(150, 0, 0, 255)
+                strokeThickness: 3, // default was 3
+                strokeColor: new Microsoft.Maps.Color(255, 255, 0, 0), // default was (150, 0, 255, 0)
+                fillColor: new Microsoft.Maps.Color(50, 0, 0, 255) // default was (150, 0, 0, 255)
             },
             /// <field type='Object(PushpinOptons)'>Options used to define what the primary drag handles should look like.</field>
             primaryDragHandleOptions: {

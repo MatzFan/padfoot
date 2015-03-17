@@ -95,6 +95,12 @@ class PlanningApp < Sequel::Model
       SRID=3109;POINT(#{x} #{y})'::geometry LIMIT 1"].first)
   end
 
+  def self.within_circle(lat, long, radius) # radius in meters
+    circle = "ST_Buffer(ST_Transform(ST_SetSRID(ST_MakePoint(#{long}, #{lat}), 4326), 3109), #{radius})::geometry"
+    ds = DB["SELECT * from planning_apps WHERE ST_Contains(#{circle}, planning_apps.geom)"].all
+    ds.map { |hash| PlanningApp.new(hash) }
+  end
+
   def set_geom(lat, long)
     x, y = self.class.coords(lat, long)
     self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]

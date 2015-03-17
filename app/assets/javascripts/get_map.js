@@ -16,7 +16,17 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   Microsoft.Maps.loadModule("DrawingToolsModule", {
     callback: function () {
       var drawingTools = new DrawingTools.DrawingManager(map, {
-        toolbarContainer: document.getElementById('toolbarContainer')
+        toolbarContainer: document.getElementById('toolbarContainer'),
+        toolbarOptions: {
+          drawingModes: ['circle', 'erase'],
+          // drawingModes: ['polygon', 'circle', 'rectangle', 'erase'],
+          styleTools: []
+        },
+        events: {
+          drawingEnded: function(s) {
+            containedApps(s);
+          }
+        }
       });
     }
   });
@@ -44,6 +54,12 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   }
   map.entities.push(pinLayer);
   map.entities.push(infoboxLayer);
+}
+
+function containedApps(shape) {
+  var center = shape.ShapeInfo.center;
+  var radius = shape.ShapeInfo.radius * 1000; // meters
+  alert(center.latitude + ', ' + center.longitude + ', ' + radius);
 }
 
 function addNavMenuButtons() {

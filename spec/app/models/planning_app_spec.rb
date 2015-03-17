@@ -16,6 +16,28 @@ describe PlanningApp do
     end
   end
 
+  context '.within_circle' do
+    it 'returns an array of app objects' do
+      near_app.save; far_app.save
+      expect(PlanningApp.within_circle(49.178609, -2.224561, 20000).map &:class).to eq([PlanningApp, PlanningApp])
+    end
+
+    it 'returns the applications within the circle' do
+      near_app.save; far_app.save
+      expect(PlanningApp.within_circle(49.178609, -2.224561, 20000).map &:app_ref).to eq(['P/2015/1234', 'A/2014/2345'])
+    end
+
+    it "doesn't return applications outside the circle" do
+      near_app.save; far_app.save
+      expect(PlanningApp.within_circle(49.178609, -2.224561, 2000).map &:app_ref).to eq(['P/2015/1234'])
+    end
+
+    it 'returns an empty array if no applications are in the circle' do
+      near_app.save; far_app.save
+      expect(PlanningApp.within_circle(49.178609, -2.224561, 2).map &:app_ref).to eq([])
+    end
+  end
+
   context '.latest_app_num_for' do
     it 'returns the latest app number for the given year' do
       create(:planning_app)

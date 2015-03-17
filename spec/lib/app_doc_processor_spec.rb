@@ -1,6 +1,6 @@
 describe AppDocProcessor do
 
-  S3_URL = 'https://s3.amazonaws.com/meetingdocs/150128_PAP_M'
+  S3_URL = 'https://meetingdocuments.s3.amazonaws.com/150128_PAP_M' # care if renaming bucket
   PAGE_REFS = [[1, ["P/2014/1777"]], [2, ["P/2014/1061", "RC/2014/1504"]],
                [3, ["P/2009/2253", "P/2014/1165"]], [4, ["P/2014/1587"]], [6, ["PP/2014/1794",
                 "P/2009/1871"]], [7, ["RM/2014/1173"]], [9, ["P/2014/1246"]],
@@ -16,9 +16,13 @@ describe AppDocProcessor do
   let(:doc) { create(:document) }
 
   def sample_doc_text
-    open('temp_pdf', 'wb') { |file| file << open(S3_URL).read }
-    text = `pdftotext -enc UTF-8 temp_pdf -`
-    File.delete('temp_pdf')
+    begin
+      open('temp_pdf', 'wb') { |file| file << open(S3_URL).read }
+      text = `pdftotext -enc UTF-8 temp_pdf -`
+    rescue
+    ensure
+      File.delete('temp_pdf')
+    end
     text
   end
 
