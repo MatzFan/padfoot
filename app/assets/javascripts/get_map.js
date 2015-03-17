@@ -15,7 +15,6 @@ function GetMap(locations, colours, letters, refs, descriptions) {
   Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
   Microsoft.Maps.loadModule("DrawingToolsModule", {
     callback: function () {
-      alert('called');
       var drawingTools = new DrawingTools.DrawingManager(map, {
         toolbarContainer: document.getElementById('toolbarContainer')
       });
