@@ -1,7 +1,8 @@
 function GetMap(locations, colours, letters, refs, descriptions) {
 
-  var pinLayer = new Microsoft.Maps.EntityCollection();
-  var infoboxLayer = new Microsoft.Maps.EntityCollection();
+  pinInfoBox = null;
+  pinLayer = new Microsoft.Maps.EntityCollection(); // global
+  infoboxLayer = new Microsoft.Maps.EntityCollection(); // global
 
   var mapOptions = {
     credentials:'AutjcX00ethCZF2CQURexruteEwuFxvWJ6BVywEvyDv5BIaOO3vfhrH59O_rnLFd',
@@ -10,8 +11,40 @@ function GetMap(locations, colours, letters, refs, descriptions) {
     mapTypeId: Microsoft.Maps.MapTypeId.aerial
   }
   map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions); // make map global
+  map.getMode().setOptions({ drawShapesInSingleLayer: true }); // THANK F*CK FOR SO : http://stackoverflow.com/questions/21737320/bing-maps-7-polygon-events-not-firing-when-pushed-to-entitycollection
 
-  //Register and load the Drawing Tools Module
+  addDrawingTools();
+
+  $(window).load(function() { addNavMenuButtons(); }); // add custom nav buttons when all DOM elements loaded
+
+  for (var i=0,  len=locations.length; i < len; i++) {
+    var lat = locations[i][0]; var lng = locations[i][1];
+    var loc = new Microsoft.Maps.Location(lat, lng);
+    var pushpinOptions = {
+      icon: "../assets/pin_" +colours[i]+ ".png",
+      text: letters[i],
+      // textOffset: new Microsoft.Maps.Point(3, 3)
+    }
+    title = refs[i];
+    description = descriptions[i];
+    // pin = createPin(loc, title, description, pushpinOptions);
+
+    var pin = new Microsoft.Maps.Pushpin(loc, pushpinOptions);
+    pin.Title = title;
+    pin.Description = description;
+    Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
+    pinLayer.push(pin);
+
+    pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {visible: false });
+    Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
+
+    infoboxLayer.push(pinInfobox);
+  }
+  map.entities.push(pinLayer);
+  map.entities.push(infoboxLayer);
+}
+
+function addDrawingTools() {
   Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
   Microsoft.Maps.loadModule("DrawingToolsModule", {
     callback: function () {
@@ -21,33 +54,18 @@ function GetMap(locations, colours, letters, refs, descriptions) {
           drawingModes: ['circle', 'erase'],
           // drawingModes: ['polygon', 'circle', 'rectangle', 'erase'],
           styleTools: []
-        }, events: { drawingEnded: function(s) { containedApps(s); } }
+        }, events: {
+          drawingEnded: function(s) {
+            containedApps(s);
+            drawingTools.setDrawingMode(null); // exit mode when drawing finished
+          },
+          drawingErased: function (s) {
+            drawingTools.setDrawingMode(null); // exit mode when drawing finished
+          }
+        }
       });
     }
   });
-
-  $(window).load(function() { addNavMenuButtons(); }); // add nav button when all DOM elements loaded
-
-  for (var i=0,  len=locations.length; i < len; i++) {
-    var lat = locations[i][0]; var lng = locations[i][1];
-    var loc = new Microsoft.Maps.Location(lat, lng);
-    var pushpinOptions = {
-      icon: "../assets/marker_" +colours[i]+ ".png",
-      text: letters[i],
-      textOffset: new Microsoft.Maps.Point(3, 3)
-    }
-    title = refs[i];
-    description = descriptions[i];
-    pin = createPin(loc, title, description, pushpinOptions);
-    pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {visible: false });
-
-    Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
-
-    pinLayer.push(pin);
-    infoboxLayer.push(pinInfobox);
-  }
-  map.entities.push(pinLayer);
-  map.entities.push(infoboxLayer);
 }
 
 function containedApps(shape) {
@@ -55,9 +73,7 @@ function containedApps(shape) {
   var radius = shape.ShapeInfo.radius * 1000; // meters
   $.getJSON( "within.json", {lat: center.latitude, long: center.longitude, radius: radius})
     .done(function(data) {
-      $.each(data, function(i, data) {
-        plotPin(data)
-      });
+      $.each(data, function(i, data) { plotPin(data); });
     });
 }
 
@@ -77,16 +93,16 @@ function toggleMenuBar() {
 }
 
 function plotPin(data) {
-  var app_loc = new Microsoft.Maps.Location(data.lat, data.long);
-  var pin = createPin(app_loc, data.ref, data.desc, null);
-  Microsoft.Maps.Events.addHandler(pin, 'dblclick', function(mouseEvent) {
-    map.entities.remove(mouseEvent.target);
-  });
-  map.entities.push(pin);
+  var location = new Microsoft.Maps.Location(data.lat, data.long);
+  var pin = createPin(location, data.ref, data.desc, null);
+  pinLayer.push(pin);
 }
 
 function createPin(location, title, description, pushpinOptions) {
+  pushpinOptions = $.extend({}, pushpinOptions, {text: 'A'});
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
+  pin.Background = Microsoft.Maps.Color(100,255,0,0);
+  pin.FontSize = 20.0;
   pin.Title = title;
   pin.Description = description;
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);

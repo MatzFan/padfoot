@@ -202,7 +202,7 @@ var DrawingTools = {
                 drawingModeChanged: null,
                 /// <field type='Function'>An event handler that is fired when the drawing of a shape is started.</field>
                 drawingStarted: null,
-                /// <field type='Function'>An event handler that is fired when the initial drawing of a shape is started.</field>
+                /// <field type='Function'>An event handler that is fired when the initial drawing of a shape is finished.</field>
                 drawingEnded: null
             }
         };
@@ -210,7 +210,7 @@ var DrawingTools = {
         var drawingModeToolTips = {
             pushpin: 'Add a pushpin',
             polyline: 'Draw a line or path on the map',
-            polygon: 'Draw an area on the map',
+            polygon: 'Draw an area on the map, press "Escape" to end',
             circle: 'Draw a circle on the map',
             rectangle: 'Draw a rectangle on the map',
             erase: 'Erase shapes',
