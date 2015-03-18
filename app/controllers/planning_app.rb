@@ -30,11 +30,12 @@ Padfoot::App.controllers :planning_app do
     render :map
   end
 
-  get :nearest, map: 'applications/nearest', provides: :json do
-    lat, long = params[:latitude], params[:longitude]
-    app = PlanningApp.nearest_to(lat.to_f, long.to_f)
-    json = { app_ref: app.app_ref, lat: app.latitude, long: app.longitude,
-      description: app.app_description }.to_json
+  get :within, map: 'applications/within', provides: :json do
+    lat, long, radius = params[:lat], params[:long], params[:radius]
+    apps = PlanningApp.within_circle(lat.to_f, long.to_f, radius.to_f)
+    cols = [{ref: :app_ref}, {desc: :app_description}, {lat: :latitude}, {long: :longitude}]
+    arr = apps.map { |app| cols.map(&:values).flatten.map { |col| app.send(col) } }
+    arr.map { |arr| cols.map(&:keys).flatten.zip(arr).to_h }.to_json
   end
 
 end

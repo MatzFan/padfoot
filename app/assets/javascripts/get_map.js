@@ -9,7 +9,7 @@ function GetMap(locations, colours, letters, refs, descriptions) {
     zoom: 13,
     mapTypeId: Microsoft.Maps.MapTypeId.aerial
   }
-  var map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions);
+  map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions); // make map global
 
   //Register and load the Drawing Tools Module
   Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
@@ -21,12 +21,7 @@ function GetMap(locations, colours, letters, refs, descriptions) {
           drawingModes: ['circle', 'erase'],
           // drawingModes: ['polygon', 'circle', 'rectangle', 'erase'],
           styleTools: []
-        },
-        events: {
-          drawingEnded: function(s) {
-            containedApps(s);
-          }
-        }
+        }, events: { drawingEnded: function(s) { containedApps(s); } }
       });
     }
   });
@@ -47,7 +42,6 @@ function GetMap(locations, colours, letters, refs, descriptions) {
     pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {visible: false });
 
     Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
-    Microsoft.Maps.Events.addHandler(map, 'rightclick', nearestApp);
 
     pinLayer.push(pin);
     infoboxLayer.push(pinInfobox);
@@ -59,7 +53,12 @@ function GetMap(locations, colours, letters, refs, descriptions) {
 function containedApps(shape) {
   var center = shape.ShapeInfo.center;
   var radius = shape.ShapeInfo.radius * 1000; // meters
-  alert(center.latitude + ', ' + center.longitude + ', ' + radius);
+  $.getJSON( "within.json", {lat: center.latitude, long: center.longitude, radius: radius})
+    .done(function(data) {
+      $.each(data, function(i, data) {
+        plotPin(data)
+      });
+    });
 }
 
 function addNavMenuButtons() {
@@ -77,6 +76,15 @@ function toggleMenuBar() {
   $('.navbar-fixed-top').toggle();
 }
 
+function plotPin(data) {
+  var app_loc = new Microsoft.Maps.Location(data.lat, data.long);
+  var pin = createPin(app_loc, data.ref, data.desc, null);
+  Microsoft.Maps.Events.addHandler(pin, 'dblclick', function(mouseEvent) {
+    map.entities.remove(mouseEvent.target);
+  });
+  map.entities.push(pin);
+}
+
 function createPin(location, title, description, pushpinOptions) {
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
   pin.Title = title;
@@ -92,21 +100,4 @@ function displayInfobox(e) {
 
 function hideInfobox(e) {
   pinInfobox.setOptions({ visible: false });
-}
-
-function nearestApp(e) {
-  if (e.targetType == "map") {
-    var map  = e.target;
-    var point = new Microsoft.Maps.Point(e.getX(), e.getY());
-    var loc = map.tryPixelToLocation(point);
-    $.get( "nearest.json", { latitude: loc.latitude, longitude: loc.longitude } )
-      .done(function(data) {
-        var app_loc = new Microsoft.Maps.Location(data.lat, data.long);
-        var pin = createPin(app_loc, data.app_ref, data.description, null);
-        Microsoft.Maps.Events.addHandler(pin, 'rightclick', function(mouseEvent) {
-          map.entities.remove(mouseEvent.target);
-        });
-      map.entities.push(pin);
-    });
-  }
 }
