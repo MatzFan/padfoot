@@ -30,13 +30,13 @@ function addDrawingTools() {
       var drawingTools = new DrawingTools.DrawingManager(map, {
         toolbarContainer: document.getElementById('toolbarContainer'),
         toolbarOptions: {
-          drawingModes: ['circle', 'erase'],
-          // drawingModes: ['polygon', 'circle', 'rectangle', 'erase'],
-          styleTools: []
-        }, events: {
+          drawingModes: ['circle', 'polygon', 'rectangle', 'erase'], styleTools: [] },
+          events: {
           drawingEnded: function(s) {
             containedApps(s);
-            drawingTools.setDrawingMode(null); // exit mode when drawing finished
+            if(s.ShapeInfo.type == 'circle' || s.ShapeInfo.type == 'rectangle') {
+              drawingTools.setDrawingMode(null); // NOT FOR POLY - creates infinite loop!!!!!!!!
+            }
           },
           drawingErased: function (s) {
             drawingTools.setDrawingMode(null); // exit mode when drawing finished
@@ -48,12 +48,25 @@ function addDrawingTools() {
 }
 
 function containedApps(shape) {
-  var center = shape.ShapeInfo.center;
-  var radius = shape.ShapeInfo.radius * 1000; // meters
-  $.getJSON( "within.json", {lat: center.latitude, long: center.longitude, radius: radius})
-    .done(function(data) {
-      $.each(data, function(i, data) { plotPin(data); });
-    });
+  var locs;
+  if(shape.ShapeInfo.type === 'circle') {
+    var center = shape.ShapeInfo.center;
+    var radius = shape.ShapeInfo.radius * 1000; // meters
+    $.getJSON( "within_circle.json", {lat: center.latitude, long: center.longitude, radius: radius})
+      .done(function(data) {
+        $.each(data, function(i, data) { plotPin(data); });
+      });
+  } else {
+    var longs = [];
+    var lats = [];
+    var locs = shape.getLocations();
+    $.each(locs, function(i, values) { lats.push(values.latitude) });
+    $.each(locs, function(i, values) { longs.push(values.longitude) });
+    $.getJSON( "within_polygon.json", {lats: lats, longs: longs})
+      .done(function(data) {
+        $.each(data, function(i, data) { plotPin(data); });
+      });
+  }
 }
 
 function addNavMenuButtons() {

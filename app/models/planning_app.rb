@@ -101,6 +101,17 @@ class PlanningApp < Sequel::Model
     ds.map { |hash| PlanningApp.new(hash) }
   end
 
+  def self.within_polygon(lats, longs)
+    polygon = "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(lats, longs)})), 3109)::geometry"
+    ds = DB["SELECT * from planning_apps WHERE ST_Contains(#{polygon}, planning_apps.geom)"].all
+    ds.map { |hash| PlanningApp.new(hash) }
+  end
+
+  def self.line_string(lats, longs)
+    cartesians = lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
+    "'LINESTRING(#{cartesians.map { |coords| coords.join(' ') }.join(', ')})'"
+  end
+
   def set_geom(lat, long)
     x, y = self.class.coords(lat, long)
     self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]

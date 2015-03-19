@@ -24,10 +24,16 @@ Padfoot::App.controllers :planning_app do
     render :map
   end
 
-  get :within, map: 'applications/within', provides: :json do
+  get :within_circle, map: 'applications/within_circle', provides: :json do
     lat, long, radius = params[:lat], params[:long], params[:radius]
     apps = PlanningApp.within_circle(lat.to_f, long.to_f, radius.to_f)
-    pin_data_hash(apps).to_json
+    pin_data_hash(apps).to_json # helper method
+  end
+
+  get :within_polygon, map: 'applications/within_polygon', provides: :json do
+    lats, longs = params[:lats], params[:longs]
+    apps = PlanningApp.within_polygon(lats, longs)
+    pin_data_hash(apps).to_json # helper method
   end
 
 end

@@ -140,7 +140,7 @@ var DrawingTools = {
             editEventIds = [],
             toolbar,
             mapContainer = map.getRootElement(),
-            numCirlceNodes = 36,
+            numCirlceNodes = 360, // default was 36
             ignoreOnce = false,
             numberRx = new RegExp('^[0-9]+$'),
             hexRx = new RegExp('^#?[A-Fa-f0-9]{6}$');
