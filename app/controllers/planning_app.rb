@@ -19,23 +19,15 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
-    apps = PlanningApp.where(:mapped, app_ref: @all_refs)
-    statuses = Status.to_hash(:name, :colour)
-    categories = Category.to_hash(:code, :letter)
-    gon.colours = apps.select_map(:app_status).map { |s| statuses[s] }
-    gon.letters = apps.select_map(:app_category).map { |c| categories[c] }
-    gon.locations = apps.select_map([:latitude, :longitude])
-    gon.refs = apps.select_map(:app_ref)
-    gon.descrips = apps.select_map(:app_description).map { |t| trunc(t, 20) }
+    apps = PlanningApp.where(:mapped, app_ref: @all_refs).all
+    gon.data = pin_data_hash(apps)
     render :map
   end
 
   get :within, map: 'applications/within', provides: :json do
     lat, long, radius = params[:lat], params[:long], params[:radius]
     apps = PlanningApp.within_circle(lat.to_f, long.to_f, radius.to_f)
-    cols = [{ref: :app_ref}, {desc: :app_description}, {lat: :latitude}, {long: :longitude}]
-    arr = apps.map { |app| cols.map(&:values).flatten.map { |col| app.send(col) } }
-    arr.map { |arr| cols.map(&:keys).flatten.zip(arr).to_h }.to_json
+    pin_data_hash(apps).to_json
   end
 
 end

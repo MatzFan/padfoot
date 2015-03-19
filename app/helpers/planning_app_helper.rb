@@ -1,5 +1,16 @@
 module PlanningAppHelper
 
+  MAP_COLS = [{ref: 'app_ref'}, {colour: 'status.colour'},
+              {letter: 'category.letter'}, {desc: 'app_description'},
+              {lat: 'latitude'}, {long: 'longitude'}]
+
+  def pin_data_hash(apps)
+    arr = apps.map do |a|
+      MAP_COLS.map(&:values).flatten.map { |s| s.split('.').inject(a, :send) }
+    end
+    arr.map { |arr| MAP_COLS.map(&:keys).flatten.zip(arr).to_h }
+  end
+
   def all_apps_ordered # all in descending :order
     PlanningApp.order(:order).reverse
   end
