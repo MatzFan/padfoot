@@ -1,8 +1,8 @@
-require_relative 's3_helper'
+require_relative 's3_storable'
 require 'open-uri'
 
 class AppDocProcessor
-  include S3Helper
+  include S3storable
 
   attr_reader :scraper, :new_data, :new_doc_link_data, :link_count
 

@@ -1,6 +1,6 @@
-describe S3Helper do
+describe S3storable do
 
-  includer = class Includer; include S3Helper; end
+  includer = class Includer; include S3storable; end
   uri = 'http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20%20PAP%2020140724.pdf'
   let(:helper) { Includer.new }
   let(:example_key) { '140724_PAP_M'}

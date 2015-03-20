@@ -1,4 +1,4 @@
-module S3Helper
+module S3storable
 
   def s3_file_keys
     S3.list_objects(bucket: BUCKET).map { |r| r.contents.map(&:key) }.flatten #flatten for single file case
