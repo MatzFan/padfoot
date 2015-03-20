@@ -1,5 +1,8 @@
 class PlanningApp < Sequel::Model
 
+  extend Mappable
+  extend Plottable
+
   unrestrict_primary_key
   many_to_one :category, key: :app_category
   many_to_one :officer, key: :app_officer
@@ -42,6 +45,9 @@ class PlanningApp < Sequel::Model
   def after_save
     add_constraints
   end
+
+  PUSHIN_COLUMNS = [{ref: :app_ref}, {colour: :app_status}, {letter: :app_category},
+              {desc: :app_description}, {lat: :latitude}, {long: :longitude}]
 
   DETAILS_TABLE_TITLES = ['Reference',
                           'Category',
@@ -89,38 +95,17 @@ class PlanningApp < Sequel::Model
                   :appeal_date,
                  ]
 
-  def self.nearest_to(lat, long)
-    x, y = coords(lat, long)
-    PlanningApp.new(DB["SELECT * FROM planning_apps ORDER BY geom <-> '
-      SRID=3109;POINT(#{x} #{y})'::geometry LIMIT 1"].first)
+  def self.pushpin_colours_hash
+    Status.select_hash(:name, :colour)
   end
 
-  def self.within_circle(lat, long, radius) # radius in meters
-    circle = "ST_Buffer(ST_Transform(ST_SetSRID(ST_MakePoint(#{long}, #{lat}), 4326), 3109), #{radius})::geometry"
-    ds = DB["SELECT * from planning_apps WHERE ST_Contains(#{circle}, planning_apps.geom)"].all
-    ds.map { |hash| PlanningApp.new(hash) }
-  end
-
-  def self.within_polygon(lats, longs)
-    polygon = "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(lats, longs)})), 3109)::geometry"
-    ds = DB["SELECT * from planning_apps WHERE ST_Contains(#{polygon}, planning_apps.geom)"].all
-    ds.map { |hash| PlanningApp.new(hash) }
-  end
-
-  def self.line_string(lats, longs)
-    cartesians = lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
-    "'LINESTRING(#{cartesians.map { |coords| coords.join(' ') }.join(', ')})'"
+  def self.pushpin_letters_hash
+    Category.select_hash(:code, :letter)
   end
 
   def set_geom(lat, long)
     x, y = self.class.coords(lat, long)
     self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]
-  end
-
-  def self.coords(lat, long)
-    res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
-      #{long}, #{lat}), 4326), 3109))"].first[:st_asgeojson]
-    JSON.parse(res)['coordinates'].map { |c| c.round(6) }
   end
 
   def self.latest_app_num_for(year)

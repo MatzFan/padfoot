@@ -1,17 +1,10 @@
 describe PlanningApp do
 
+  extend Mappable
+
   let(:app) { create(:planning_app) }
   let(:near_app) { PlanningApp.create(app_ref: 'P/2015/1234', latitude: 49.178731, longitude: -2.225203) }
   let(:far_app) { PlanningApp.create(app_ref: 'A/2014/2345', latitude: 49.182016, longitude: -2.107085) }
-  let(:line_string) { "'LINESTRING(38818.777146 71930.481571, 38431.026905 71020.6382, 39718.715094 71120.14873, 38818.777146 71930.481571)'"}
-
-  context '.line_string' do
-    it 'returns text represenation of a PostGIS linestring' do
-      lats = [49.2423570821659, 49.23417522262926, 49.23507193090019, 49.2423570821659]
-      longs = [-2.1512220001220683, -2.156543502807615, -2.1388623809814433, -2.1512220001220683]
-      expect(PlanningApp.line_string(lats, longs)).to eq(line_string)
-    end
-  end
 
   context '.nearest_to' do
     it 'returns a single PlanningApp object' do
