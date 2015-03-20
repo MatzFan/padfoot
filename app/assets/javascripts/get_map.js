@@ -86,10 +86,10 @@ function toggleMenuBar() {
 
 function plotPin(data) {
   var pushpinOptions = {icon: "../assets/pin_" +data.colour+ ".png", text: data.letter}
-  var location = new Microsoft.Maps.Location(data.lat, data.long);
+  var location = new Microsoft.Maps.Location(data.latitude, data.longitude);
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
-  pin.Title = data.ref;
-  pin.Description = data.desc;
+  pin.Title = data.title;
+  pin.Description = data.description;
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
   // pinLayer.push(pin);
   map.entities.push(pin);

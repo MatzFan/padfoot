@@ -9,8 +9,7 @@ class Property < Sequel::Model
   many_to_one :road_name, key: :road
   many_to_one :property_type, key: :type
 
-  PUSHIN_COLUMNS = [{ref: :uprn}, {colour: :road}, {letter: :road},
-              {desc: :address1}, {lat: :prop_lat}, {long: :prop_long}]
+  PUSHIN_COLUMNS = [:uprn, :road, :road, :address1, :prop_lat, :prop_long]
 
   def before_save
     DB.transaction do
