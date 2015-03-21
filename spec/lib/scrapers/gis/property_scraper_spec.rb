@@ -131,4 +131,10 @@ describe PropertyScraper do
     end
   end
 
+  context '#rings' do
+    it 'returns nil, as properties are points, not polygons' do
+      expect(scraper.rings).to be_nil
+    end
+  end
+
 end
