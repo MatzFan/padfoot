@@ -16,8 +16,6 @@ describe PropertyScraper do
 
   SCRAPER_DATA = [{x: 42035.15699999966, y: 65219.985874999315, object_id: 29727, guid: 10593, add1: "25 Pier Road", add2: nil, add3: nil, add4: nil, parish_num: 4, p_code: "JE2 4XW", uprn: 69003083, usrn: 40002299, type: "Commercial", address1: "25 PIER ROAD,", vingtaine: "de Haut de la Ville"}]
 
-  SCRAPER3_DATA =
-
   let(:scraper) { PropertyScraper.new(29727, 29727) }
   let(:scraper3) { PropertyScraper.new(29726, 29728) } # range of 3 ids
 
@@ -47,9 +45,9 @@ describe PropertyScraper do
     end
   end
 
-  context '#num_props' do
+  context '#num_records' do
     it 'returns the total number of properties' do
-      expect(scraper.num_props).to eq(67537)
+      expect(scraper.num_records).to eq(67537)
     end
   end
 
