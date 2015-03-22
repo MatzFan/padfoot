@@ -19,8 +19,8 @@ describe ParishScraper do
   end
 
   context '#data' do
-    it 'returns a 3D array of polygon ring coords' do
-      expect(scraper.data).to eq([{object_id: 1, name: "St Clement"}])
+    it 'returns an array of hashes with object_id and parish as keys (parish num is value)' do
+      expect(scraper.data).to eq([{object_id: 1, parish: 3}])
     end
   end
 

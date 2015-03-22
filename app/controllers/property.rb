@@ -15,8 +15,8 @@ Padfoot::App.controllers :property do
 
   get :within_polygon, map: 'properties/within_polygon', provides: :json do
     lats, longs = params[:lats], params[:longs]
-    props = Property.within_polygon(lats, longs)
-    Property.pin_data_hash(props).to_json # helper method
+    props = Property.within_polygon(Property.transform(lats, longs))
+    Property.pin_data_hash(props).to_json
   end
 
 end

@@ -23,6 +23,17 @@ function GetMap(pinData) {
   // map.entities.push(infoboxLayer);
 }
 
+// function addParishes() {
+//   var coords = [[49.1847,-2.2229],[49.1866, -2.2269],[49.1845,-2.2282],[49.1847,-2.2229]];
+//   var locs = [];
+//   $.each(coords, function(i, arr) {
+//     console.log(arr);
+//     locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
+//   });
+//   var parish = new Microsoft.Maps.Polygon(locs);
+//   map.entities.push(parish);
+// }
+
 function addDrawingTools() {
   Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
   Microsoft.Maps.loadModule("DrawingToolsModule", {

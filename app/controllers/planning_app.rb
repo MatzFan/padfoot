@@ -32,7 +32,7 @@ Padfoot::App.controllers :planning_app do
 
   get :within_polygon, map: 'applications/within_polygon', provides: :json do
     lats, longs = params[:lats], params[:longs]
-    apps = PlanningApp.within_polygon(lats, longs)
+    apps = PlanningApp.within_polygon(PlanningApp.transform(lats, longs))
     PlanningApp.pin_data_hash(apps).to_json
   end
 

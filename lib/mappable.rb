@@ -12,9 +12,12 @@ module Mappable
     JSON.parse(res)['coordinates'].reverse.map { |c| c.round(6) }
   end
 
-  def line_string(lats, longs)
-    cartesians = lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
-    "'LINESTRING(#{cartesians.map { |coords| coords.join(' ') }.join(', ')})'"
+  def line_string(xys)
+    "'LINESTRING(#{xys.map { |coords| coords.join(' ') }.join(', ')})'"
+  end
+
+  def transform(lats, longs)
+    lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
   end
 
   def within_circle(lat, long, radius) # radius in meters
@@ -23,10 +26,14 @@ module Mappable
     ds.map { |hash| self.new(hash) }
   end
 
-  def within_polygon(lats, longs)
-    polygon = "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(lats, longs)})), 3109)::geometry"
-    ds = DB["SELECT * from #{self.table_name} WHERE ST_Contains(#{polygon}, #{self.table_name}.geom)"].all
+  def within_polygon(xys)
+    poly = polygon(xys)
+    ds = DB["SELECT * from #{self.table_name} WHERE ST_Contains(#{poly}, #{self.table_name}.geom)"].all
     ds.map { |hash| self.new(hash) }
+  end
+
+  def polygon(xys)
+    "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(xys)})), 3109)::geometry"
   end
 
   def nearest_to(x, y)

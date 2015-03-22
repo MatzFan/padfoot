@@ -1,5 +1,7 @@
 class Parish < Sequel::Model
 
+  extend Mappable
+
   unrestrict_primary_key
   one_to_many :parish_aliases, key: :number
   one_to_many :addresses
