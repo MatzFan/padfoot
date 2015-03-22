@@ -7,6 +7,11 @@ class Parish < Sequel::Model
   one_to_many :addresses
   one_to_many :properties
 
+  def contains?(object)
+
+    DB["SELECT ST_Contains(ST_GeomFromText(ST_AsText('#{self.geom}')), ST_GeomFromText(ST_AsText('#{object.geom}')))"].first
+  end
+
   NAMES = [
     'Grouville',
     'St. Brelade',
