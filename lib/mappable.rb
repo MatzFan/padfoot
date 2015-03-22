@@ -6,6 +6,12 @@ module Mappable
     JSON.parse(res)['coordinates'].map { |c| c.round(6) }
   end
 
+  def cartesian(x, y)
+    res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
+      #{x}, #{y}), 3109), 4326))"].first[:st_asgeojson]
+    JSON.parse(res)['coordinates'].reverse.map { |c| c.round(6) } # note reverse
+  end
+
   def lat_long(x, y)
     res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
       #{x}, #{y}), 3109), 4326))"].first[:st_asgeojson]
@@ -18,6 +24,10 @@ module Mappable
 
   def transform(lats, longs)
     lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
+  end
+
+  def transform_xy(xs, ys)
+    xs.zip(ys).map { |arr| self.cartesian(arr[0], arr[1]) }
   end
 
   def within_circle(lat, long, radius) # radius in meters
