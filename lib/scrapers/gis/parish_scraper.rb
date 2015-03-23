@@ -6,6 +6,8 @@ class ParishScraper < GisScraper
 
   COLUMNS = [:object_id, :parish]
 
+  OBJ_IDS = [[3],[8],[1],[9,15],[17],[11],[4],[12],[6],[10,14],[2,13],[5,7,16]] # maps parish indices to GIS objectids
+
   def initialize(lower_id = 0, upper_id = 0)
     super
   end
