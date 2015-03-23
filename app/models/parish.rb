@@ -22,6 +22,10 @@ class Parish < Sequel::Model
     'Trinity'
   ]
 
+  def to_geog
+    DB["SELECT ST_AsText(ST_Transform(ST_GeomFromText(ST_AsText('#{self.geom}'),3109),4326))"].first[:st_astext]
+  end
+
   def contains?(object)
     DB["SELECT ST_Contains(ST_GeomFromText(ST_AsText('#{self.geom}')), ST_GeomFromText(ST_AsText('#{object.geom}')))"].first[:st_contains]
   end

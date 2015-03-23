@@ -20,11 +20,10 @@ Padfoot::App.controllers :property do
   end
 
   get :parishes, map: 'properties/parishes', provides: :json do
-    xys = DB["SELECT ST_AsText('#{Parish[5].geom}')"].first[:st_astext]
-    # .split('((').last.split('))').first.split(',').map { |s| s.split(' ')}
-    # xs, ys = xys.map(&:first), xys.map(&:last)
-    # Property.transform_xy(xs, ys).to_json
-    xys.to_json
+    Parish.exclude(geom: nil).all.map do |parish|
+      ring_strings = parish.to_geog.split(')))').first.split('MULTIPOLYGON(((').last.split('),(')
+      ring_strings.map { |ring| ring.split(',').map { |coords| coords.split(' ').reverse } }
+    end.to_json
   end
 
 end

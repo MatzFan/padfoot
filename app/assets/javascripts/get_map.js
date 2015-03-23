@@ -31,15 +31,23 @@ function GetMap(pinData) {
 
 function addParishes() {
   $.getJSON("parishes.json")
-    .done(function(data) {
-      var locs = [];
-      $.each(data, function(i, arr) {
-        locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
+    .done(function(parishes) {
+      $.each(parishes, function(i, rings) {
+        $.each(rings, function(i, ringCoords) {
+          plotPoly(ringCoords);
+        });
       });
-      var polygoncolor = new Microsoft.Maps.Color(0, 0, 0, 255);
-      var parish = new Microsoft.Maps.Polygon(locs, {fillColor: polygoncolor});
-      map.entities.push(parish);
     });
+}
+
+function plotPoly(coordsArray) {
+  var locs = [];
+  $.each(coordsArray, function(i, arr) {
+    locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
+  });
+  var polygoncolor = new Microsoft.Maps.Color(0, 0, 0, 255);
+  var poly = new Microsoft.Maps.Polygon(locs, {fillColor: polygoncolor});
+  map.entities.push(poly);
 }
 
 function addDrawingTools() {

@@ -32,5 +32,4 @@ describe Mappable do
       expect(extender.multipolygon(xys_arr).class).to eq(Sequel::Postgres::Dataset)
     end
   end
-
 end

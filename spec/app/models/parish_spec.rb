@@ -20,4 +20,10 @@ describe Parish do
     end
   end
 
+  context '.to_geog' do
+    it 'returns a shape transformed to SRID 4326' do
+      expect(parish.to_geog[0..11]).to eq('MULTIPOLYGON')
+    end
+  end
+
 end
