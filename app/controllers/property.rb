@@ -20,9 +20,11 @@ Padfoot::App.controllers :property do
   end
 
   get :parishes, map: 'properties/parishes', provides: :json do
-    xys = DB["SELECT ST_AsText('#{Parish[3].geom}')"].first[:st_astext].split('((').last.split('))').first.split(',').map { |s| s.split(' ')}
-    xs, ys = xys.map(&:first), xys.map(&:last)
-    Property.transform_xy(xs, ys).to_json
+    xys = DB["SELECT ST_AsText('#{Parish[5].geom}')"].first[:st_astext]
+    # .split('((').last.split('))').first.split(',').map { |s| s.split(' ')}
+    # xs, ys = xys.map(&:first), xys.map(&:last)
+    # Property.transform_xy(xs, ys).to_json
+    xys.to_json
   end
 
 end

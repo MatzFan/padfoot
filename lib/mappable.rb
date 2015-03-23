@@ -19,7 +19,19 @@ module Mappable
   end
 
   def line_string(xys)
-    "'LINESTRING(#{xys.map { |coords| coords.join(' ') }.join(', ')})'"
+    "'LINESTRING(" + parse_2d_coords_arr(xys) + ")'"
+  end
+
+  def parse_2d_coords_arr(arr_2d) # coords is 1d array
+    arr_2d.map { |arr| arr.join(' ') }.join(', ')
+  end
+
+  def parse_3d_coords_arr(arr_3d) # coords is 1d array
+    '(' + arr_3d.map { |arr_2d| parse_2d_coords_arr(arr_2d) }.join('), (') + ')'
+  end
+
+  def multiline_string(xys_arr)
+    "'MULTILINESTRING(" + parse_3d_coords_arr(xys_arr) + ")'"
   end
 
   def transform(lats, longs)
@@ -36,14 +48,18 @@ module Mappable
     ds.map { |hash| self.new(hash) }
   end
 
-  def within_polygon(xys)
-    poly = polygon(xys)
+  def within_multipolygon(xys_arr)
+    poly = multipolygon(xys)
     ds = DB["SELECT * from #{self.table_name} WHERE ST_Contains(#{poly}, #{self.table_name}.geom)"].all
     ds.map { |hash| self.new(hash) }
   end
 
   def polygon(xys)
     "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(xys)})), 3109)::geometry"
+  end
+
+  def multipolygon(xys_arr)
+    DB["SELECT ST_GeomFromText('MULTIPOLYGON((#{parse_3d_coords_arr(xys_arr)}))', 3109)"]
   end
 
   def nearest_to(x, y)
