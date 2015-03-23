@@ -48,8 +48,8 @@ module Mappable
     ds.map { |hash| self.new(hash) }
   end
 
-  def within_multipolygon(xys_arr)
-    poly = multipolygon(xys)
+  def within_polygon(xys)
+    poly = polygon(xys)
     ds = DB["SELECT * from #{self.table_name} WHERE ST_Contains(#{poly}, #{self.table_name}.geom)"].all
     ds.map { |hash| self.new(hash) }
   end
