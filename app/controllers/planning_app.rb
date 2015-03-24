@@ -17,6 +17,11 @@ Padfoot::App.controllers :planning_app do
     content_type == :json ? json : render(:index) # assume html
   end
 
+  get :map, map: 'applications/map' do
+    gon.data = []
+    render :map
+  end
+
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
     apps = PlanningApp.where(:mapped, app_ref: @all_refs).all

@@ -1,5 +1,5 @@
 body {
-  padding-top: 60px; /* so BS narbar doesn't overlap site! */
+  padding-top: 35px; /* so BS narbar doesn't overlap site! */
   font: 18.5px Palatino, 'Palatino Linotype', Helvetica, Arial, Verdana,
     sans-serif;
   text-align: justify;
@@ -12,12 +12,17 @@ body {
 }
 
 #navigation {
-  padding-top: 20px;
+  padding-top: 0px;
 }
 
 .copyright {
-  padding-top: 20px;
   font-size: 12px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding-right: 15px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 
@@ -28,14 +33,17 @@ h1 {
 }
 
 .site {
-  padding: 20px;
+  padding-top: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 0px;
   /*line-height: 1.8em;*/
 }
 
 .map_container{
   position: relative;
   width: 100%;
-  padding-bottom: 55%; /* Ratio 16:10 ( 100%/16*10 = 62.5% ) */
+  padding-bottom: 52%; /* Ratio 16:10 ( 100%/16*10 = 62.5% ) */
 }
 
 .map_container .map_canvas{
