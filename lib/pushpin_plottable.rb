@@ -1,4 +1,4 @@
-module Plottable # for objects which can be plotted as pushpins
+module PushpinPlottable # for objects which can be plotted as pushpins
 
   PIN_DATA = [:title, :colour, :letter, :description, :latitude, :longitude] # GetMap JS expects these keys to plot a pushpin
 

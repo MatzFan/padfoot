@@ -1,7 +1,7 @@
 class PlanningApp < Sequel::Model
 
   extend Mappable
-  extend Plottable
+  extend PushpinPlottable
 
   unrestrict_primary_key
   many_to_one :category, key: :app_category

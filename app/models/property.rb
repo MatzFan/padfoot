@@ -1,7 +1,7 @@
 class Property < Sequel::Model
 
   extend Mappable
-  extend Plottable
+  extend PushpinPlottable
 
   unrestrict_primary_key
   many_to_one :postcode, key: :p_code
