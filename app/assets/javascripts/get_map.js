@@ -22,7 +22,7 @@ function GetMap(pinData) {
 
 
 
-  addParishes();
+  // addParishes();
 
 
   // map.entities.push(pinLayer);
@@ -34,13 +34,13 @@ function addParishes() {
     .done(function(parishes) {
       $.each(parishes, function(i, rings) {
         $.each(rings, function(i, ringCoords) {
-          plotPoly(ringCoords);
+          plotParishPoly(ringCoords);
         });
       });
     });
 }
 
-function plotPoly(coordsArray) {
+function plotParishPoly(coordsArray) {
   var locs = [];
   $.each(coordsArray, function(i, arr) {
     locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
@@ -54,7 +54,7 @@ function addDrawingTools() {
   Microsoft.Maps.registerModule("DrawingToolsModule", "../assets/DrawingToolsModule.js");
   Microsoft.Maps.loadModule("DrawingToolsModule", {
     callback: function () {
-      var drawingTools = new DrawingTools.DrawingManager(map, {
+      drawingTools = new DrawingTools.DrawingManager(map, { // global var
         toolbarContainer: document.getElementById('toolbarContainer'),
         toolbarOptions: {
           drawingModes: ['circle', 'polygon', 'rectangle', 'erase'], styleTools: [] },
@@ -81,7 +81,7 @@ function containedApps(shape) {
     var radius = shape.ShapeInfo.radius * 1000; // meters
     $.getJSON( "within_circle.json", {lat: center.latitude, long: center.longitude, radius: radius})
       .done(function(data) {
-        $.each(data, function(i, data) { plotPin(data); });
+        $.each(data, function(i, data) { plotPin(data, shape); });
       });
   } else {
     var longs = [];
@@ -91,7 +91,7 @@ function containedApps(shape) {
     $.each(locs, function(i, values) { longs.push(values.longitude) });
     $.getJSON( "within_polygon.json", {lats: lats, longs: longs})
       .done(function(data) {
-        $.each(data, function(i, data) { plotPin(data); });
+        $.each(data, function(i, data) { plotPin(data, shape); });
       });
   }
 }
@@ -101,25 +101,41 @@ function addNavMenuButtons() {
   $($('.NavBar_modeSelectorControlContainer')[0]).append(
   $('<span>').addClass('NavBar_separator')).append(
   $('<a>').attr('href', '#').addClass('NavBar_button').append(
-  $('<span>').html( 'Show/Hide menu').click(toggleMenuBar) ));
+  $('<span>').html( 'View in table').click(showPlottedAppsInTable) ));
 }
 
-function toggleMenuBar() {
-  if($('body').css('padding-top') === '60px') {
-    $('body').css('padding-top', '0px');
-  } else { $('body').css('padding-top', '60px'); }
-  $('.navbar-fixed-top').toggle();
+function showPlottedAppsInTable() {
+  var token = $('meta[name="csrf-token"]').attr("content");
+  var refs = [];
+  for(var i=0; i < drawingTools.shapeLayer.getLength(); i++) { // gets polygons & pushpins
+    var ref = drawingTools.shapeLayer.get(i).Title;
+    if(typeof ref !== 'undefined') { refs.push(htmlEscape(ref)); } // polygons do not have Title attribute
+  }
+  $('<form action="index" method="POST">' +
+    '<input type="hidden" name="refs" value="' + refs + '">' + // comma-separated list
+    '<input type="hidden" name="authenticity_token" value="' + token + '">' +
+    '</form>').submit();
 }
 
-function plotPin(data) {
+// function toggleMenuBar() {
+//   if($('body').css('padding-top') === '35px') {
+//     $('body').css('padding-top', '0px');
+//   } else { $('body').css('padding-top', '35px'); }
+//   $('.navbar-fixed-top').toggle();
+// }
+
+function plotPin(data, shape) {
   var pushpinOptions = {icon: "../assets/pin_" +data.colour+ ".png", text: data.letter}
   var location = new Microsoft.Maps.Location(data.latitude, data.longitude);
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
   pin.Title = data.title;
   pin.Description = data.description;
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
-  // pinLayer.push(pin);
-  map.entities.push(pin);
+  if(typeof shape === 'undefined') {
+    map.entities.push(pin);
+  } else {
+    drawingTools.shapeLayer.push(pin); // associate the pins to the shape layer
+  }
 }
 
 function displayInfobox(e) {

@@ -145,6 +145,8 @@ var DrawingTools = {
             numberRx = new RegExp('^[0-9]+$'),
             hexRx = new RegExp('^#?[A-Fa-f0-9]{6}$');
 
+        this.shapeLayer = shapeLayer; // Make shapeLayer public
+
         //Default Options
         var _options = {
             /// <field type='DOMElement'>A reference to a DOM element where the toolbar should be loaded to.</field>

@@ -8,9 +8,10 @@
   -#     %th =col
 
 :javascript
-  $.get( "index.json", function( data ) {
-      drawTable( data, function() {
-        var table = $('#tbl').DataTable();
-        table.column( 0 ).visible( false );
-      });
+  if (typeof gon !== 'undefined') { var refsFromMap = htmlEscape(gon.refs); }
+  $.getJSON("index.json", {refs: refsFromMap}, function(data) {
+    drawTable(data, function() {
+      var table = $('#tbl').DataTable();
+      table.column(0).visible(false);
     });
+  });

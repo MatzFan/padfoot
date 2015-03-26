@@ -10,4 +10,5 @@
 //= require dataTables.scroller.js
 //= require dataTables.tableTools.js
 //= require DrawingToolsModule.js
+//= require htmlEscape.js
 //= require_tree .
