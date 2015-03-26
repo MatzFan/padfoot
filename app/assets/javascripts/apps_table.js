@@ -71,6 +71,7 @@ function drawTable(data, callback) {
     tableTools: {
       "sRowSelect": "multi",
       "aButtons": [
+        'print',
         "select_none",
         {
           "sExtends": "select_all",

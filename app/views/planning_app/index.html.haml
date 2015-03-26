@@ -1,11 +1,4 @@
 #table-placeholder
--# %table#tbl.table.stripe.display{"data-toggle" => "table"}
-  -# %thead
-  -#   - @titles.each do |col|
-  -#     %th{"data-field" => col} =col
-  -# %tfoot
-  -#   - @titles.each do |col|
-  -#     %th =col
 
 :javascript
   if (typeof gon !== 'undefined') { var refsFromMap = htmlEscape(gon.refs); }

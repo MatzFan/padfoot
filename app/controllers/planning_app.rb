@@ -8,8 +8,8 @@ Padfoot::App.controllers :planning_app do
                 :list_app_meetings]
 
   get :index, map: 'applications/index', provides: [:html, :json] do
-    refs = params[:refs]
-    apps = refs ? PlanningApp.where(app_ref: refs.split(',')) : all_apps_ordered
+    refs = params[:refs] # a comma separated string of app_refs
+    apps = (refs ? PlanningApp.where(app_ref: refs.split(',')) : all_apps_ordered)
     @titles = TABLE_COLS.map { |c| c.to_s.split('_').last.capitalize }
     @app_arr = apps.select_map(TABLE_COLS) # 2D array
     classes_to_add = TABLE_COLS.map { |c| 'long-text' if c == :app_description }
