@@ -4,6 +4,10 @@ module PlanningAppHelper
     PlanningApp.order(:order).reverse
   end
 
+  def apps_ordered(refs) # selected in descending :order
+    PlanningApp.where(app_ref: refs).order(:order).reverse
+  end
+
   def div_wrap_strings_in(app, classes = [])
     app.each_with_index.map do |e, i|
       e.class == String ? div_wrap(e, classes[i]) : e
