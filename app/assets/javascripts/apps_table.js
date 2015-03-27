@@ -7,7 +7,7 @@ function drawTable(data, callback) {
   $("#table-placeholder").html("<table id='tbl' class='table stripe table-bordered' data-toggle='table'><tfoot>" + thDivs + "</tfoot></table>");
   var table = $('#tbl').dataTable({
     // dom:         'rtiS', // add scroller, remove 'f' at front to hide filtering element
-    scrollY:     440, // pixels
+    scrollY:     530, // pixels
     scrollCollapse: true,
     // paging: false,
     "deferRender": true, // for speed
@@ -23,10 +23,9 @@ function drawTable(data, callback) {
     // ],
 
 
-    initComplete: function () { // dropdown list for column rows defined in indexArray
+    initComplete: function() { // dropdown list for column rows defined in indexArray
       var api = this.api();
       var indexArray = [3,4,10,11,12]; // HARD CODED HERE
-      // api.columns().indexes().flatten().each( function (i) {
       $.each(indexArray, function (i, index) {
         var column = api.column(index);
         var title = $(column.header()).text();
@@ -35,11 +34,9 @@ function drawTable(data, callback) {
         .on( 'change', function () {
           var val = $.fn.dataTable.util.escapeRegex($(this).val());
 
-
           if(val.substring(0,5) === '<div>') {
             val = val.substring(5, (val.length - 7)); // removes <div>...<\/div> tags..
           }
-
 
           if(val === 'null') {
             column.search('^$', true, false).draw();
@@ -65,13 +62,16 @@ function drawTable(data, callback) {
           select.append( '<option value="'+d+'">'+d+'</option>' )
         });
       });
-    },
+    }, // end of initComplete hook
 
 
     tableTools: {
+      // "sSwfPath": "../flash/copy_csv_xls_pdf.swf",
       "sRowSelect": "multi",
       "aButtons": [
         'print',
+        // 'copy',
+        // 'xls',
         "select_none",
         {
           "sExtends": "select_all",
@@ -102,9 +102,17 @@ function drawTable(data, callback) {
             }
           }
         }
-      ]
-    }
-  });
+      ],
+    } // end of tableTools
+  }); // end of dataTable init
+
+  $('.dataTables_length').append(
+    '<span>From date: <input type="text" id="from_date" class="datepicker"></span>' +
+    '<span>To date: <input type="text" id="to_date" class="datepicker"></p></span>');
+  $(".datepicker").datepicker();
+
+  // $('#from_date').keyup(function() { table.draw(); } );
+  // $('#to_date').keyup(function() { table.draw(); } );
 
   // http://datatables.net/extensions/colvis/api
   var colvis = new $.fn.dataTable.ColVis( table );
@@ -118,14 +126,13 @@ function drawTable(data, callback) {
     }
   });
 
-  // DataTable
   var table = $('#tbl').DataTable();
   // Apply the search
-  table.columns().eq( 0 ).each( function ( colIdx ) {
-    $('input', table.column( colIdx ).footer()).on( 'keyup change', function() {
+  table.columns().eq(0).each(function(colIdx) {
+    $('input', table.column(colIdx).footer()).on('keyup change', function() {
       table
-        .column( colIdx )
-        .search( this.value )
+        .column(colIdx)
+        .search(this.value)
         .draw();
     });
   });
