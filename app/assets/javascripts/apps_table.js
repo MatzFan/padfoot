@@ -109,13 +109,10 @@ function drawTable(data, callback) {
   $('.dataTables_length').append(
     '<span>From date: <input type="text" id="from_date" class="datepicker"></span>' +
     '<span>To date: <input type="text" id="to_date" class="datepicker"></p></span>');
-  $(".datepicker").datepicker();
+  $("#from_date").datepicker().datepicker("setDate", new Date(1988, 0, 1));
+  $("#to_date").datepicker({ onClose: function(date) { alert(date); } }).datepicker("setDate", new Date()); // today
 
-  // $('#from_date').keyup(function() { table.draw(); } );
-  // $('#to_date').keyup(function() { table.draw(); } );
-
-  // http://datatables.net/extensions/colvis/api
-  var colvis = new $.fn.dataTable.ColVis( table );
+  var colvis = new $.fn.dataTable.ColVis( table ); // http://datatables.net/extensions/colvis/api
   $( colvis.button() ).insertAfter('#tbl_length');
 
   $('.dataTables_scrollFoot tfoot th').each( function () {
@@ -127,7 +124,6 @@ function drawTable(data, callback) {
   });
 
   var table = $('#tbl').DataTable();
-  // Apply the search
   table.columns().eq(0).each(function(colIdx) {
     $('input', table.column(colIdx).footer()).on('keyup change', function() {
       table
@@ -138,3 +134,4 @@ function drawTable(data, callback) {
   });
   callback();
 }
+
