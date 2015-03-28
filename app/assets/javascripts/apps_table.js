@@ -109,8 +109,16 @@ function drawTable(data, callback) {
   $('.dataTables_length').append(
     '<span>From date: <input type="text" id="from_date" class="datepicker"></span>' +
     '<span>To date: <input type="text" id="to_date" class="datepicker"></p></span>');
-  $("#from_date").datepicker().datepicker("setDate", new Date(1988, 0, 1));
-  $("#to_date").datepicker({ onClose: function(date) { alert(date); } }).datepicker("setDate", new Date()); // today
+  $("#from_date").datepicker({
+    changeYear: true,
+    yearRange: "1984:2015",
+    onSelect: function() { table.draw(); }
+  }).datepicker("setDate", new Date(2006, 5, 1)); // 1 June 2006
+  $("#to_date").datepicker({
+    changeYear: true,
+    yearRange: "1984:2015",
+    onSelect: function() { table.draw(); }
+  }).datepicker("setDate", new Date()); // today
 
   var colvis = new $.fn.dataTable.ColVis( table ); // http://datatables.net/extensions/colvis/api
   $( colvis.button() ).insertAfter('#tbl_length');
@@ -123,7 +131,7 @@ function drawTable(data, callback) {
     }
   });
 
-  var table = $('#tbl').DataTable();
+  // var table = $('#tbl').DataTable();
   table.columns().eq(0).each(function(colIdx) {
     $('input', table.column(colIdx).footer()).on('keyup change', function() {
       table
@@ -133,5 +141,25 @@ function drawTable(data, callback) {
     });
   });
   callback();
+  addDateRangeFilter();
+} // end of drawTable()
+
+function addDateRangeFilter() {
+  $.fn.dataTableExt.afnFiltering.push(
+    function(oSettings, aData, iDataIndex) {
+      var iFini = document.getElementById('from_date').value;
+      var iFfin = document.getElementById('to_date').value;
+      var iDateCol = 1;
+      iFini = iFini.substring(6,10) + iFini.substring(3,5)+ iFini.substring(0,2);
+      iFfin = iFfin.substring(6,10) + iFfin.substring(3,5)+ iFfin.substring(0,2);
+      var date = aData[iDateCol].substring(0,4) + aData[iDateCol].substring(5,7)+ aData[iDateCol].substring(8,10);
+      if ( iFini === "" && iFfin === "" ) { return true; }
+      else if ( iFini <= date && iFfin === "") { return true; }
+      else if ( iFfin >= date && iFini === "") { return true; }
+      else if (iFini <= date && iFfin >= date) { return true; }
+      return false;
+    }
+  );
 }
+
 
