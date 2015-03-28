@@ -131,7 +131,7 @@ function drawTable(data, callback) {
     }
   });
 
-  // var table = $('#tbl').DataTable();
+  var table = $('#tbl').DataTable();
   table.columns().eq(0).each(function(colIdx) {
     $('input', table.column(colIdx).footer()).on('keyup change', function() {
       table
@@ -140,8 +140,9 @@ function drawTable(data, callback) {
         .draw();
     });
   });
-  callback();
   addDateRangeFilter();
+  callback();
+  table.draw(); // draw after date range filter added
 } // end of drawTable()
 
 function addDateRangeFilter() {
