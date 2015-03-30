@@ -106,15 +106,17 @@ function drawTable(data, callback) {
     } // end of tableTools
   }); // end of dataTable init
 
-  $('.dataTables_length').append(
-    '<span>From date: <input type="text" id="from_date" class="datepicker"></span>' +
-    '<span>To date: <input type="text" id="to_date" class="datepicker"></p></span>');
+  $('.dataTables_length').append('<span style="margin-left:20px">'+
+    'From: <input type="text" id="from_date" class="datepicker" size="10"><span style="margin-left:20px">'+
+    'To: <input type="text" id="to_date" class="datepicker" size="10"></span></span>');
   $("#from_date").datepicker({
+    dateFormat: 'dd/mm/yy',
     changeYear: true,
     yearRange: "1984:2015",
     onSelect: function() { table.draw(); }
   }).datepicker("setDate", new Date(2006, 5, 1)); // 1 June 2006
   $("#to_date").datepicker({
+    dateFormat: 'dd/mm/yy',
     changeYear: true,
     yearRange: "1984:2015",
     onSelect: function() { table.draw(); }
