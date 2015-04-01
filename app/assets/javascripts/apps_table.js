@@ -66,12 +66,13 @@ function drawTable(data, callback) {
 
 
     tableTools: {
-      // "sSwfPath": "../flash/copy_csv_xls_pdf.swf",
+      "sSwfPath": "http://cdn.datatables.net/tabletools/2.2.3/swf/copy_csv_xls_pdf.swf",
       "sRowSelect": "multi",
       "aButtons": [
-        'print',
-        // 'copy',
-        // 'xls',
+        { "sExtends": "copy", "bFooter": false, "mColumns": "visible", "bSelectedOnly": true, "sToolTip": "Copy selected rows" },
+        { "sExtends": "csv", "bFooter": false, "mColumns": "visible", "bSelectedOnly": true, "sToolTip": "Export selected rows as csv (Excel compatible)" },
+        { "sExtends": "pdf", "bFooter": false, "mColumns": "visible", "bSelectedOnly": true, "sPdfOrientation": "landscape", "sToolTip": "Save selected rows as pdf" },
+        { "sExtends": "print", "bFooter": false, "mColumns": "visible", "bSelectedOnly": true },
         "select_none",
         {
           "sExtends": "select_all",
@@ -84,6 +85,7 @@ function drawTable(data, callback) {
         {
           "sExtends": "text",
           "sButtonText": "View on map",
+          "sToolTip": "Click to select one or more rows, or 'Select all'",
           "fnClick": function ( nButton, oConfig, oFlash ) {
             oConfig.bHeader = false;
             oConfig.mColumns = [2]; // refs column only - FRAGILE
