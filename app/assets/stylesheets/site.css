@@ -66,6 +66,11 @@ tfoot input {
   box-sizing: border-box;
 }
 
+tfoot tr th select{
+  -webkit-appearance: menulist-button;
+  height: 27px;
+}
+
 table.dataTable tfoot th {
   padding: 0px;
 }
