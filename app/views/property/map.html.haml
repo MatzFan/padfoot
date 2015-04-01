@@ -4,5 +4,27 @@
 
 :javascript
   $(function() {
-    GetMap(gon.data);
+    var map = GetMap(gon.data);
+    plotParishBoundaries();
   });
+
+  function plotParishBoundaries() {
+  $.getJSON("parishes.json")
+    .done(function(parishes) {
+      $.each(parishes, function(i, rings) {
+        $.each(rings, function(i, ringCoords) {
+          plotParishPoly(ringCoords);
+        });
+      });
+    });
+  }
+
+  function plotParishPoly(coordsArray) {
+    var locs = [];
+    $.each(coordsArray, function(i, arr) {
+      locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
+    });
+    var polygoncolor = new Microsoft.Maps.Color(0, 0, 0, 255);
+    var poly = new Microsoft.Maps.Polygon(locs, {fillColor: polygoncolor});
+    map.entities.push(poly);
+  }

@@ -19,31 +19,10 @@ function GetMap(pinData) {
   Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
   // infoboxLayer.push(pinInfobox);
   map.entities.push(pinInfobox);
-  // addParishes();
 
   // map.entities.push(pinLayer);
   // map.entities.push(infoboxLayer);
-}
-
-function addParishes() {
-  $.getJSON("parishes.json")
-    .done(function(parishes) {
-      $.each(parishes, function(i, rings) {
-        $.each(rings, function(i, ringCoords) {
-          plotParishPoly(ringCoords);
-        });
-      });
-    });
-}
-
-function plotParishPoly(coordsArray) {
-  var locs = [];
-  $.each(coordsArray, function(i, arr) {
-    locs.push(new Microsoft.Maps.Location(arr[0], arr[1]));
-  });
-  var polygoncolor = new Microsoft.Maps.Color(0, 0, 0, 255);
-  var poly = new Microsoft.Maps.Polygon(locs, {fillColor: polygoncolor});
-  map.entities.push(poly);
+  return map;
 }
 
 function addDrawingTools() {
