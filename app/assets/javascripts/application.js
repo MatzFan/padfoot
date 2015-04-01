@@ -11,4 +11,5 @@
 //= require dataTables.tableTools.js
 //= require DrawingToolsModule.js
 //= require htmlEscape.js
+//= require jquery.dotdotdot.js
 //= require_tree .

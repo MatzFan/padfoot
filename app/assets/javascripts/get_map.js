@@ -19,11 +19,7 @@ function GetMap(pinData) {
   Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
   // infoboxLayer.push(pinInfobox);
   map.entities.push(pinInfobox);
-
-
-
   // addParishes();
-
 
   // map.entities.push(pinLayer);
   // map.entities.push(infoboxLayer);
@@ -139,8 +135,20 @@ function plotPin(data, shape) {
 }
 
 function displayInfobox(e) {
-  pinInfobox.setOptions({title: e.target.Title, description: e.target.Description, visible:true, offset: new Microsoft.Maps.Point(0,15)});
+  var pin = e.target;
+  var pushpinFrameHTML = '<div class="infobox">'+
+                            '<a class="infobox_close" href="javascript:hideInfobox()"><img src="../assets/close.png"/></a>'+
+                            '<div class="infobox_content">{content}</div>'+
+                          '</div>'+
+                          '<div class="infobox_pointer"><img src="../assets/pointer_shadow.png"></div>';
+  var html = '<span class="infobox_title">' + pin.Title + '</span><br/>' + pin.Description;
+  pinInfobox.setOptions({
+    visible:true,
+    offset: new Microsoft.Maps.Point(-33, 30), // was 0, 15
+    htmlContent: pushpinFrameHTML.replace('{content}', html)
+  });
   pinInfobox.setLocation(e.target.getLocation());
+  $(".infobox").dotdotdot(); // ellipsisify :)
 }
 
 function hideInfobox(e) {

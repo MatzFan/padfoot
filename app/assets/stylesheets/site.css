@@ -89,3 +89,43 @@ td div.long-text {
   max-width: 700px;
   text-align: justify;
 }
+
+.infobox{
+  position:relative;
+  background-color:white;
+  border:1px solid rgb(136, 136, 136);
+  left:0px;
+  top:0px;
+  width:256px;
+  height: 90px;
+}
+
+.infobox_title{
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.infobox_close{
+  cursor:pointer;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  border:none;
+}
+
+.infobox_content{
+  margin:5px;
+  font-family: Arial;
+  font-size:11px;
+  line-height:16px;
+}
+
+.infobox_pointer{
+  width:33px;
+  height:38px;
+  overflow:hidden;
+  position:relative;
+  z-index:1;
+  left:20px;
+  top:-1px;
+}
