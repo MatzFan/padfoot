@@ -103,8 +103,10 @@ function plotPin(data, shape) {
   var pushpinOptions = {icon: "../assets/pin_" +data.colour+ ".png", text: data.letter}
   var location = new Microsoft.Maps.Location(data.latitude, data.longitude);
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
-  pin.Title = data.title;
-  pin.Description = data.description;
+
+  pin.Title = data.infoboxTitle; // set in mappable module
+  pin.Description = data.infoboxContent; // set in mappable module
+
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
   Microsoft.Maps.Events.addHandler(pin, 'rightclick', removePin);
   if(typeof shape === 'undefined') {
@@ -116,19 +118,28 @@ function plotPin(data, shape) {
 
 function displayInfobox(e) {
   var pin = e.target;
+  var ref = pin.Title;
   var pushpinFrameHTML = '<div class="infobox">'+
                             '<a class="infobox_close" href="javascript:hideInfobox()"><img src="../assets/close.png"/></a>'+
                             '<div class="infobox_content">{content}</div>'+
                           '</div>'+
                           '<div class="infobox_pointer"><img src="../assets/pointer_shadow.png"></div>';
-  var html = '<span class="infobox_title">' + pin.Title + '</span><br/>' + pin.Description;
+  var html = '<span class="infobox_title"><a href="javascript:addDesriptionToInfobox(\'' + ref + '\')">' + ref + '</a></span><br/>' + pin.Description;
+  // var html = '<span class="infobox_title">' + pin.Title + '</span><br/>' + pin.Description;
   pinInfobox.setOptions({
     visible:true,
     offset: new Microsoft.Maps.Point(-33, 30), // was 0, 15
     htmlContent: pushpinFrameHTML.replace('{content}', html)
   });
   pinInfobox.setLocation(e.target.getLocation());
-  $(".infobox").dotdotdot(); // ellipsisify :)
+  // $(".infobox").dotdotdot(); // ellipsisify :) - no longer needed with re-sizing infoboxes
+}
+
+function addDesriptionToInfobox(ref) {
+  $.getJSON("description.json", {ref: ref}, function(data) {
+    var html = '<br><div class="description">' + data + '</div>';
+    $('.infobox_content').append(html);
+  });
 }
 
 function hideInfobox(e) {

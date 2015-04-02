@@ -102,13 +102,14 @@ td div.long-text {
   border:1px solid rgb(136, 136, 136);
   left:0px;
   top:0px;
-  width:256px;
-  height: 90px;
+  min-width: 256px;
+  min-height: 60px;
 }
 
 .infobox_title{
   font-size: 14px;
   font-weight: bold;
+  line-height: 200%;
 }
 
 .infobox_close{
@@ -123,7 +124,12 @@ td div.long-text {
   margin:5px;
   font-family: Arial;
   font-size:11px;
+  font-weight: bold;
   line-height:16px;
+}
+
+.infobox_content .description{
+  font-weight: normal;
 }
 
 .infobox_pointer{

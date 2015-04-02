@@ -36,6 +36,10 @@ Padfoot::App.controllers :planning_app do
     render :map
   end
 
+  get :address, map: 'applications/description', provides: :json do
+    PlanningApp[params[:ref]].app_description.to_json
+  end
+
   get :within_circle, map: 'applications/within_circle', provides: :json do
     lat, long, radius = params[:lat], params[:long], params[:radius]
     apps = PlanningApp.within_circle(lat.to_f, long.to_f, radius.to_f)

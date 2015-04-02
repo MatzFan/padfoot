@@ -46,7 +46,7 @@ class PlanningApp < Sequel::Model
     add_constraints
   end
 
-  PUSHIN_COLUMNS = [:app_ref, :app_status, :app_category, :app_description, :latitude, :longitude]
+  PUSHIN_COLUMNS = [:app_ref, :app_status, :app_category, :app_full_address, :latitude, :longitude]
 
   DETAILS_TABLE_TITLES = ['Reference',
                           'Category',

@@ -1,6 +1,6 @@
 module PushpinPlottable # for objects which can be plotted as pushpins
 
-  PIN_DATA = [:title, :colour, :letter, :description, :latitude, :longitude] # GetMap JS expects these keys to plot a pushpin
+  PIN_DATA = [:infoboxTitle, :colour, :letter, :infoboxContent, :latitude, :longitude] # GetMap JS expects these keys to plot a pushpin
 
   def get_pin_colours(arr, colours)
     arr.each_with_index.map do |e, i|
