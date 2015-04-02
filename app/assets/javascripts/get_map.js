@@ -106,6 +106,7 @@ function plotPin(data, shape) {
   pin.Title = data.title;
   pin.Description = data.description;
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
+  Microsoft.Maps.Events.addHandler(pin, 'rightclick', removePin);
   if(typeof shape === 'undefined') {
     map.entities.push(pin);
   } else {
@@ -132,4 +133,9 @@ function displayInfobox(e) {
 
 function hideInfobox(e) {
   pinInfobox.setOptions({ visible: false });
+}
+
+function removePin(e) { // try to remove pin from whichever layer it was added to
+  map.entities.remove(e.target);
+  drawingTools.shapeLayer.remove(e.target);
 }

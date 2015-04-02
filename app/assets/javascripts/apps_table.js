@@ -84,6 +84,11 @@ function drawTable(data, callback) {
         },
         {
           "sExtends": "text",
+          "sButtonText": "Clear all filters",
+          "fnClick": function ( nButton, oConfig, oFlash ) { clearTableState(); }
+        },
+        {
+          "sExtends": "text",
           "sButtonText": "View on map",
           "sToolTip": "Click to select one or more rows, or 'Select all'",
           "fnClick": function ( nButton, oConfig, oFlash ) {
@@ -108,22 +113,6 @@ function drawTable(data, callback) {
     } // end of tableTools
   }); // end of dataTable init
 
-  $('.dataTables_length').append('<span style="margin-left:20px">'+
-    'From: <input type="text" id="from_date" class="datepicker" size="10"><span style="margin-left:20px">'+
-    'To: <input type="text" id="to_date" class="datepicker" size="10"></span></span>');
-  $("#from_date").datepicker({
-    dateFormat: 'dd/mm/yy',
-    changeYear: true,
-    yearRange: "1984:2015",
-    onSelect: function() { table.draw(); }
-  }).datepicker("setDate", new Date(2006, 5, 1)); // 1 June 2006
-  $("#to_date").datepicker({
-    dateFormat: 'dd/mm/yy',
-    changeYear: true,
-    yearRange: "1984:2015",
-    onSelect: function() { table.draw(); }
-  }).datepicker("setDate", new Date()); // today
-
   var colvis = new $.fn.dataTable.ColVis( table ); // http://datatables.net/extensions/colvis/api
   $( colvis.button() ).insertAfter('#tbl_length');
 
@@ -144,10 +133,17 @@ function drawTable(data, callback) {
         .draw();
     });
   });
+  setupDatePickers();
   addDateRangeFilter();
   callback();
   table.draw(); // draw after date range filter added
 } // end of drawTable()
+
+function clearTableState() {
+  var table = $('#tbl').DataTable();
+  table.state.clear();
+  window.location.reload();
+}
 
 function addDateRangeFilter() {
   $.fn.dataTableExt.afnFiltering.push(
@@ -167,4 +163,24 @@ function addDateRangeFilter() {
   );
 }
 
+function setupDatePickers() {
+  var table = $('#tbl').DataTable();
+  $('.dataTables_length').append('<span style="margin-left:20px">'+
+    'From: <input type="text" id="from_date" class="datepicker" size="10"><span style="margin-left:20px">'+
+    'To: <input type="text" id="to_date" class="datepicker" size="10"></span></span>');
+  var fromDatePicker = $("#from_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    changeYear: true,
+    yearRange: "1984:2015",
+    onSelect: function() { table.draw(); }
+  })
+  fromDatePicker.datepicker("setDate", new Date(2006, 5, 1)); // defaults to 1 June 2006
 
+  var toDatePicker = $("#to_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    changeYear: true,
+    yearRange: "1984:2015",
+    onSelect: function() { table.draw(); }
+  })
+  toDatePicker.datepicker("setDate", new Date()); // today
+}
