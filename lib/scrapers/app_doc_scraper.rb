@@ -5,7 +5,7 @@ class AppDocScraper
   TITLE_CSS = 'h2.govstyleElement-H3'
   PAP = 'PAP'
   MM = 'MM'
-  PAP_TEXT = ['PAP', 'Panel'] # text in url which determines doc type is PAP
+  PAP_TEXT = ['PAP', 'PAC', 'Panel'] # text in url which determines doc type is PAP
   MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
 
   attr_reader :agent, :page, :tables, :table_agenda_columns, :table_minutes_columns,
