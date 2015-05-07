@@ -57,7 +57,7 @@ class AppDocProcessor
       begin
         doc.url = upload(links[i], doc.name) # upload returns the public url
         doc
-      rescue Error # deals with 404 error for broken links
+      rescue # deals with 404 error for broken links
         nil
       end
     end
