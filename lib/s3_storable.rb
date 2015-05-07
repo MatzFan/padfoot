@@ -6,9 +6,13 @@ module S3storable
 
   def upload(uri, key)
     obj, caller = s3_object(key), self
-    open(uri) { |file| obj.upload_file(file) } # closes stream :)
-    obj.acl.put(acl: 'public-read')
-    obj.public_url
+    begin
+      open(uri) { |file| obj.upload_file(file) } # closes stream :)
+      obj.acl.put(acl: 'public-read')
+      obj.public_url
+    rescue OpenURI::HTTPError
+      raise "File at #{uri} failed to upload"
+    end
   end
 
   def s3_object(object_key)

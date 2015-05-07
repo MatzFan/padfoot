@@ -2,6 +2,7 @@ describe S3storable do
 
   includer = class Includer; include S3storable; end
   uri = 'http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20%20PAP%2020140724.pdf'
+  duff_uri = 'http://www.gov.je/SiteCollectionDocuments/loadofoldbollocks.pdf'
   let(:helper) { Includer.new }
   let(:example_key) { '140724_PAP_M'}
 
@@ -18,11 +19,15 @@ describe S3storable do
   end
 
   context '#upload' do
-    it "should upload a file from a uri to S3 and return a valid URL" do
+    it 'should upload a file from a uri to S3 and return a valid URL' do
       expect(->{ URI.parse(helper.upload(uri, example_key)) }).not_to raise_error
     end
 
-    it "the URL should be public-readable" do
+    it 'should raise "FileUploadFailureError" if a file cannot be uploaded' do
+      expect(->{ URI.parse(helper.upload(duff_uri, example_key)) }).to raise_error("File at #{duff_uri} failed to upload")
+    end
+
+    it 'the URL should be public-readable' do
       url = helper.upload(uri, example_key)
       expect(->{ open(url) { |file| } }).not_to raise_error
     end
