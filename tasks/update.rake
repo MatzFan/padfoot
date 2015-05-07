@@ -10,8 +10,7 @@ def capture_stdout
 end
 
 namespace :sq do
-  tasks = ['sq:apps:changes', 'sq:apps:new']
-  #, 'sq:apps:docs']
+  tasks = ['sq:apps:changes', 'sq:apps:new', 'sq:apps:docs']
   desc "Runs listed rake tasks & emails an output report: #{tasks.join(', ')}"
   task update: :environment do
     t = Time.now
