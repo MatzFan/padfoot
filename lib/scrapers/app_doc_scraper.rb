@@ -152,14 +152,20 @@ class AppDocScraper
   end
 
   def doc_dates
-    @table_link_names.each_with_index.map do |t, i|
-      t.map { |name| doc_date(name, @table_years[i]) }
+    @table_link_names.each_with_index.map do |t, t_num|
+      t.each_with_index.map { |link_name, i| doc_date(t_num, i, link_name, @table_years[t_num]) }
     end.flatten
   end
 
-  def doc_date(string, known_year = nil) # some are missing year which gets set to current year by strftime..
+  def doc_date(t_num, i, string, known_year = nil)
+    year = year_from_uri(t_num, i) if string.split('(').first.scan(/(\d{4})/).count != 1 # if year missing, get it from link uri
     date = Date.parse(string).strftime("%d/%m/%Y").to_date
-    known_year ? Date.new(known_year, date.month, date.day) : date
+    year ? date = Date.new(year, date.month, date.day) : date # substitute year parsed from uri string
+    known_year ? Date.new(known_year, date.month, date.day) : date # year known from table title
+  end
+
+  def year_from_uri(t_num, i)
+    URI.unescape(@table_links[t_num][i]).scan(/(20\d{2})/).flatten.first.to_i
   end
 
   def meet_data

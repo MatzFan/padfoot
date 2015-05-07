@@ -106,6 +106,13 @@
     end
   end
 
+  context '#year_from_uri' do
+    it 'should return a year from a uri string' do
+      expect(scraper.table_links[2][9]).to eq('http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20MM%202014-08-15.pdf')
+      expect(scraper.year_from_uri(2,9)).to eq(2014)
+    end
+  end
+
   context '#doc_types' do
     it 'should return an array only of correct document types' do
       expect(scraper.doc_types.all? { |type| doc_types.any? { |m| type == m } }).to be_truthy
