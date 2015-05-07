@@ -5,6 +5,9 @@
 
   s = AppDocScraper.new
   page = Mechanize.new.get('file://' + PADRINO_ROOT + '/spec/lib/scrapers/docs_page_example.html')
+  titles = ['2015 Upcoming Planning Applications Committee meetings',
+            '2014 & 2015 Planning Applications Panel meetings',
+            '2014 & 2015 Ministerial meetings']
 
   let(:scraper) do
     dup = s.dup
@@ -37,13 +40,13 @@
 
   context '#table_titles' do
     it 'returns an array of the table titles for each set of meetings' do
-      expect(scraper.table_titles.all? {|s| s.include?('meetings') }).to be_truthy
+      expect(scraper.table_titles).to eq(titles)
     end
   end
 
   context '#table_years' do
     it 'returns an array of the year extracted from the table titles, if any' do
-      expect(scraper.table_years).to eq([nil,2014,2014])
+      expect(scraper.table_years).to eq([2015,nil,nil])
     end
   end
 

@@ -2,7 +2,6 @@ class AppDocScraper
 
   ROOT = 'http://www.gov.je'
   URL = 'http://www.gov.je/PlanningBuilding/PublicPlanningMeetings/Pages/AgendasMinutes.aspx'
-  TITLE_CSS = 'h2.govstyleElement-H3'
   PAP = 'PAP'
   MM = 'MM'
   PAP_TEXT = ['PAP', 'PAC', 'Panel'] # text in url which determines doc type is PAP
@@ -38,7 +37,7 @@ class AppDocScraper
   end
 
   def table_titles
-    page.search(TITLE_CSS).map(&:text).map { |s| zws(s) }.map(&:strip)
+    page.search('table').map { |t| t.xpath('preceding-sibling::h2').last.text }
   end
 
   def zws(string) # pesky zero width spaces..
@@ -67,14 +66,20 @@ class AppDocScraper
   end
 
   def verify_structure
-    raise error if
+    raise Exception.new('Page structure changed') if
     table_titles.count != tables.count ||
     links.count != doc_types.count ||
     links.count != file_names.count
   end
 
   def table_years
-    table_titles.map { |string| string.to_i if string.to_i != 0 }
+    # table_titles.map { |string| string.to_i if string.to_i != 0 }
+    table_titles.map { |string| years_in(string) }
+  end
+
+  def years_in(string)
+    years = string.scan(/\d{4}/) #2D array of strings
+    years.count == 1 ? years.flatten.first.to_i : nil # if zero or multiple matches return nil
   end
 
   def table_types
