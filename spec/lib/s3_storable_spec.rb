@@ -23,7 +23,7 @@ describe S3storable do
       expect(->{ URI.parse(helper.upload(uri, example_key)) }).not_to raise_error
     end
 
-    it 'should raise "FileUploadFailureError" if a file cannot be uploaded' do
+    it 'should raise FileUploadFailureError if a file cannot be uploaded' do
       expect(->{ URI.parse(helper.upload(duff_uri, example_key)) }).to raise_error("File at #{duff_uri} failed to upload")
     end
 
