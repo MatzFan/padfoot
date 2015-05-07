@@ -53,14 +53,19 @@ class AppDocProcessor
   end
 
   def docs_with_urls
-    docs_with_meeting_ids.each_with_index do |doc, i|
-      doc.url = upload(links[i], doc.name) # upload returns the public url
-      doc
+    docs_with_meeting_ids.each_with_index.map do |doc, i|
+      begin
+        doc.url = upload(links[i], doc.name) # upload returns the public url
+        doc
+      rescue FileUploadFailureError # deals with 404 error for broken links
+        nil
+      end
     end
   end
 
   def create_docs
-    docs_with_urls.map &:save
+    docs_with_urls.compact.each &:save
+    docs_with_urls.count - docs_with_urls.compact.count
   end
 
   def create_doc_app_ref_links

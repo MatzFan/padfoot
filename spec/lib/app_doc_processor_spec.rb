@@ -108,4 +108,22 @@ describe AppDocProcessor do
     end
   end
 
+  context 'create_docs' do
+    it 'save documents in the variable "docs_with_urls"' do
+      allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
+      processor.create_docs
+      expect(DB[:documents].count).to eq 2
+    end
+
+    it 'returns 0 if "docs_with_urls" as no nils' do
+      allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
+      expect(processor.create_docs).to eq 0
+    end
+
+    it 'returns 1 if "docs_with_urls" has a single nil, representing a broken document link' do
+      allow(processor).to receive(:docs_with_urls) { [nil, build(:document)] }
+      expect(processor.create_docs).to eq 1
+    end
+  end
+
 end
