@@ -28,6 +28,7 @@ gem 'sequel_pg', '1.6.11', require: 'sequel'
 gem 'aws-sdk', '2.0.24', require: 'aws-sdk'
 gem 'curb', '0.8.6'
 gem 'linguistics', '2.0.3'
+gem 'stripe', '1.21.0'
 
 group :test do
   gem 'rspec', '3.1.0'
