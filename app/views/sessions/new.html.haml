@@ -1,17 +1,19 @@
-%h1 Login
-= form_tag url(:sessions, :create) do # don't hard code route url :)
-  - if error
-    .alert.alert-error
-      %h4 Error
-      Your Email and/or Password is wrong!
-  = label_tag :email
-  = text_field_tag :email
-  = label_tag :password
-  = password_field_tag :password
-  %label.checkbox
-    = check_box_tag :remember_me
-    Remember me
-  %p
-    = link_to 'forgotten password?', url(:forget_password, :new)
-  %p
-    = submit_tag "Sign in", :class => "btn btn-primary"
+.container-fluid
+  .col-md-4.col-md-offset-4.column
+    %h1 Login
+    = form_tag url(:sessions, :create), :class => 'form', :role => 'form' do # don't hard code route url :)
+      - if error
+        .alert.alert-error
+          %h4 Error
+          Your Email and/or Password is wrong!
+      = label_tag :email, :class => 'control-label'
+      = text_field_tag :email, :class => 'form-control'
+      = label_tag :password, :class => 'control-label'
+      = password_field_tag :password, :class => 'form-control'
+      %label.checkbox-inline
+        = check_box_tag :remember_me
+        Remember me
+      %p
+        = link_to 'forgotten password?', url(:forget_password, :new)
+      %p
+        = submit_tag "Sign in", :class => "btn btn-primary"

@@ -6,18 +6,14 @@
         = f.label :name, :class => 'control-label'
         = f.text_field :name, :class => 'form-control'
         = error_message_on @user, :name, class: "form-control", :prepend => "The name "
-        %br
         = f.label :email, :class => 'control-label'
         = f.text_field :email, :class => 'form-control'
         = error_message_on @user, :email, class: "form-control", :prepend => "The email "
-        %br
         = f.label :password, :class => 'control-label'
         = f.password_field :password, :class => 'form-control'
         = error_message_on @user, :password, class: "form-control", :prepend => "The password "
-        %br
         = f.label :password_confirmation, :class => 'control-label'
         = f.password_field :password_confirmation, :class => 'form-control'
         = error_message_on @user, :password_confirmation, class: "form-control"
-        %br
         %p
           = submit_tag "Register", :class => "btn btn-primary"
