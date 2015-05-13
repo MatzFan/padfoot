@@ -1,11 +1,9 @@
 describe AppDocProcessor do
 
-  S3_URL = 'https://meetingdocuments.s3.amazonaws.com/150128_PAP_M' # care if renaming bucket
-  PAGE_REFS = [[1, ["P/2014/1777"]], [2, ["P/2014/1061", "RC/2014/1504"]],
-               [3, ["P/2009/2253", "P/2014/1165"]], [4, ["P/2014/1587"]], [6, ["PP/2014/1794",
-                "P/2009/1871"]], [7, ["RM/2014/1173"]], [9, ["P/2014/1246"]],
-                [11, ["S/2014/1606"]], [13, ["P/2014/1521"]],[16, ["P/2014/1646"]],
-                [17, ["PP/2014/1302", "RP/2014/0880"]], [18, ["P/2014/1444"]]]
+  S3_URL = 'https://meetingdocuments.s3.amazonaws.com/150219_PAP_M' # care if renaming bucket
+  PAGE_REFS = [[3, ["RP/2014/0880", "P/2009/1871", "PP/2014/1794", "RC/2014/2002"]],
+               [4, ["P/2014/1936"]], [19, ["P/2014/1619"]], [20, ["P/2014/1791"]],
+               [21, ["P/2014/1873"]]]
 
   processor = AppDocProcessor.new
   date = Date.parse(Time.now.strftime("%y%m%d"))

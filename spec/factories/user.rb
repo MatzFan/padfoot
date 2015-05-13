@@ -5,7 +5,7 @@ FactoryGirl.define do
   factory :user do
     id
     name 'Test User'
-    email
+    email 'test.user@somewhere.com'
     password 'password'
     password_confirmation 'password'
     confirmation_code 'none_sent_yet'

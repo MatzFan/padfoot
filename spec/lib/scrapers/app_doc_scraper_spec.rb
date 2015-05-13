@@ -5,9 +5,10 @@
 
   s = AppDocScraper.new
   page = Mechanize.new.get('file://' + PADRINO_ROOT + '/spec/lib/scrapers/docs_page_example.html')
-  titles = ['2015 Upcoming Planning Applications Committee meetings',
-            '2014 & 2015 Planning Applications Panel meetings',
-            '2014 & 2015 Ministerial meetings']
+  titles = ["2015 Upcoming Planning Applications Committee meetings",
+            "2015 Planning Applications Committee meetings",
+            "2014 & 2015 Planning Applications Panel meetings",
+            "2014 & 2015 Ministerial meetings"]
 
   let(:scraper) do
     dup = s.dup
@@ -46,25 +47,25 @@
 
   context '#table_years' do
     it 'returns an array of the year extracted from the table titles, if any' do
-      expect(scraper.table_years).to eq([2015,nil,nil])
+      expect(scraper.table_years).to eq([2015,2015,nil,nil])
     end
   end
 
   context '#table_agenda_columns' do
     it 'returns an array of the column number entitled "Agenda" in each table' do
-      expect(scraper.table_agenda_columns).to eq([2,1,1])
+      expect(scraper.table_agenda_columns).to eq([2,1,1,1])
     end
   end
 
   context '#table_minutes_columns' do
     it 'returns an array of the column number entitled "Minutes" in each table, if any' do
-      expect(scraper.table_minutes_columns).to eq([nil,2,2])
+      expect(scraper.table_minutes_columns).to eq([nil,2,2,2])
     end
   end
 
   context '#table_types' do
     it 'returns an array of the table meeting type, if any' do
-      expect(scraper.table_types).to eq(['?','PAP','MM'])
+      expect(scraper.table_types).to eq(['?','?','PAP','MM'])
     end
   end
 
@@ -108,8 +109,8 @@
 
   context '#year_from_uri' do
     it 'should return a year from a uri string' do
-      expect(scraper.table_links[2][9]).to eq('http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20MM%202014-08-15.pdf')
-      expect(scraper.year_from_uri(2,9)).to eq(2014)
+      scraper.instance_variable_set(:@table_links, [['http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20MM%202014-08-15.pdf']])
+      expect(scraper.year_from_uri(0,0)).to eq(2014)
     end
   end
 
