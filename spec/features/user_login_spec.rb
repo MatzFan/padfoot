@@ -1,19 +1,35 @@
-describe 'Login', type: :feature do
-  context 'for a confirmed user' do
-    before(:each) do
-      confirmed_user = create(:user, confirmation: true, email: 'test@example.com')
-      visit '/login'
-      fill_in 'email', with: confirmed_user.email
-      fill_in 'password', with: confirmed_user.password
-      click_button 'Sign in'
+describe 'Logging in', type: :feature do
+  context 'a confirmed user' do
+    context 'who is subscribed' do
+      before(:each) do
+        confirmed_user = create(:user, confirmation: true, subscription: true, email: 'test@example.com')
+        visit '/login'
+        fill_in 'email', with: confirmed_user.email
+        fill_in 'password', with: confirmed_user.password
+        click_button 'Sign in'
+      end
+
+      it 'redirects to applications/index' do
+        expect(current_path).to eq '/applications/index'
+      end
     end
 
-    it 'redirects to applications/index' do
-      expect(current_path).to eq '/applications/index'
+    context 'who is not subscribed' do
+      before(:each) do
+        confirmed_user = create(:user, confirmation: true, email: 'test@example.com')
+        visit '/login'
+        fill_in 'email', with: confirmed_user.email
+        fill_in 'password', with: confirmed_user.password
+        click_button 'Sign in'
+      end
+
+      it 'redirects to user/subscribe' do
+        expect(current_path).to eq '/user/subscribe'
+      end
     end
   end
 
-  context 'for a non-confirmed user' do
+  context 'a non-confirmed user' do
     before(:each) do
       non_confirmed_user = create(:user, email: 'test@example.com')
       visit '/login'
