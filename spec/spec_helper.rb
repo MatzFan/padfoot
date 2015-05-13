@@ -1,10 +1,13 @@
 RACK_ENV = 'test' unless defined?(RACK_ENV)
 require 'capybara/rspec'
+require 'capybara/email/rspec'
 require File.expand_path(__dir__ + '/../config/boot')
 Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
 Dir[File.expand_path(__dir__ + '/../app/helpers/**/*.rb')].each(&method(:require))
 
 Capybara.app = Padfoot::App # need this to tell Capy what the app is..
+
+Padfoot::App.set :delivery_method, :test # for capybara-email
 
 def session
   last_request.env['rack.session'] # for session tests
