@@ -14,7 +14,9 @@ credentials = Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACC
 S3 = Aws::S3::Client.new(credentials: credentials, region: ENV['AWS_REGION'])
 BUCKET = 'meetingdocuments'
 
-Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+set :stripe_publishable_key, ENV['STRIPE_PUBLISHABLE_KEY']
+set :stripe_secret_key, ENV['STRIPE_SECRET_KEY']
+Stripe.api_key = settings.stripe_secret_key
 
 # JMTPROJ4 = '+proj=tmerc +lat_0=49.225 +lon_0=-2.135 +k=0.9999999000000001 '+
 #              '+x_0=40000 +y_0=70000 +ellps=GRS80 +units=m +no_defs'

@@ -3,12 +3,12 @@
     %h1 Subscribe
     = form_tag '/charge', :class => 'form', :role => 'form' do
       %span
-        = label_tag :annual_plan, :class => 'control-label'
+        = label_tag :annual_subscription_cost, :class => 'control-label'
         £512.50
       %p
         = javascript_include_tag "https://checkout.stripe.com/v2/checkout.js",
-          :class => "stripe-button",
-          :"data-key" => "crap",
-          :"data-description" => "30-day free trial",
-          :"data-amount" => "500",
-          :"data-image" => "/app-128x128.png"
+          :class => 'stripe-button',
+          :"data-key" => ENV['STRIPE_PUBLISHABLE_KEY'],
+          :"data-description" => 'annual subscription',
+          :"data-currency" => 'GBP',
+          :"data-amount" => "51250"
