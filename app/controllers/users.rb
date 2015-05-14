@@ -19,6 +19,7 @@ Padfoot::App.controllers :users do
         @user.email,
         @user.id,
         @user.confirmation_code) unless @user.confirmation # check confirmed
+      flash[:notice] = 'Message sent'
       redirect('/')
     else
       render :new # refresh the page (with warnings)
