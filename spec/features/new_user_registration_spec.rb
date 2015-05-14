@@ -25,4 +25,10 @@ describe 'Registering a new user', type: :feature do
     current_email.click_link ''
     expect(page).to have_content 'your registration has been confirmed'
   end
+
+  it "sends an email with a link allows the user to subscribe" do
+    id = User.first.id
+    current_email.click_link ''
+    expect(page).to have_link('subscribe', :href => "/users/#{id}/subscribe")
+  end
 end

@@ -1,11 +1,14 @@
 .container-fluid
   .col-md-4.col-md-offset-4.column
-    %h1 Registration
-    =form_for(@user, action: :"", method: :put)
-      :javascript
-        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-        data-key="pk_test_RAwhlWUHn2XVIYqyEADKpSaQ"
-        data-amount="2000"
-        data-name="Demo Site"
-        data-description="2 widgets ($20.00)"
-        data-image="/128x128.png"
+    %h1 Subscribe
+    = form_tag '/charge', :class => 'form', :role => 'form' do
+      %article
+        %label{:class => "amount"}
+          %span Amount: $5.00
+
+      = javascript_include_tag "https://checkout.stripe.com/v2/checkout.js",
+        :class => "stripe-button",
+        :"data-key" => "crap",
+        :"data-description" => "30-day free trial",
+        :"data-amount" => "500",
+        :"data-image" => "/app-128x128.png"

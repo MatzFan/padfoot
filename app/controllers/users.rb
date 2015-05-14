@@ -52,4 +52,9 @@ Padfoot::App.controllers :users do
     end
   end
 
+  get :subscribe, map: '/users/:id/subscribe' do
+    @user = User[params[:id].to_i]
+    render :subscribe
+  end
+
 end
