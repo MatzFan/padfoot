@@ -1,3 +1,5 @@
+require_relative 'gis_scraper'
+
 class ParishScraper < GisScraper
 
   URL = 'arcgis/rest/services/StatesOfJersey/JLandOL/MapServer/0/query'

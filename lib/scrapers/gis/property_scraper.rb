@@ -1,3 +1,5 @@
+require_relative 'gis_scraper'
+
 class PropertyScraper < GisScraper
 
   URL = 'arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'
