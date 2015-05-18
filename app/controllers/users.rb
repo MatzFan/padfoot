@@ -67,7 +67,7 @@ Padfoot::App.controllers :users do
     )
 
     charge = Stripe::Charge.create(
-      :amount      => @amount,
+      :amount      => 50000,
       :description => 'Test Charge',
       :currency    => 'gbp',
       :customer    => customer.id
