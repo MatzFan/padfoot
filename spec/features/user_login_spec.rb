@@ -25,7 +25,7 @@ describe 'Logging in', type: :feature do
 
       it 'redirects to the subscription page for that user' do
         id = User.first.id
-        expect(current_path).to eq "/users/#{id}/subscribe"
+        expect(current_path).to eq "/subscribe"
       end
     end
   end

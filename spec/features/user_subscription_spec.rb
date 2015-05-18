@@ -1,25 +1,38 @@
-describe 'A user can subscribe', type: :feature, js: true do
+describe 'Subscribing', type: :feature, js: true do
 
   before do
     confirmed_user = create(:user, confirmation: true)
-    id = User.first.id
-    visit "/users/#{id}/subscribe"
   end
 
-  it 'by visiting the subscription page displays a "Pay with Card" option' do
-    expect(page).to have_content 'Pay with Card'
-  end
+  context 'a confirmed user' do
+    context "by visiting the subscription page" do
+      it 'displays a "Pay with Card" button' do
+        visit '/subscribe'
+        expect(page).to have_button 'Pay with Card'
+      end
 
-  it 'by clicking the "Pay with Card" button displays a "Pay" button' do
-    click_button 'Pay with Card'
-    expect(page).to have_content 'Pay £'
-  end
+      context 'and selecting "Pay with Card"' do
+        it 'displays the Stripe checkout form' do
+          visit '/subscribe'
+          click_button 'Pay with Card'
+          expect(page).to have_content 'Pay £512.50'
+        end
 
-  it 'by paying with a valid credit card' do
-    fill_in 'user_email', with: user.email
-    fill_in 'user_password', with: user.password
-    click_button 'Pay with Card'
-    expect(page).to have_content 'Pay £'
+        context "making a successful payment" do
+          it 'will be directed to the charge page' do
+            user = User.first
+            visit '/subscribe'
+            click_button 'Pay with Card'
+            fill_in 'email', with: 'medff@test.com'
+            fill_in 'card_number', with: '4242424242424242'
+            fill_in 'cc-exp', with: '1215'
+            fill_in 'cc-csc', with: '123'
+            click_button 'Pay £512.50'
+            expect(page).to have_content ''
+          end
+        end
+      end
+    end
   end
 
 end

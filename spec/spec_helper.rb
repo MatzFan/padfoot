@@ -1,13 +1,12 @@
 RACK_ENV = 'test' unless defined?(RACK_ENV)
 require 'capybara/rspec'
 require 'capybara/email/rspec'
-require 'capybara/poltergeist'
 require File.expand_path(__dir__ + '/../config/boot')
 Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
 Dir[File.expand_path(__dir__ + '/../app/helpers/**/*.rb')].each(&method(:require))
 
 Capybara.app = Padfoot::App # need this to tell Capy what the app is..
-Capybara.javascript_driver = :poltergeist
+Capybara.javascript_driver = :webkit
 
 Padfoot::App.set :delivery_method, :test # for capybara-email
 
@@ -34,6 +33,10 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  # config.before(:each) do
+  #   page.driver.allow_url('*') # capy webkit - silences warnings
+  # end
 
 end
 
