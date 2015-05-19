@@ -53,4 +53,29 @@ Padfoot::App.controllers :users do
     end
   end
 
+  get :subscribe, map: '/users/:id/subscribe' do
+    @user = User[params[:id].to_i]
+    render :subscribe
+  end
+
+  post :payment, map: '/users/:id/payment' do
+    @user = User[params[:id].to_i]
+    @amount = 51250
+
+    customer = Stripe::Customer.create(
+      :email => 'a.user.com',
+      :card  => params[:stripeToken]
+    )
+
+    charge = Stripe::Charge.create(
+      :amount      => 50000,
+      :description => 'Test Charge',
+      :currency    => 'gbp',
+      :customer    => customer.id
+    )
+    @user.subscription = true
+    @user.save
+    render :payment
+  end
+
 end

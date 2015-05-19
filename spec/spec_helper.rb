@@ -6,7 +6,7 @@ Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
 Dir[File.expand_path(__dir__ + '/../app/helpers/**/*.rb')].each(&method(:require))
 
 Capybara.app = Padfoot::App # need this to tell Capy what the app is..
-Capybara.javascript_driver = :webkit
+Capybara.javascript_driver = :selenium
 
 Padfoot::App.set :delivery_method, :test # for capybara-email
 
