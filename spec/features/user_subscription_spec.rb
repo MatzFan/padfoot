@@ -1,5 +1,11 @@
 describe 'Subscribing', type: :feature, js: true do
 
+  RSpec.configure do |config|
+    config.before(:each) do
+      page.driver.allow_unknown_urls # capy webkit - silences warnings
+    end
+  end
+
   before do
     confirmed_user = create(:user, confirmation: true)
   end

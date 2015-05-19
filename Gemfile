@@ -38,7 +38,8 @@ group :test do
   gem 'faker', '1.4.3'
   gem 'capybara', '2.4.4'
   gem 'capybara-email', '2.4.0'
-  gem 'capybara-webkit', '1.5.1'
+  # gem 'capybara-webkit', '1.5.1'
+  gem 'capybara-webkit', :git => 'https://github.com/thoughtbot/capybara-webkit.git', branch: 'master'
 end
 
 group :test, :development do

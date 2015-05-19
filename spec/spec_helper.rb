@@ -34,10 +34,6 @@ RSpec.configure do |config|
     end
   end
 
-  # config.before(:each) do
-  #   page.driver.allow_url('*') # capy webkit - silences warnings
-  # end
-
 end
 
 # You can use this method to custom specify a Rack app
