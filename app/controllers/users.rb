@@ -75,8 +75,8 @@ Padfoot::App.controllers :users do
       :customer    => customer.id
     )
     @user.update(subscription: true, stripe_cust_id: customer.id)
-    flash[:notice] = 'Many thanks, you are now subscribed to jerseypropertyservices.com'
-    render :payment_confirmation
+    flash[:notice] = 'You have successfully subscribed, please log in'
+    redirect '/login'
   end
 
 end
