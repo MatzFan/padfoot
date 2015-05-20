@@ -3,12 +3,15 @@
     %h1 Subscribe
     = form_for(@user, "/users/#{@user.id}/payment", method: :post, class: :form, role: :form) do
       %span
-        = label_tag :annual_subscription_cost, :class => 'control-label'
-        £512.50
+        = label_tag :annual_subscription, :class => 'control-label'
+        = '£' + sprintf("%.2f", annual_subscription_cost_pence / 100.0) # stripe_helper method
+        - gon.subscription = annual_subscription_cost_pence.to_s
       %p
-        = javascript_include_tag "https://checkout.stripe.com/v2/checkout.js",
+      = javascript_include_tag "https://checkout.stripe.com/v2/checkout.js",
           :class => 'stripe-button',
           :"data-key" => ENV['STRIPE_PUBLISHABLE_KEY'],
-          :"data-description" => 'annual subscription',
+          :"data-description" => 'Annual subscription',
           :"data-currency" => 'GBP',
-          :"data-amount" => "51250"
+          :"data-amount" => gon.subscription
+
+    <input type="number" id="custom-donation-amount" placeholder="50.00" min="0" step="10.00"/>

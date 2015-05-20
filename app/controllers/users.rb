@@ -60,21 +60,22 @@ Padfoot::App.controllers :users do
 
   post :payment, map: '/users/:id/payment' do
     @user = User[params[:id].to_i]
-    @amount = 51250
+    stripe_cust_id = @user.stripe_cust_id
 
-    customer = Stripe::Customer.create(
-      :email => 'a.user.com',
-      :card  => params[:stripeToken]
-    )
+    if stripe_cust_id
+      customer = Stripe::Customer.retrieve(stripe_cust_id)
+    else
+      customer = Stripe::Customer.create(card: params[:stripeToken])
+    end
 
     charge = Stripe::Charge.create(
-      :amount      => 50000,
+      :amount      => annual_subscription_cost_pence, # stripe_helper method
       :description => 'Test Charge',
       :currency    => 'gbp',
       :customer    => customer.id
     )
-    @user.subscription = true
-    @user.save
+    @user.update(subscription: true, stripe_cust_id: customer.id)
+    flash[:notice] = 'Many thanks, you are now subscribed to jerseypropertyservices.com'
     render :payment
   end
 
