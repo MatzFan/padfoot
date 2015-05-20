@@ -3,8 +3,6 @@ describe 'Subscribing', type: :feature, js: true do
     context "by visiting the subscription page" do
       context 'and selecting "Pay with Card"' do
 
-        @customers = Stripe::Customer.all
-
         before do
           create(:user, confirmation: true)
           visit "/users/#{User.first.id}/subscribe"
@@ -21,7 +19,7 @@ describe 'Subscribing', type: :feature, js: true do
           sleep 10
         end
 
-        after { Stripe::Customer.all.each &:delete } # tidy up
+        after(:suite) { Stripe::Customer.all.each &:delete } # tidy up
 
         context "and making a successful payment" do
           it 'will assign the stripe customer id to the user' do
