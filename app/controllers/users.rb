@@ -59,22 +59,12 @@ Padfoot::App.controllers :users do
   end
 
   post :payment_confirmation, map: '/users/:id/payment_confirmation' do
-    @user = User[params[:id].to_i]
-    stripe_cust_id = @user.stripe_cust_id
+    user = User[params[:id].to_i]
+    token = params[:stripeToken]
+    stripe_cust_id = user.stripe_cust_id
 
-    if stripe_cust_id
-      customer = Stripe::Customer.retrieve(stripe_cust_id)
-    else
-      customer = Stripe::Customer.create(card: params[:stripeToken])
-    end
-
-    charge = Stripe::Charge.create(
-      :amount      => annual_subscription_cost_pence, # stripe_helper method
-      :description => 'Test Charge',
-      :currency    => 'gbp',
-      :customer    => customer.id
-    )
-    @user.update(subscription: true, stripe_cust_id: customer.id)
+    customer = Stripe::Customer.create(source: token, plan: 'annual')
+    user.update(subscription: true, stripe_cust_id: customer.id)
     flash[:notice] = 'You have successfully subscribed, please log in'
     redirect '/login'
   end

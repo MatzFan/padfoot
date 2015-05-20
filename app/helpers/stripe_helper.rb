@@ -1,9 +1,11 @@
 module Padfoot
   class App
     module StripeHelper
+
       def annual_subscription_cost_pence
-        51250
+        Stripe::Plan.retrieve('annual').amount
       end
+
     end
 
     helpers StripeHelper
