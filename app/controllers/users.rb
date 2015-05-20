@@ -58,7 +58,7 @@ Padfoot::App.controllers :users do
     render :subscribe
   end
 
-  post :payment, map: '/users/:id/payment' do
+  post :payment_confirmation, map: '/users/:id/payment_confirmation' do
     @user = User[params[:id].to_i]
     stripe_cust_id = @user.stripe_cust_id
 
@@ -76,7 +76,7 @@ Padfoot::App.controllers :users do
     )
     @user.update(subscription: true, stripe_cust_id: customer.id)
     flash[:notice] = 'Many thanks, you are now subscribed to jerseypropertyservices.com'
-    render :payment
+    render :payment_confirmation
   end
 
 end

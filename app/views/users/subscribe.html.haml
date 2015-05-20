@@ -1,7 +1,7 @@
 .container-fluid
   .col-md-4.col-md-offset-4.column
     %h1 Subscribe
-    = form_for(@user, "/users/#{@user.id}/payment", method: :post, class: :form, role: :form) do
+    = form_for(@user, "/users/#{@user.id}/payment_confirmation", method: :post, class: :form, role: :form) do
       %span
         = label_tag :annual_subscription, :class => 'control-label'
         = '£' + sprintf("%.2f", annual_subscription_cost_pence / 100.0) # stripe_helper method
@@ -13,5 +13,3 @@
           :"data-description" => 'Annual subscription',
           :"data-currency" => 'GBP',
           :"data-amount" => gon.subscription
-
-    <input type="number" id="custom-donation-amount" placeholder="50.00" min="0" step="10.00"/>
