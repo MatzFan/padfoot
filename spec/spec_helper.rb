@@ -1,14 +1,20 @@
 RACK_ENV = 'test' unless defined?(RACK_ENV)
 require 'capybara/rspec'
 require 'capybara/email/rspec'
+require 'selenium-webdriver'
 require File.expand_path(__dir__ + '/../config/boot')
 Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
 Dir[File.expand_path(__dir__ + '/../app/helpers/**/*.rb')].each(&method(:require))
 
 Capybara.app = Padfoot::App # need this to tell Capy what the app is..
-Capybara.javascript_driver = :selenium
+Capybara.register_driver :selenium_chrome do |app|
+  Capybara::Selenium::Driver.new(app, browser: :chrome) # register chrome
+end
+Capybara.default_driver = :selenium_chrome # uses FF and NOT Selenium by default
+Capybara.javascript_driver = :selenium_chrome # uses selenium FF by default
 
 Padfoot::App.set :delivery_method, :test # for capybara-email
+Capybara.server_port = Padrino::Application.settings.port # use default 4567 so email links work
 
 def session
   last_request.env['rack.session'] # for session tests

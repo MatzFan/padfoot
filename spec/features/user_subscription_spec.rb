@@ -7,7 +7,8 @@ describe 'Subscribing', type: :feature, js: true do
           create(:user, confirmation: true)
           visit "/users/#{User.first.id}/subscribe"
           click_button 'Pay with Card'
-          sleep 0.7
+          sleep 1
+          # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
           within_frame 'stripe_checkout_app' do
             page.driver.browser.find_element(:id, 'email').send_keys User.first.email
             4.times {page.driver.browser.find_element(:id, 'card_number').send_keys('4242')}
@@ -35,7 +36,7 @@ describe 'Subscribing', type: :feature, js: true do
             expect(current_path).to eq "/login"
           end
 
-          context 'where logging in' do
+          context 'and logging in' do
             it 'should be successful' do
               user = User.first
               fill_in('email', with: user.email)
