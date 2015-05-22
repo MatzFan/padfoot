@@ -1,3 +1,5 @@
+require_relative 'features_helper'
+
 describe 'Subscribing', type: :feature, js: true do
   context 'a confirmed user' do
     context "by visiting the subscription page" do
@@ -10,11 +12,11 @@ describe 'Subscribing', type: :feature, js: true do
           sleep 1
           # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
           within_frame 'stripe_checkout_app' do
-            page.driver.browser.find_element(:id, 'email').send_keys User.first.email
-            4.times {page.driver.browser.find_element(:id, 'card_number').send_keys('4242')}
-            page.driver.browser.find_element(:id, 'cc-exp').send_keys '12'
-            page.driver.browser.find_element(:id, 'cc-exp').send_keys '18'
-            page.driver.browser.find_element(:id, 'cc-csc').send_keys '123'
+            find_element(:id, 'email').send_keys User.first.email
+            4.times { find_element(:id, 'card_number').send_keys('4242') }
+            find_element(:id, 'cc-exp').send_keys '12'
+            find_element(:id, 'cc-exp').send_keys '18'
+            find_element(:id, 'cc-csc').send_keys '123'
             find('button[type="submit"]').click
           end
           sleep 10

@@ -1,3 +1,5 @@
+require_relative 'features_helper'
+
 describe 'Logging in', type: :feature do
   context 'a confirmed user' do
     context 'who is subscribed' do

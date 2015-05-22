@@ -1,3 +1,5 @@
+require_relative 'features_helper'
+
 describe 'Registering a new user', type: :feature do
 
   let(:user) { build(:user, email: 'test@example.com') }
