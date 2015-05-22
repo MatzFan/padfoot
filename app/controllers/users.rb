@@ -62,11 +62,15 @@ Padfoot::App.controllers :users do
     user = User[params[:id].to_i]
     token = params[:stripeToken]
     stripe_cust_id = user.stripe_cust_id
-
     customer = Stripe::Customer.create(source: token, plan: 'annual')
-    user.update(subscription: true, stripe_cust_id: customer.id)
-    flash[:notice] = 'You have successfully subscribed, please log in'
-    redirect '/login'
+    if customer
+      user.update(subscription: true, stripe_cust_id: customer.id)
+      flash[:notice] = 'You have successfully subscribed, please log in'
+      redirect '/login'
+    else
+      flash[:error] = 'Sorry, that transaction was unsuccessful'
+      render :subscription
+    end
   end
 
 end

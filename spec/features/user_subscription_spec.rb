@@ -1,30 +1,26 @@
 require_relative 'features_helper'
+require_relative 'pay_stripe_helper'
 
 describe 'Subscribing', type: :feature, js: true do
   context 'a confirmed user' do
     context "by visiting the subscription page" do
       context 'and selecting "Pay with Card"' do
+        context "and making an unsuccessful payment" do
 
-        before do
-          create(:user, confirmation: true)
-          visit "/users/#{User.first.id}/subscribe"
-          click_button 'Pay with Card'
-          sleep 1
-          # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
-          within_frame 'stripe_checkout_app' do
-            find_element(:id, 'email').send_keys User.first.email
-            4.times { find_element(:id, 'card_number').send_keys('4242') }
-            find_element(:id, 'cc-exp').send_keys '12'
-            find_element(:id, 'cc-exp').send_keys '18'
-            find_element(:id, 'cc-csc').send_keys '123'
-            find('button[type="submit"]').click
+          before(:each) { subscribe('4000000000000002') }
+
+          it "will remain on the user's subscription page" do
+            expect(current_path).to eq "/users/#{User.first.id}/subscribe"
           end
-          sleep 10
-        end
 
-        after(:suite) { Stripe::Customer.all.each &:delete } # tidy up
+        end # of unsuccessful payment
 
         context "and making a successful payment" do
+
+          before(:each) { subscribe('4242424242424242') }
+
+          after(:suite) { Stripe::Customer.all.each &:delete } # tidy up
+
           it 'will assign the stripe customer id to the user' do
             expect(User.first.stripe_cust_id).not_to be_blank
           end
@@ -48,7 +44,7 @@ describe 'Subscribing', type: :feature, js: true do
             end
           end
 
-        end
+        end # of making a successful payment
       end
     end
   end
