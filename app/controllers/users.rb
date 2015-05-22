@@ -73,4 +73,11 @@ Padfoot::App.controllers :users do
     end
   end
 
+  post :stripe_events, map: '/stripe_events' do
+    event_json = JSON.parse(request.body.read)
+    event = Stripe::Event.retrieve(event_json["id"])
+    logger.info event
+    status 200
+  end
+
 end
