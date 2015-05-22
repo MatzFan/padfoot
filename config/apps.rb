@@ -27,6 +27,7 @@
 #
 Padrino.configure_apps do
   # enable :sessions
+  enable :allow_disabled_csrf # for stripe webhooks: https://github.com/padrino/padrino-framework/issues/1258
   set :session_secret, '1c1d335be54946dcb9125760e1daeba654a2f86ea085a7386201758df7cc8566'
   set :protection, except: :path_traversal
   set :protect_from_csrf, !(RACK_ENV == 'test') # disable CSRF in test env only
