@@ -1,5 +1,12 @@
 module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
 
+  def enable_stripe_event_capture
+    port, dn = Padrino::Application.settings.port, '/dev/null'
+    pid = spawn("ultrahook stripe #{port}/stripe_events", out: dn, err: dn)
+    Process.detach pid
+    pid # return pid
+  end
+
   def subscribe(card_number)
     create(:user, confirmation: true)
     visit "/users/#{User.first.id}/subscribe"
@@ -7,8 +14,8 @@ module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e
     sleep 1
     within_frame 'stripe_checkout_app' do
       page.driver.browser.find_element(:id, 'email').send_keys User.first.email
-      split_into_4(card_number).each do |d|
-        page.driver.browser.find_element(:id, 'card_number').send_keys(d)
+      quartetify(card_number).each do |quartet|
+        page.driver.browser.find_element(:id, 'card_number').send_keys(quartet)
       end
       page.driver.browser.find_element(:id, 'cc-exp').send_keys '12'
       page.driver.browser.find_element(:id, 'cc-exp').send_keys '18'
@@ -18,7 +25,7 @@ module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e
     sleep 10
   end
 
-  def split_into_4(string)
+  def quartetify(string)
     string.chars.each_slice(4).map(&:join)
   end
 

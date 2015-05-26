@@ -2,6 +2,9 @@ require_relative 'features_helper'
 require_relative 'pay_stripe_helper'
 
 describe 'Subscribing', type: :feature, js: true do
+
+  after(:suite) { Stripe::Customer.all(limit: 100).each &:delete } # tidy up
+
   context 'a confirmed user' do
     context "by visiting the subscription page" do
       context 'and selecting "Pay with Card"' do
@@ -18,8 +21,6 @@ describe 'Subscribing', type: :feature, js: true do
         context "and making a successful payment" do
 
           before(:each) { subscribe('4242424242424242') }
-
-          after(:suite) { Stripe::Customer.all.each &:delete } # tidy up
 
           it 'will assign the stripe customer id to the user' do
             expect(User.first.stripe_cust_id).not_to be_blank
