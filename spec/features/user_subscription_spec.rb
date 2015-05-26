@@ -8,9 +8,12 @@ describe 'Subscribing', type: :feature, js: true do
   context 'a confirmed user' do
     context "by visiting the subscription page" do
       context 'and selecting "Pay with Card"' do
+
+        before(:each) { click_checkout_button }
+
         context "and making an unsuccessful payment" do
 
-          before(:each) { subscribe('4000000000000002') }
+          before(:each) { checkout(card_number: '4000000000000002') }
 
           it "will remain on the user's subscription page" do
             expect(current_path).to eq "/users/#{User.first.id}/subscribe"
@@ -20,7 +23,7 @@ describe 'Subscribing', type: :feature, js: true do
 
         context "and making a successful payment" do
 
-          before(:each) { subscribe('4242424242424242') }
+          before(:each) { checkout } # user default card details
 
           it 'will assign the stripe customer id to the user' do
             expect(User.first.stripe_cust_id).not_to be_blank

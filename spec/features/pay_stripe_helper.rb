@@ -1,5 +1,13 @@
 module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
 
+  FIELD_IDS = ['email', 'card_number', 'cc-exp', 'cc-csc']
+  # keys must be same as FIELD_IDS
+  CHECKOUT_DEFAULTS = { :email => 'test@example.com',
+                        :card_number => '4242424242424242',
+                        :'cc-exp' => '1218', # month & year
+                        :'cc-csc' => '123'
+                      }
+
   def enable_stripe_event_capture
     port, dn = Padrino::Application.settings.port, '/dev/null'
     pid = spawn("ultrahook stripe #{port}/stripe_events", out: dn, err: dn)
@@ -7,26 +15,24 @@ module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e
     pid # return pid
   end
 
-  def subscribe(card_number)
+  def click_checkout_button
     create(:user, confirmation: true)
     visit "/users/#{User.first.id}/subscribe"
     click_button 'Pay with Card'
     sleep 1
+  end
+
+  def checkout(opts = {})
+    opts = CHECKOUT_DEFAULTS.merge opts
     within_frame 'stripe_checkout_app' do
-      page.driver.browser.find_element(:id, 'email').send_keys User.first.email
-      quartetify(card_number).each do |quartet|
-        page.driver.browser.find_element(:id, 'card_number').send_keys(quartet)
-      end
-      page.driver.browser.find_element(:id, 'cc-exp').send_keys '12'
-      page.driver.browser.find_element(:id, 'cc-exp').send_keys '18'
-      page.driver.browser.find_element(:id, 'cc-csc').send_keys '123'
+      FIELD_IDS.each { |id| enter(id, opts[id.to_sym]) }
       find('button[type="submit"]').click
     end
     sleep 10
   end
 
-  def quartetify(string)
-    string.chars.each_slice(4).map(&:join)
+  def enter(field_id, keys)
+    page.driver.browser.find_element(:id, field_id).send_keys keys
   end
 
 end
