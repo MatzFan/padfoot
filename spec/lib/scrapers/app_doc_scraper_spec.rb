@@ -3,18 +3,11 @@
   let(:doc_types) { ['Agenda', 'Minutes'] }
   let(:meet_types) { ['PAP', 'MM'] }
 
-  s = AppDocScraper.new
-  page = Mechanize.new.get('file://' + PADRINO_ROOT + '/spec/lib/scrapers/docs_page_example.html')
+  let(:scraper) { AppDocScraper.new }
   titles = ["2015 Upcoming Planning Applications Committee meetings",
             "2015 Planning Applications Committee meetings",
             "2014 & 2015 Planning Applications Panel meetings",
             "2014 & 2015 Ministerial meetings"]
-
-  let(:scraper) do
-    dup = s.dup
-    dup.instance_variable_set(:@page, page)
-    dup
-  end
 
   context '#page' do
     it "should return the agendas/minutes page source" do

@@ -4,8 +4,10 @@ class AppDocScraper
   URL = 'http://www.gov.je/PlanningBuilding/PublicPlanningMeetings/Pages/AgendasMinutes.aspx'
   PAP = 'PAP'
   MM = 'MM'
+  PAC = 'PAC'
   PAP_TEXT = ['PAP', 'PAC', 'Panel'] # text in url which determines doc type is PAP
   MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
+  PAC_TEXT = ['PAC'] # text in url which determines doc type is PAC
 
   attr_reader :agent, :page, :tables, :table_agenda_columns, :table_minutes_columns,
   :table_years, :table_types, :table_links, :table_link_columns, :links, :num_docs,
@@ -66,10 +68,13 @@ class AppDocScraper
   end
 
   def verify_structure
-    raise Exception.new('Page structure changed') if
-    table_titles.count != tables.count ||
-    links.count != doc_types.count ||
-    links.count != file_names.count
+    if table_titles.count != tables.count
+      fail "table_titles = #{table_titles.count} <> tables = #{tables.count}"
+    elsif links.count != doc_types.count
+      fail "links = #{links.count} <> doc_types = #{doc_types.count}"
+    elsif links.count != file_names.count
+      fail "links = #{links.count} <> file_names = #{file_names.count}"
+    end
   end
 
   def table_years
