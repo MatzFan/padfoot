@@ -1,10 +1,10 @@
 describe S3storable do
 
   includer = class Includer; include S3storable; end
-  uri = 'http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/M%20%20PAP%2020140724.pdf'
+  uri = 'http://www.gov.je/SiteCollectionDocuments/Planning%20and%20building/A%20PAC%2011%2006%202015.pdf'
   duff_uri = 'http://www.gov.je/SiteCollectionDocuments/loadofoldbollocks.pdf'
   let(:helper) { Includer.new }
-  let(:example_key) { '140724_PAP_M'}
+  let(:example_key) { '150611_PAC_A'}
 
   context '#s3_file_keys' do
     it 'should return an array of the keys of existing S3 files' do

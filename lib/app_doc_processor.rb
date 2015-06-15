@@ -17,8 +17,10 @@ class AppDocProcessor
     scraper.meet_data.each { |hash| Meeting.find_or_create(hash) }
   end
 
-  def new_data # data-pairs is 2D array of doc/meetign data hash pairs
-    scraper.data_pairs.reject { |arr| s3_file_keys.any? { |f| arr[0][:name] == f } }
+  def new_data # data-pairs is 2D array of doc/meeting data hash pairs
+    scraper.data_pairs.reject do |arr|
+      s3_file_keys.any? { |f| arr[0][:name] == f }
+    end
   end
 
   def new_doc_link_data

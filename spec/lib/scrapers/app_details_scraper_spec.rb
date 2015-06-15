@@ -22,7 +22,7 @@ describe AppDetailsScraper do
                    nil # no agent
                    ] }
   let(:dates) { ["2014-04-04", "2014-04-15", "2014-05-06", "",
-                 "2014-08-15", "2014-10-14", "2014-06-18"
+                 "2014-08-15", "2014-10-14", "2014-07-10"
                 ] }
   let(:app_coords) { [49.185511, -2.191882] }
 
@@ -46,7 +46,7 @@ describe AppDetailsScraper do
                           :site_visit_date => nil, # no site visit date in this example
                           :committee_date => Date.parse('2014-08-15'),
                           :decision_date => Date.parse('2014-10-14'),
-                          :appeal_date => Date.parse('2014-06-18'),
+                          :appeal_date => Date.parse('2014-07-10'),
                       } }
 
   context '#initialize' do
