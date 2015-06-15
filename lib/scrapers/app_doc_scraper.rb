@@ -2,12 +2,7 @@ class AppDocScraper
 
   ROOT = 'http://www.gov.je'
   URL = 'http://www.gov.je/PlanningBuilding/PublicPlanningMeetings/Pages/AgendasMinutes.aspx'
-  PAP = 'PAP'
-  MM = 'MM'
-  PAC = 'PAC'
-  PAP_TEXT = ['PAP', 'PAC', 'Panel'] # text in url which determines doc type is PAP
-  MH_TEXT = ['MM', 'Ministerial'] # text in url which determines doc type is MH
-  PAC_TEXT = ['PAC'] # text in url which determines doc type is PAC
+  MEET_TYPES = {:PAP => ['PAP', 'Panel'], :MM => ['MM', 'Ministerial'], :PAC => ['Committee', 'PAC']}
 
   attr_reader :agent, :page, :tables, :table_agenda_columns, :table_minutes_columns,
   :table_years, :table_types, :table_links, :table_link_columns, :links, :num_docs,
@@ -78,7 +73,6 @@ class AppDocScraper
   end
 
   def table_years
-    # table_titles.map { |string| string.to_i if string.to_i != 0 }
     table_titles.map { |string| years_in(string) }
   end
 
@@ -88,7 +82,7 @@ class AppDocScraper
   end
 
   def table_types
-    table_titles.map { |s| s.include?('Panel') ? 'PAP' : s.include?('Ministerial') ? 'MM' : '?' }
+    table_titles.map { |s| type(s) }
   end
 
   def table_links # returns 2D array
@@ -142,8 +136,12 @@ class AppDocScraper
     end.flatten
   end
 
-  def type(link)
-    pap?(link) ? PAP : (mm?(link) ? MM : '?')
+  def type(txt)
+    MEET_TYPES.each { |type, arr| return type.to_s if match?(txt, arr) }
+  end
+
+  def match?(uri, text_arr)
+    text_arr.any? { |text| File.basename(uri).include?(text) }
   end
 
   def table_link_names # returns 2D array
@@ -185,14 +183,6 @@ class AppDocScraper
 
   def data_pairs
     doc_data.zip(meet_data)
-  end
-
-  def pap?(uri)
-    PAP_TEXT.any? { |text| File.basename(uri).include?(text) }
-  end
-
-  def mm?(uri)
-    MH_TEXT.any? { |text| File.basename(uri).include?(text) }
   end
 
   def file_names

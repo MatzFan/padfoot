@@ -1,17 +1,18 @@
  describe AppDocScraper do
 
-  let(:doc_types) { ['Agenda', 'Minutes'] }
-  let(:meet_types) { ['PAP', 'MM'] }
+  let(:doc_types) { %w(Agenda Minutes) }
+  let(:tbl_types) { %w(PAC PAC PAP MM) }
+  let(:meeting_types) { %w(PAP MM PAC) }
 
   let(:scraper) { AppDocScraper.new }
   titles = ["2015 Upcoming Planning Applications Committee meetings",
             "2015 Planning Applications Committee meetings",
             "2014 & 2015 Planning Applications Panel meetings",
-            "2014 & 2015 Ministerial meetings"]
+            "2015 Ministerial meetings"]
 
   context '#page' do
     it "should return the agendas/minutes page source" do
-      expect(s.page.title).to include('Agendas and minutes')
+      expect(scraper.page.title).to include('Agendas and minutes')
     end
   end
 
@@ -40,7 +41,7 @@
 
   context '#table_years' do
     it 'returns an array of the year extracted from the table titles, if any' do
-      expect(scraper.table_years).to eq([2015,2015,nil,nil])
+      expect(scraper.table_years).to eq([2015,2015,nil,2015])
     end
   end
 
@@ -58,7 +59,7 @@
 
   context '#table_types' do
     it 'returns an array of the table meeting type, if any' do
-      expect(scraper.table_types).to eq(['?','?','PAP','MM'])
+      expect(scraper.table_types).to eq(tbl_types)
     end
   end
 
@@ -76,7 +77,7 @@
 
   context '#meet_types' do
     it 'should return an array only of correct meeting types' do
-      expect(scraper.meet_types.all? { |type| meet_types.any? { |m| type == m } }).to be_truthy
+      expect(scraper.meet_types.all? { |type| meeting_types.any? { |m| type == m } }).to be_truthy
     end
   end
 
@@ -114,15 +115,15 @@
   end
 
   context '#file_names' do
-    it 'returns an array of strings of format: yymmdd_[PAP/MM]_[A/M]' do
-      expect(scraper.file_names.all? { |s| s =~ /^\d{6}_(PAP|MM)_(A|M)(_\d)?$/ }).to be_truthy
+    it 'returns an array of strings of format: yymmdd_[PAP/MM/PAC]_[A/M]' do
+      expect(scraper.file_names.all? { |s| s =~ /^\d{6}_(PAP|MM|PAC)_(A|M)(_\d)?$/ }).to be_truthy
     end
   end
 
   context '#meet_data' do
     it 'returns an array of meetings data hashes: {type: xxx, date: xxx}' do
       expect(scraper.meet_data.all? do |h|
-        meet_types.any? { |m| h[:type] == m } && h[:date].kind_of?(Date)
+        meeting_types.any? { |m| h[:type] == m } && h[:date].kind_of?(Date)
       end).to be_truthy
     end
   end
