@@ -20,7 +20,7 @@ Padfoot::App.controllers :sessions do
         sign_in(@user) # defined in helpers/sessions
         redirect 'applications/index'
       else
-        redirect "/users/#{@user.id}/subscribe"
+        redirect "users/#{@user.id}/subscribe"
       end
     else
       render :new, locals: { error: true }
