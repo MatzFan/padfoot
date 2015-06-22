@@ -9,8 +9,9 @@ describe AppDocProcessor do
   processor = AppDocProcessor.new
   date = Date.parse(Time.now.strftime("%y%m%d"))
   new_data = [[{type: "doc_type", name: "new_doc_name", link: "link_to_a.pdf"}, {type: "meet_type", date: date }]] # single doc & meeting
-  processor.instance_variable_set(:@new_data, new_data)
-  scraper = processor.scraper
+  processor.instance_variable_set(:@new_web_data, new_data)
+  processor.instance_variable_set(:@new_doc_link_data, [{type: "doc_type", name: "new_doc_name", link: "link_to_a.pdf"}])
+  scraper = processor.instance_variable_get :@scraper
   meeting_hash = { type: 'MM', date: Date.new(2014,06,16) }
   let(:doc) { create(:document) }
 

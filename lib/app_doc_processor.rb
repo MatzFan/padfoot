@@ -4,39 +4,36 @@ require 'open-uri'
 class AppDocProcessor
   include S3storable
 
-  attr_reader :scraper, :new_data, :new_doc_link_data, :link_count
-
   def initialize
     @scraper = AppDocScraper.new
-    @new_data = new_data
+    @new_web_data = new_web_data
     @new_doc_link_data = new_doc_link_data
-    @link_count = []
   end
 
   def create_meetings
-    scraper.meet_data.each { |hash| Meeting.find_or_create(hash) }
+    @scraper.meet_data.each { |hash| Meeting.find_or_create(hash) }
   end
 
-  def new_data # data-pairs is 2D array of doc/meeting data hash pairs
-    scraper.data_pairs.reject do |arr|
+  def new_web_data # data-pairs is 2D array of doc/meeting data hash pairs
+    @scraper.data_pairs.reject do |arr|
       s3_file_keys.any? { |f| arr[0][:name] == f }
     end
   end
 
   def new_doc_link_data
-    @new_data.map(&:first).flatten
-  end
-
-  def new_doc_data
-    new_doc_link_data.map { |hash| hash.reject { |k,v| k == :link } }
-  end
-
-  def links
-    new_doc_link_data.map { |hash| hash.select { |k,v| k == :link }[:link] }
+    @new_web_data.map(&:first).flatten
   end
 
   def meeting_data
-    @new_data.map(&:last).flatten
+    @new_web_data.map(&:last).flatten
+  end
+
+  def new_doc_data
+    @new_doc_link_data.map { |hash| hash.reject { |k,v| k == :link } }
+  end
+
+  def links
+    @new_doc_link_data.map { |hash| hash.select { |k,v| k == :link }[:link] }
   end
 
   def new_docs
