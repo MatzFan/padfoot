@@ -1,8 +1,8 @@
 class Document < Sequel::Model
   plugin :validation_helpers
 
-  many_to_one :document_types, key: :name
-  many_to_one :meetings
+  many_to_one :document_type, key: :name
+  many_to_one :meeting
   many_to_many :planning_apps, left_key: :id, right_key: :app_ref
 
   def validate

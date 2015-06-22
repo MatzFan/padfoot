@@ -1,6 +1,6 @@
 class Meeting < Sequel::Model
 
-  many_to_one :meeting_types, key: :name
+  many_to_one :meeting_type, key: :name
   one_to_many :documents
 
   def before_save

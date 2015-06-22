@@ -39,7 +39,7 @@ class AppDocProcessor
     @new_data.map(&:last).flatten
   end
 
-  def new_docs #
+  def new_docs
     new_doc_data.map { |hash| Document.new(hash) }
   end
 
@@ -67,7 +67,7 @@ class AppDocProcessor
 
   def create_docs
     docs_with_urls.compact.each &:save
-    docs_with_urls.count - docs_with_urls.compact.count
+    docs_with_urls.count - docs_with_urls.compact.count # return number > 0 if any duplicates
   end
 
   def create_doc_app_ref_links
@@ -100,10 +100,16 @@ class AppDocProcessor
     data == {} ? nil : PlanningApp.create(data)
   end
 
-  def page_app_refs_in(doc)
+  def text_of(doc)
     open('temp_pdf', 'wb') { |file| file << open(doc.url).read }
     text = `pdftotext -enc UTF-8 temp_pdf -`
     File.delete('temp_pdf')
+    text
+  end
+
+  def page_app_refs_in(doc) # also adds meeting number to associated meeting
+    text = text_of(doc)
+    add_meet_num(doc, text) if doc.type == 'Agenda' && doc.meeting.type != 'MM'
     parse_app_refs_from(text)
   end
 
@@ -111,6 +117,18 @@ class AppDocProcessor
     doc_text.split("\u000C").each_with_index.map do |page_text, i|
       [i + 1, refs_in_page(page_text)] # add 1 as pdf page links index from 1
     end.reject { |arr| arr.last == [] }
+  end
+
+  def add_meet_num(doc, text)
+    meeting = doc.meeting
+    meeting.number = parse_meeting_num_from(text)
+    meeting.save
+  end
+
+  def parse_meeting_num_from(doc_text)
+    first_page_lines = doc_text.split("\u000C").first.split("\n")
+    arr = first_page_lines.map { |l| l.match /^Meeting No[:|.](.*)$/ }.compact
+    arr.size == 1 ? arr[0][1].to_i : 0 # zero unless a single match
   end
 
   def refs_in_page(page_text)

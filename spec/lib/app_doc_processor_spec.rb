@@ -1,6 +1,7 @@
 describe AppDocProcessor do
 
   S3_URL = 'https://meetingdocuments.s3.amazonaws.com/150219_PAP_M' # care if renaming bucket
+  PAP_A_URL = 'https://meetingdocuments.s3.amazonaws.com/150611_PAC_A'
   PAGE_REFS = [[3, ["RP/2014/0880", "P/2009/1871", "PP/2014/1794", "RC/2014/2002"]],
                [4, ["P/2014/1936"]], [19, ["P/2014/1619"]], [20, ["P/2014/1791"]],
                [21, ["P/2014/1873"]]]
@@ -13,9 +14,9 @@ describe AppDocProcessor do
   meeting_hash = { type: 'MM', date: Date.new(2014,06,16) }
   let(:doc) { create(:document) }
 
-  def sample_doc_text
+  def sample_doc_text(url)
     begin
-      open('temp_pdf', 'wb') { |file| file << open(S3_URL).read }
+      open('temp_pdf', 'wb') { |file| file << open(url).read }
       text = `pdftotext -enc UTF-8 temp_pdf -`
     rescue
     ensure
@@ -101,18 +102,19 @@ describe AppDocProcessor do
 
   context '#parse_app_refs_from' do
     it 'returns a 2D array of page numbers and any app refs found on each page' do
-      expect(processor.parse_app_refs_from(sample_doc_text)).to eq(PAGE_REFS)
+      expect(processor.parse_app_refs_from(sample_doc_text(S3_URL))).to eq(PAGE_REFS)
+    end
+  end
+
+  context '#parse_meeting_number_from' do
+    it 'returns the meeting number from first page of a Planning Application Panel agenda' do
+      expect(processor.parse_meeting_num_from(sample_doc_text(PAP_A_URL))).to eq(103)
     end
   end
 
   context '#create_docs' do
     it 'save documents in the variable "docs_with_urls"' do
-      doc1 = build(:document)
-      doc2 = build(:document)
-      pp doc1
-      pp doc2
-      # allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
-      allow(processor).to receive(:docs_with_urls) { [doc1, doc2] }
+      allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
       processor.create_docs
       expect(DB[:documents].count).to eq 2
     end
@@ -127,7 +129,5 @@ describe AppDocProcessor do
       expect(processor.create_docs).to eq 1
     end
   end
-
-
 
 end
