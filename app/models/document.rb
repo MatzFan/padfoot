@@ -1,4 +1,5 @@
 class Document < Sequel::Model
+  plugin :validation_helpers
 
   many_to_one :document_types, key: :name
   many_to_one :meetings

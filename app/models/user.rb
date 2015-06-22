@@ -1,7 +1,7 @@
 class User < Sequel::Model
-
   plugin :validation_helpers
   plugin :validation_class_methods # needed for validates_confirmation_of
+
   validates_confirmation_of :password # a class method in Sequel...
 
   def validate

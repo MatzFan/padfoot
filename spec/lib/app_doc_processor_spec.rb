@@ -24,7 +24,6 @@ describe AppDocProcessor do
     text
   end
 
-
   context '#new' do
     it 'should return an instance of the class' do
       expect(processor.class).to eq(AppDocProcessor)
@@ -106,14 +105,19 @@ describe AppDocProcessor do
     end
   end
 
-  context 'create_docs' do
+  context '#create_docs' do
     it 'save documents in the variable "docs_with_urls"' do
-      allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
+      doc1 = build(:document)
+      doc2 = build(:document)
+      pp doc1
+      pp doc2
+      # allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
+      allow(processor).to receive(:docs_with_urls) { [doc1, doc2] }
       processor.create_docs
       expect(DB[:documents].count).to eq 2
     end
 
-    it 'returns 0 if "docs_with_urls" as no nils' do
+    it 'returns 0 if "docs_with_urls" contains no nils' do
       allow(processor).to receive(:docs_with_urls) { [build(:document), build(:document)] }
       expect(processor.create_docs).to eq 0
     end
@@ -123,5 +127,7 @@ describe AppDocProcessor do
       expect(processor.create_docs).to eq 1
     end
   end
+
+
 
 end
