@@ -2,7 +2,7 @@ describe TransactionTableParser do
 
   uri = URI.join('file:///', "#{Padrino.root}/spec/fixtures/trans_table.html")
   let(:parser) { TransactionTableParser.new(uri) }
-  first = ["27/11/2012", "1304", "471", "Will Registered"]
+  first = ['02/01/2014', '1324', '458', 'H.C.S. - Reimbursement']
 
   context '#new' do
     it 'should return an instance of the class' do
