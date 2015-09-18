@@ -17,7 +17,8 @@ class AppRefsScraper # scrapes app refs for a given year
 
   def initialize(year = Time.now.year, start_page = 1)
     @year = year.to_s
-    @start_page = start_page.to_i
+    @get_all = start_page.to_i < 0 ? true : false
+    @start_page = start_page.to_i.abs # deal with -1
     @latest_app_num = latest_app_num
   end
 
@@ -27,10 +28,10 @@ class AppRefsScraper # scrapes app refs for a given year
 
   def refs
     refs = []
-    (start_page..num_pages).collect do |page_num|
+    (@start_page..num_pages).map do |page_num|
       logger.info "Getting apps for page: #{page_num}"
       refs += app_refs_on_page(page_num)
-      return refs if refs.any? { |r| r =~ /\/#{year}\/#{@latest_app_num}$/ }
+      return refs if !@get_all && include_latest_app_ref?(refs)
     end
     refs
   end
@@ -74,6 +75,12 @@ class AppRefsScraper # scrapes app refs for a given year
   def json_for_page(page)
     cmd = CURL + " {'" + params(page) + "}' " + ROOT + REQ_PAGE
     `#{cmd}`
+  end
+
+  private
+
+  def include_latest_app_ref?(refs)
+    refs.any? { |r| r =~ /\/#{@year}\/#{@latest_app_num}$/ }
   end
 
 end

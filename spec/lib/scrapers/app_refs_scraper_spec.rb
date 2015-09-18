@@ -51,13 +51,17 @@ describe AppRefsScraper do
   end
 
   context '#refs' do
-    it "should return 20 apps for 2013 if latest_app_num is '1833'" do
+    it "returns 20 apps for 2013 if latest_app_num is '1833'" do
       scraper.instance_variable_set(:@latest_app_num, '1833') # simulates latest app ref '1833' in database
       expect(scraper.refs.count).to eq(20)
     end
 
-    it "should return 29 apps for 2013 if page param set to 143" do
+    it "returns 29 apps for 2013 if page param set to 143" do
       expect(AppRefsScraper.new(2013, 143).refs.count).to eq(34)
+    end
+
+    it "returns all 384 app refs for 1988 if page param set to -1" do
+      expect(AppRefsScraper.new(1988, -1).refs.count).to eq(384)
     end
   end
 
