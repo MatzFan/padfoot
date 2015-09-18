@@ -30,13 +30,13 @@ namespace :sq do
             if app != new_apps[i]
               count += 1
               app.update(new_data[i]) if (app.app_ref == new_apps[i][:app_ref])
-              puts "#{count} applications updated, #{deleted} applications deleted in #{(Time.now - t).to_i/60} minutes"
             end
           end
         end
       rescue
         puts "ERROR in sq:apps:changes:\n\nnew_data[i] = #{new_data[i].inspect}\n\nnew_apps[i] = #{new_apps[i]}"
       end
+      puts "#{count} applications updated, #{deleted} applications deleted in #{(Time.now - t).to_i/60} minutes"
     end
   end
 end
