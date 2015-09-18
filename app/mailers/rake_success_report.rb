@@ -1,4 +1,4 @@
-Padfoot::App.mailer :rake_report do
+Padfoot::App.mailer :rake_success_report do
 
   email :daily_report_email do |report|
     from 'jerseypropertyservices.com'

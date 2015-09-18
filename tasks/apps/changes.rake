@@ -16,11 +16,15 @@ namespace :sq do
         old_apps.each_with_index do |app, i|
           if app != new_apps[i]
             count += 1
-            app.update(new_data[i]) if (app.app_ref == new_apps[i][:app_ref])
+            begin
+              app.update(new_data[i]) if (app.app_ref == new_apps[i][:app_ref])
+              puts "#{count} applications updated in #{(Time.now - t).to_i/60} minutes"
+            rescue Error
+              puts "ERROR in sq:apps:changes:\n\nnew_data[i] = #{new_data[i].inspect}\n\nnew_apps[i] = #{new_apps[i]}"
+            end
           end
         end
       end
-      puts "#{count} applications updated in #{(Time.now - t).to_i/60} minutes"
     end
   end
 end
