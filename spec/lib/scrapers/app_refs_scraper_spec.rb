@@ -11,7 +11,7 @@ describe AppRefsScraper do
 
   context '#num_apps' do
     it 'should return correct number of apps for a valid year - e.g. 2013' do
-      expect(scraper.num_apps).to eq(1449)
+      expect(scraper.num_apps).to eq(1454)
     end
 
     it 'should return 0 for an invalid year - e.g. 9999' do
@@ -57,7 +57,7 @@ describe AppRefsScraper do
     end
 
     it "should return 29 apps for 2013 if page param set to 143" do
-      expect(AppRefsScraper.new(2013, 143).refs.count).to eq(29)
+      expect(AppRefsScraper.new(2013, 143).refs.count).to eq(34)
     end
   end
 
