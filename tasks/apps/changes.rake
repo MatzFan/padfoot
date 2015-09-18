@@ -19,7 +19,7 @@ namespace :sq do
             begin
               app.update(new_data[i]) if (app.app_ref == new_apps[i][:app_ref])
               puts "#{count} applications updated in #{(Time.now - t).to_i/60} minutes"
-            rescue Error
+            rescue
               puts "ERROR in sq:apps:changes:\n\nnew_data[i] = #{new_data[i].inspect}\n\nnew_apps[i] = #{new_apps[i]}"
             end
           end
