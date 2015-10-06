@@ -1,5 +1,7 @@
 class AppDocScraper
 
+  class Err < StandardError; end
+
   ROOT = 'http://www.gov.je'
   URL = 'http://www.gov.je/PlanningBuilding/PublicPlanningMeetings/Pages/AgendasMinutes.aspx'
   MEET_TYPES = {:PAP => ['PAP', 'Panel'], :MM => ['MM', 'Ministerial'], :PAC => ['Committee', 'PAC']}
@@ -64,11 +66,11 @@ class AppDocScraper
 
   def verify_structure
     if table_titles.count != tables.count
-      fail "table_titles = #{table_titles.count} <> tables = #{tables.count}"
+      fail Err, "table_titles = #{table_titles.count} <> tables = #{tables.count}"
     elsif links.count != doc_types.count
-      fail "links = #{links.count} <> doc_types = #{doc_types.count}"
+      fail Err, "links = #{links.count} <> doc_types = #{doc_types.count}"
     elsif links.count != file_names.count
-      fail "links = #{links.count} <> file_names = #{file_names.count}"
+      fail Err, "links = #{links.count} <> file_names = #{file_names.count}"
     end
   end
 
