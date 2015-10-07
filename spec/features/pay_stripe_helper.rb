@@ -24,11 +24,18 @@ module PayStripeHelper # credit here: https://gist.github.com/nruth/b2500074749e
 
   def checkout(opts = {})
     opts = CHECKOUT_DEFAULTS.merge opts
-    within_frame 'stripe_checkout_app' do
-      FIELD_IDS.each { |id| enter(id, opts[id.to_sym]) }
+    within_frame 'stripe_checkout_app' do # selenium
+      enter('email', opts[:email])
+      opts[:card_number].chars.each_slice(4) do |digits|
+        enter('card_number', digits)
+      end
+      opts[:'cc-exp'].chars.each_slice(2) do |digits| # month then year
+        enter('cc-exp', digits)
+      end
+      enter('cc-csc', opts[:'cc-csc'])
       find('button[type="submit"]').click
     end
-    sleep 10
+    sleep 5
   end
 
   def enter(field_id, keys)
