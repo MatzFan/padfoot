@@ -24,11 +24,6 @@ describe Property do
       Property.new(uprn: 12345678, x: 47479, y: 63374).save
       expect([Property.first.prop_lat, Property.first.prop_long]).to eq([49.165375, -2.032449])
     end
-
-    it 'raises Error if x or y is missing' do
-      prop = Property.new(uprn: 12345678, prop_html: 'an address')
-      expect(->{ prop.save }).to raise_error
-    end
   end
 
   context '#property_type' do
