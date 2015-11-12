@@ -1,6 +1,6 @@
 class TransProp < Sequel::Model
 
-  many_to_one :property, key: :property_uprn
+  many_to_one :property, key: :property_uprn # use many_to_one this side of 1-1 assoc.
   many_to_one :transaction
 
   def before_save
