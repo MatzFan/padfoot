@@ -1,10 +1,13 @@
 describe TransactionParser do
 
-  uri = URI.join('file:///', "#{Padrino.root}/spec/fixtures/single_page_trans.html")
-  let(:parser) { TransactionParser.new(uri) }
-  let(:party_hash) { {role: 'Vendor - Realty', surname: 'BROWN', maiden_name: '',
-                      forenames: 'Phillip Andrew', ext_text: 'or Philip Andrew'} }
-  let(:property_hash) { {uprn: '69117812', parish: 'St. Helier', address: 'Almeda, 7 La Rue de Pod棚tre,'} }
+  file = "#{Padrino.root}/spec/fixtures/trans_details.html"
+  let(:parser) { TransactionParser.new(file) }
+  let(:party1_hash) { {role: 'Vendor - Realty', surname: 'BROWN', maiden_name: nil,
+                      forename: 'Phillip Andrew', ext_text: 'or Philip Andrew'} }
+  let(:party3_hash) { {role: 'Vendor - Realty', surname: 'Brown', maiden_name: 'Sowden',
+                      forename: 'Nicolle Stephanie Cubitt', ext_text: nil} }
+  let(:property_hash) { {property_uprn: '69117812', parish: 'St. Helier',
+                         address: 'Almeda, 7 La Rue de Podêtre,'} }
 
   context '#new' do
     it 'should return an instance of the class' do
@@ -33,13 +36,13 @@ describe TransactionParser do
 
     context '#extended_text' do
       it "returns the extended text field" do
-        expect(parser.extended_text).to eq('Ext text')
+        expect(parser.extended_text).to be_nil
       end
     end
 
     context '#summary_details' do
       it "returns the summary details field" do
-        expect(parser.summary_details).to eq('Test')
+        expect(parser.summary_details).to be_nil
       end
     end
 
@@ -55,9 +58,15 @@ describe TransactionParser do
       end
     end
 
-    context '#book_page' do
-      it "returns an array of book and page integers" do
-        expect(parser.book_page).to eq([1271, 699])
+    context '#book_page_suffix' do
+      it "returns an 3-element array of book and page integers and nil if there is no suffix" do
+        expect(parser.book_page_suffix).to eq([1271, 699, nil])
+      end
+
+      it "returns an 3-element array of book and page integers and the page_num suffix if there is one" do
+        p = parser
+        allow(p).to receive(:book_page_text) { ["                1271", "                699/A"] }
+        expect(p.book_page_suffix).to eq([1271, 699, 'A'])
       end
     end
 
@@ -82,9 +91,13 @@ describe TransactionParser do
       end
     end
 
-    context '#party_data' do
+    context '#parties_data' do
       it "returns an array of party data hashes" do
-        expect(parser.party_data[0]).to eq(party_hash)
+        expect(parser.parties_data[0]).to eq(party1_hash)
+      end
+
+      it "returns an array of party data hashes, which includes maiden name" do
+        expect(parser.parties_data[2]).to eq(party3_hash)
       end
     end
 
@@ -96,19 +109,16 @@ describe TransactionParser do
     end
   end
 
-  context 'property data' do
-    context '#properties' do
-      it "returns a 2D 'property' array with a single element (one property)" do
-        expect(parser.properties.count).to eq(1)
-      end
+  context '#properties' do
+    it "returns a 2D 'property' array with a single element (one property)" do
+      expect(parser.properties.count).to eq(1)
     end
+  end
 
-    context '#property_hashes' do
-      it "returns an array of property data hashes" do
-        expect(parser.property_data[0]).to eq(property_hash)
-      end
+  context '#properties_data' do
+    it "returns an array of property data hashes" do
+      expect(parser.properties_data[0]).to eq(property_hash)
     end
-
   end
 
 end

@@ -5,11 +5,11 @@ class TransactionParser
   HEADER_ROWS = %w(Surname: Maiden\ Name: Summary\ Details: Index: Doc\ Type: Book/Page: Role:)
   PARTY_ROWS = %w(Role Surname/Corporate\ Name Maiden\ Name Forename Extended\ Text)
   PROPERTY_ROWS = %w(Prop\ Id(s) Parish(es) Address(es))
-  PARTY_KEYS = [:role, :surname, :maiden_name, :forenames, :ext_text]
-  PROP_KEYS = [:uprn, :parish, :address]
+  PARTY_KEYS = [:role, :surname, :maiden_name, :forename, :ext_text]
+  PROP_KEYS = [:property_uprn, :parish, :address]
 
   def initialize(file)
-    @file = file
+    @uri = URI.join('file:///', file)
     @agent = Mechanize.new
     @page = page
     @tables = tables
@@ -26,7 +26,9 @@ class TransactionParser
   end
 
   def page
-    @agent.get(@file)
+    page = @agent.get(@uri)
+    page.encoding = 'utf-8'
+    page
   end
 
   def tables
@@ -38,15 +40,18 @@ class TransactionParser
   end
 
   def extended_text
-    @header_trs[1].children.children.last.text
+    arr = @header_trs[1].search('td').last.children
+    arr.first.text if !arr.empty?
   end
 
   def summary_details
-    @header_trs[2].children.children.last.text
+    arr = @header_trs[2].search('td').last.children
+    arr.first.text if !arr.empty?
   end
 
   def doc_num
-    @header_trs[3].children.children.last.text.to_i
+    arr = @header_trs[3].search('td').last.children
+    arr.first.text.to_i if !arr.empty?
   end
 
   def doc_type
@@ -54,11 +59,13 @@ class TransactionParser
   end
 
   def book_page_text
-    @header_trs[5].children.children[1].text.split("\n")
+    @header_trs[5].children.children[1].text.split("\n").values_at(2,4)
   end
 
-  def book_page
-    [book_page_text[2], book_page_text[4]].map &:to_i
+  def book_page_suffix
+    book_num_text, page_num_suffix = book_page_text
+    page_num_text, suffix = page_num_suffix.split('/')
+    [book_num_text.to_i, page_num_text.to_i, suffix]
   end
 
   def reg_date_string
@@ -74,10 +81,16 @@ class TransactionParser
   end
 
   def parties
-    @party_trs[1..-1].map { |r| r.children.children.map(&:text).map(&:strip) }
+    @party_trs[1..-1].map do |row|
+      nils row.search('td').to_a.values_at(0,2,4,6,8).map(&:text).map(&:strip)
+    end
   end
 
-  def party_data
+  def nils(arr)
+    arr.map { |string| string.empty? ? nil : string }
+  end
+
+  def parties_data
     parties.map { |party| Hash[*PARTY_KEYS.zip(party).flatten] }
   end
 
@@ -89,7 +102,7 @@ class TransactionParser
     @prop_trs[1..-1].map { |r| r.children.children.map(&:text).map(&:strip) }
   end
 
-  def property_data
+  def properties_data
     properties.map { |property| Hash[*PROP_KEYS.zip(property).flatten] }
   end
 
