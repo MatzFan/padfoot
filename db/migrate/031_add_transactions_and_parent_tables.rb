@@ -19,22 +19,29 @@ Sequel.migration do
       String :name, primary_key: true
     end
 
-    create_table :parties do
+    create_table :names do
       primary_key :id
+      TrueClass :current
       String :surname
-      String :maiden_name
       String :forename
+      String :maiden_name
+    end
+
+    create_table :parties do
       String :ext_text
       foreign_key :role, :party_roles, type: String
       foreign_key :transaction_id, :transactions
+      foreign_key :name_id, :names
+      primary_key [:transaction_id, :name_id]
+      index [:transaction_id, :name_id]
     end
 
     create_table :trans_props do
       primary_key :id
-      Integer :uprn
       String :parish
       String :address
       foreign_key :transaction_id, :transactions
+      foreign_key :property_uprn, :properties
     end
 
   end
