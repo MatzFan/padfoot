@@ -9,18 +9,25 @@ namespace :sq do
       vars = {doc_num: nil, summary_details: nil}
       vars.map { |k,v| vars[k] = p.send k}
       if book * page == 0
-        exit 'Book & page numbers are zero!'
+        abort 'Book & page numbers are zero!'
       else
         t = Transaction.find(book_num: book, page_num: page, page_suffix: sf)
         if t
-          parts, prps = p.parties_data, p.properties_data
+          parties, prps = p.parties_data, p.properties_data
           DB.transaction do
-            t.update vars
-            parts.each { |p| t.add_party Party.new(p) } if !parts.empty?
-            prps.each { |p| t.add_trans_prop TransProp.new(p) } if !prps.empty?
+            # t.update vars
+            # prps.each { |p| t.add_trans_prop TransProp.new(p) } if !prps.empty?
+            if !parties.empty?
+              parties.each do |p| # NamesTransaction model represents parties
+                name_hash = p.select { |k,v| k.to_s[-4..-1] == 'name' }
+                name = t.add_name Name.find_or_create name_hash
+                nt = NamesTransaction[name_id: name.id, transaction_id: t.id]
+                nt.update(role: p[:role], ext_text: p[:ext_text])
+              end
+            end
           end
         else
-          exit "No Transaction for book: #{book}, page: #{page}, suffix: #{sf}"
+          abort "No Transaction for book: #{book}, page: #{page}, suff: #{sf}"
         end
       end
     end

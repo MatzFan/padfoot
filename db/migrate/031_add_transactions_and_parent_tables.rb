@@ -27,7 +27,7 @@ Sequel.migration do
       String :maiden_name
     end
 
-    create_table :parties do
+    create_table :names_transactions do # alphabetical & plural
       String :ext_text
       foreign_key :role, :party_roles, type: String
       foreign_key :transaction_id, :transactions

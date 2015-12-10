@@ -17,6 +17,10 @@ class TransactionParser
     @party_trs = party_trs
     @prop_trs = prop_trs
     fail unless verify_structure
+    @book_page_suffix = book_page_suffix
+    @parties = parties
+    @maiden_names = maiden_names
+    @properties = properties
   end
 
   def verify_structure
@@ -91,7 +95,20 @@ class TransactionParser
   end
 
   def parties_data
-    parties.map { |party| Hash[*PARTY_KEYS.zip(party).flatten] }
+    parties_less_maidens.map { |party| Hash[*PARTY_KEYS.zip(party).flatten] }
+  end
+
+  def parties_less_maidens
+    raise "Maiden ext_text: #{@book_page_suffix}" if @maiden_names.any? &:last
+    @parties - @maiden_names
+  end
+
+  def maiden_names
+    married_names.map { |arr| [arr[0], arr[2], nil, arr[3], arr[4]] }
+  end
+
+  def married_names
+    @parties.reject { |a| a[2].nil? }
   end
 
   def prop_trs
@@ -103,7 +120,7 @@ class TransactionParser
   end
 
   def properties_data
-    properties.map { |property| Hash[*PROP_KEYS.zip(property).flatten] }
+    @properties.map { |property| Hash[*PROP_KEYS.zip(property).flatten] }
   end
 
 end

@@ -2,7 +2,7 @@ class Transaction < Sequel::Model
 
   many_to_one :transaction_type, key: :type
   one_to_many :trans_props
-  many_to_many :names, left_key: :id, right_key: :id
+  many_to_many :names
 
   def before_save
     DB.transaction do

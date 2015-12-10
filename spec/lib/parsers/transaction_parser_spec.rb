@@ -2,10 +2,10 @@ describe TransactionParser do
 
   file = "#{Padrino.root}/spec/fixtures/trans_details.html"
   let(:parser) { TransactionParser.new(file) }
-  let(:party1_hash) { {role: 'Vendor - Realty', surname: 'BROWN', maiden_name: nil,
-                      forename: 'Phillip Andrew', ext_text: 'or Philip Andrew'} }
-  let(:party3_hash) { {role: 'Vendor - Realty', surname: 'Brown', maiden_name: 'Sowden',
-                      forename: 'Nicolle Stephanie Cubitt', ext_text: nil} }
+  let(:party_hash) { [{:role=>"Vendor - Realty", :surname=>"BROWN", :maiden_name=>nil, :forename=>"Phillip Andrew", :ext_text=>"or Philip Andrew"},
+                      {:role=>"Vendor - Realty", :surname=>"Brown", :maiden_name=>"Sowden", :forename=>"Nicolle Stephanie Cubitt", :ext_text=>nil},
+                      {:role=>"Purchaser - Realty", :surname=>"Thorne", :maiden_name=>nil, :forename=>"Nicholas Edward", :ext_text=>nil},
+                      {:role=>"Purchaser - Realty", :surname=>"Plunkett-Cole", :maiden_name=>nil, :forename=>"Anna Rachel", :ext_text=>nil}] }
   let(:property_hash) { {property_uprn: '69117812', parish: 'St. Helier',
                          address: 'Almeda, 7 La Rue de Podêtre,'} }
 
@@ -86,18 +86,25 @@ describe TransactionParser do
     end
 
     context '#parties' do
-      it "should return 5 parties" do
+      it 'should return 5 parties' do
         expect(parser.parties.count).to eq(5)
       end
     end
 
-    context '#parties_data' do
-      it "returns an array of party data hashes" do
-        expect(parser.parties_data[0]).to eq(party1_hash)
+    context '#parties_less_maidens' do
+      it 'raises an error if any maiden names have associated extended text' do
+        parser.instance_variable_set(:@maiden_names, [["Vendor - Realty", "Sowden", nil, "Nicolle Stephanie Cubitt", 'some ext text']])
+        expect(->{parser.parties_less_maidens}).to raise_error
       end
 
-      it "returns an array of party data hashes, which includes maiden name" do
-        expect(parser.parties_data[2]).to eq(party3_hash)
+      it 'returns @parties less any maiden names' do
+        expect(parser.parties_less_maidens.count).to eq(4)
+      end
+    end
+
+    context '#parties_data' do
+      it 'returns an array of party data hashes' do
+        expect(parser.parties_data).to eq(party_hash)
       end
     end
 
