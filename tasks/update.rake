@@ -16,7 +16,7 @@ namespace :sq do
   task update: :environment do
     t = Time.now
     exit if Date.today.wday < 2 # runs Tuesday thru Saturday
-    sleep 3600 if t.dst? # Heroku Scheduler runs on UTC
+    sleep 3600 if !t.dst? # Heroku Scheduler runs on UTC
     report = tasks.map { |task| capture_stdout { Rake::Task[task].invoke } }
     if report.include? 'ERROR'
       Padfoot::App.deliver(:rake_error_report, :daily_report_email, report)
