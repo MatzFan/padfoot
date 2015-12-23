@@ -48,9 +48,9 @@ describe BusTimetableScraper do
     end
   end
 
-  context '#pages' do
+  context '#timetable_pages' do
     it 'returns an array of Mechanize::Pages for each route timetable page' do
-      expect(scraper.pages[0].title).to eq 'Liberty Bus - Timetables'
+      expect(scraper.timetable_pages[0].title).to eq 'Liberty Bus - Timetables'
     end
   end
 
@@ -92,7 +92,7 @@ describe BusTimetableScraper do
 
   context '#data' do
     it 'returns a 2D array of stop code and arrival time data for given route and timetable indices' do
-      expect(scraper.data(6, 3).first).to eq ['2434', %w(07:58 09:23 11:23 13:23 14:43 16:13 16:58 18:28 19:53)]
+      expect(scraper.data(6, 0).first).to eq ['2757', [nil, nil, nil, nil, nil, '15:15', nil, nil, nil, nil]]
     end
   end
 

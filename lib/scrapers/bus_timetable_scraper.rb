@@ -10,7 +10,7 @@ class BusTimetableScraper
     @main_page = main_page
     @routes = routes
     @links = links
-    @pages = pages
+    @p = timetable_pages
   end
 
   def main_page
@@ -37,12 +37,12 @@ class BusTimetableScraper
     @routes.map { |e| e.children[3].text }
   end
 
-  def pages
+  def timetable_pages
     (0...@links.size).map { |i| @agent.get(ROOT + @links[i]) }
   end
 
   def titles(i)
-    pages[i].search("//div[@class='t-table']/h2").children.map(&:text).map &:strip
+    @p[i].search("//div[@class='t-table']/h2").children.map(&:text).map &:strip
   end
 
   def days(i)
@@ -57,7 +57,7 @@ class BusTimetableScraper
   end
 
   def header_table_rows(i)
-    pages[i]./(".//table[@class='headers']").map { |e| e./(".//tr") }
+    @p[i]./(".//table[@class='headers']").map { |e| e./(".//tr") }
   end
 
   def code(row)
@@ -65,11 +65,11 @@ class BusTimetableScraper
   end
 
   def tt_codes(route_index, tt_index)
-    header_table_rows(route_index)[tt_index].map { |row| code(row) }
+    header_table_rows(route_index)[tt_index].map { |row| code(row) }.flatten
   end
 
   def times_table_rows(i)
-    pages[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
+    @p[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
   end
 
   def tt_times(route_index, tt_index)
@@ -77,11 +77,11 @@ class BusTimetableScraper
   end
 
   def times(row)
-    row./(".//td")[3..-2].map &:text
+    row./(".//td")[3..-2].map(&:text).map { |e| e if e != ' - ' } # '-' to nils
   end
 
   def data(route_index, tt_index)
-    tt_codes(route_index, tt_index).flatten.zip tt_times(route_index, tt_index)
+    tt_codes(route_index, tt_index).zip tt_times(route_index, tt_index)
   end
 
   def timetables(i)
