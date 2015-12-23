@@ -1,7 +1,9 @@
 describe BusTimetableScraper do
 
-  let(:scraper) { BusTimetableScraper.new }
-  let(:route_1) { scraper.timetable_page(0) }
+  scraper = BusTimetableScraper.new
+  route_4_timetables = scraper.timetables(6)
+  let(:route_1_page) { scraper.timetable_pages[0] }
+  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
   let(:titles) { ["Liberation Station - Gorey Pier - Outbound - Monday-Friday",
                   "Gorey Pier - Liberation Station  - Inbound - Monday-Friday",
                   "Liberation Station - Gorey Pier - Outbound - Saturday",
@@ -23,7 +25,7 @@ describe BusTimetableScraper do
   end
 
   context '#routes' do
-    it 'returns the title of the latest timetable' do
+    it 'returns an array of <a> elements for the 21 routes' do
       expect(scraper.routes.count).to eq 21
     end
   end
@@ -34,33 +36,85 @@ describe BusTimetableScraper do
     end
   end
 
-  context '#names' do
+  context '#rte_nums' do
+    it 'returns an array of the route numbers' do
+      expect(scraper.rte_nums).to eq route_numbers
+    end
+  end
+
+  context '#route_names' do
     it 'returns an array of route names' do
-      expect(scraper.names.first).to eq 'Liberation Station - Gorey Pier'
+      expect(scraper.route_names.first).to eq 'Liberation Station - Gorey Pier'
     end
   end
 
-  context '#timetable_page' do
-    it 'returns a Mechanize::Page for the given route index' do
-      expect(scraper.timetable_page(0).title).to eq 'Liberty Bus - Timetables'
+  context '#pages' do
+    it 'returns an array of Mechanize::Pages for each route timetable page' do
+      expect(scraper.pages[0].title).to eq 'Liberty Bus - Timetables'
     end
   end
 
-  context '#timetable_titles' do
+  context '#titles' do
     it 'returns the title of the given timetable' do
-      expect(scraper.timetable_titles(route_1)).to eq titles
+      expect(scraper.titles(0)).to eq titles
     end
   end
 
-  context '#headers_tables' do
-    it 'returns the headers tables for the given timetable' do
-      expect(scraper.header_tables(route_1).count).to eq 6
+  context '#days' do
+    it 'returns "Weekdays" if index provided is < 2' do
+      expect(scraper.days(1)).to eq 'Weekdays'
+    end
+
+     it 'returns "Saturdays" if index provided is > 1 and < 4' do
+      expect(scraper.days(3)).to eq 'Saturday'
+    end
+
+     it 'returns "Sunday" if index provided is > 3 and < 6' do
+      expect(scraper.days(5)).to eq 'Sunday'
+    end
+
+    it 'raises ArgumentError if index > 5' do
+      expect(->{scraper.days(6)}).to raise_error(ArgumentError)
     end
   end
 
-  context '#times_tables' do
+  context '#header_table_rows' do
+    it 'returns a 2D array of headers table rows for each timetable for the given route index' do
+      expect(scraper.header_table_rows(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
+    end
+  end
+
+  context '#times_table_rows' do
     it 'returns the times tables for the given timetable' do
-      expect(scraper.times_tables(route_1).count).to eq 6
+      expect(scraper.times_table_rows(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
+    end
+  end
+
+  context '#data' do
+    it 'returns a 2D array of stop code and arrival time data for given route and timetable indices' do
+      expect(scraper.data(6, 3).first).to eq ['2434', %w(07:58 09:23 11:23 13:23 14:43 16:13 16:58 18:28 19:53)]
+    end
+  end
+
+  context '#timetables' do
+    it 'returns an array of 4 element arrays - one for each timetable for the given route index' do
+      expect(route_4_timetables.all? { |e| e.size == 4 }).to eq true
+    end
+
+    it 'the value for the array first element is the route number' do
+      expect(route_4_timetables.map &:first).to eq ['4', '4', '4', '4']
+    end
+
+    it 'the value for the array second element is "In" or "Out"' do
+      expect(route_4_timetables.map { |e| e[1] }).to eq %w(Out In Out In)
+    end
+
+    it 'the value for the array third element is "Weekdays", "Saturday" or "Sunday"' do
+      expect(route_4_timetables.map { |e| e[2] }).to eq %w(Weekdays Weekdays Saturday Saturday)
+    end
+
+     it 'the value for the array fourth element is an 2D array of stop codes and times' do
+      expect(route_4_timetables.map { |e| e[3] }.last.last).to eq ["2465", ["08:30", "10:00", "12:00", "14:00", "15:20", "16:50", "17:35", "19:05", "20:30"]]
     end
   end
 
