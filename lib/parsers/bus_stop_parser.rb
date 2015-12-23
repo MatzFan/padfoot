@@ -2,13 +2,14 @@ require 'open-uri'
 
 class BusStopParser
 
-  def initialize(uri)
-    @uri = uri
+  URI = 'http://www.libertybus.je/jersey.php' # where bus stop data lives
+
+  def initialize
     @source = source
   end
 
   def source
-    open(@uri).read
+    open(URI).read
   end
 
   def office_layer # var name fro bus stop data is 'officeLayer'

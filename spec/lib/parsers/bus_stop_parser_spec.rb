@@ -1,9 +1,7 @@
 describe BusStopParser do
 
   hash = {name: 'Gorey Common S', code: '02323', coords: [49.193795, -2.034982]}
-
-  uri = 'http://www.libertybus.je/jersey.php' # where bus stop data lives
-  let(:parser) { BusStopParser.new(uri) }
+  let(:parser) { BusStopParser.new }
 
   context '#new' do
     it 'returns an instance of the class' do
