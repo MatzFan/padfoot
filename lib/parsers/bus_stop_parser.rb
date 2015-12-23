@@ -6,6 +6,7 @@ class BusStopParser
 
   def initialize
     @source = source
+    @places = places
   end
 
   def source
@@ -33,15 +34,23 @@ class BusStopParser
   end
 
   def codes
-    places.map { |e| name_code(e['name']).last }
+    @places.map { |e| name_code(e['name']).last.to_i.to_s }
   end
 
   def names
-    places.map { |e| name_code(e['name']).first }
+    @places.map { |e| name_code(e['name']).first }
   end
 
   def coords
-    places.map { |e| e['posn'] }
+    @places.map { |e| e['posn'] }
+  end
+
+  def data
+    clean(codes.zip(names).each_with_index { |e, i| e << coords[i] })
+  end
+
+  def clean(arr)
+    arr.reject { |e| e.first == '0' } # removes entries with missing code
   end
 
 end

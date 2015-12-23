@@ -23,9 +23,14 @@ describe BusStopParser do
 
   context '#codes' do
     it 'returns array of bus stop codes' do
-      expect(parser.codes.first).to eq '02323'
+      expect(parser.codes.first).to eq '2323'
+    end
+
+    it 'converts any non-number to "0"' do
+      expect(parser.codes.last).to eq '0' # last is 'St Helier'
     end
   end
+
   context '#names' do
     it 'returns array of bus stop names' do
       expect(parser.names.first).to eq 'Gorey Common S'
@@ -35,6 +40,16 @@ describe BusStopParser do
   context '#coords' do
     it 'returns array of bus stop coords' do
       expect(parser.coords.first).to eq [49.193795, -2.034982]
+    end
+  end
+
+  context '#data' do
+    it 'returns data for 770 bus stops' do
+      expect(parser.data.size).to eq 770
+    end
+
+    it 'returns 3D array of bus stop data [code, name, [coords]]' do
+      expect(parser.data.first).to eq ["2323", "Gorey Common S", [49.193795, -2.034982]]
     end
   end
 
