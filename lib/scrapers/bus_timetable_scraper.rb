@@ -44,13 +44,24 @@ class BusTimetableScraper
   def initialize
     @agent = Mechanize.new
     @main_page = main_page
+    @parser = parser
     @routes = routes
+    @route_nums = route_nums
+    @special_days = special_days
     @links = links
     @p = timetable_pages
   end
 
   def main_page
     @agent.get(ROOT + TIMETABLES_PAGE)
+  end
+
+  def parser
+    JavascriptVarsParser.new(@main_page.body)
+  end
+
+  def special_days
+    @parser.special_days_data.map { |e| e[0][0] }
   end
 
   def main_title
@@ -65,7 +76,7 @@ class BusTimetableScraper
     @routes.map { |e| e.attribute('href').value.gsub('TRUE', 'FALSE') }
   end
 
-  def rte_nums
+  def route_nums
     @routes.map { |e| e.children[1].children.text }
   end
 
@@ -93,10 +104,6 @@ class BusTimetableScraper
     times_table_rows(i).map(&:first).map { |e| e./(".//td").size - 4 }
   end
 
-  def special_days(i)
-    times_table_rows(i).map(&:first).map { |e| e./".//td[@class='dusk']" }
-  end
-
   def code(row)
     row./(".//td/span").map(&:text).select { |e| e =~ /\d{4}/ }.first
   end
@@ -109,6 +116,15 @@ class BusTimetableScraper
     @p[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
   end
 
+  def num_stops(i, tt_index)
+    header_table_rows(i)[tt_index].size
+  end
+
+  def time(row, column)
+    time = row./(".//td")[column + 3].text
+    time if time != ' - ' # '-' to nils
+  end
+
   def stop_times(i, tt_index, column)
     (0...num_stops(i, tt_index)).map do |row_num|
       [code(header_table_rows(i)[tt_index][row_num]), time(times_table_rows(i)[tt_index][row_num], column)]
@@ -118,13 +134,9 @@ class BusTimetableScraper
   def buses(i)
     bus_nums(i).each_with_index.map do |num_buses, tt_index|
       (0...num_buses).map do |column|
-        [rte_nums[i], *bound_days(i)[tt_index], stop_times(i, tt_index, column)]
+        [@route_nums[i], *bound_days(i)[tt_index], stop_times(i, tt_index, column)]
       end
     end
-  end
-
-  def num_stops(i, tt_index)
-    header_table_rows(i)[tt_index].size
   end
 
   # def tt_times(route_index, tt_index)
@@ -135,17 +147,12 @@ class BusTimetableScraper
   #   row./(".//td")[3..-2].map(&:text).map { |e| e if e != ' - ' } # '-' to nils
   # end
 
-  def time(row, column)
-    time = row./(".//td")[column + 3].text
-    time if time != ' - ' # '-' to nils
-  end
-
   # def data(route_index, tt_index)
   #   tt_codes(route_index, tt_index).zip tt_times(route_index, tt_index)
   # end
 
   # def timetables(i)
-  #   (0...titles(i).size).map { |x| [rte_nums[i], *bound_days(i)[x], data(i, x)] }
+  #   (0...titles(i).size).map { |x| [@route_nums[i], *bound_days(i)[x], data(i, x)] }
   # end
 
 end

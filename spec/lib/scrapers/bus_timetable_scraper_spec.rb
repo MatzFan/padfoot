@@ -122,9 +122,9 @@ describe BusTimetableScraper do
     end
   end
 
-  context '#rte_nums' do
+  context '#route_nums' do
     it 'returns an array of the route numbers' do
-      expect(scraper.rte_nums).to eq route_numbers
+      expect(scraper.route_nums).to eq route_numbers
     end
   end
 
