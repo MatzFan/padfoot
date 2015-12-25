@@ -2,7 +2,7 @@ describe JavascriptVarsParser do
 
   let(:source) { Mechanize.new.get 'http://www.libertybus.je/routes_times/timetables'}
   let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
-  let(:parser) { JavascriptVarsParser.new(source.body, route_numbers) }
+  let(:parser) { JavascriptVarsParser.new(source.body, route_numbers, 3) }
 
   context '#new' do
     it 'returns an instance of the class' do
@@ -23,8 +23,8 @@ describe JavascriptVarsParser do
   end
 
   context '#column_days' do
-    it 'returns a 2D array of the column(s) the special days apply to and the days (e.g. "school")' do
-      expect(parser.column_days("var columns= {  13:'dusk',19:'sky'};")).to eq [[13, 'school'], [19, 'friday']]
+    it 'returns a 2D array of the column(s) the special days apply to and the days (e.g. "School Days Only")' do
+      expect(parser.column_days("var columns= {  13:'dusk',19:'sky'};")).to eq [[10, 'School Days Only'], [16, 'Fridays Only']]
     end
   end
 
@@ -33,8 +33,12 @@ describe JavascriptVarsParser do
       expect(parser.special_days_data.all? { |e| e.all? { |e| e.class == Array } }).to eq true
     end
 
+    it 'only returns data for current routes' do
+      expect(parser.special_days_data.size).to eq 14 # Javascript had 19 routes - 5 no longer exist
+    end
+
     it 'where each array has 3 element; 1) [route_num, tt_index] 2) ' do
-      expect(parser.special_days_data[17]).to eq [[16, 0], [[4, 'school'], [13, 'school']]]
+      expect(parser.special_days_data.last).to eq [[16, 0], [[1, 'School Days Only'], [10, 'School Days Only']]]
     end
   end
 
@@ -44,7 +48,6 @@ end
 describe BusTimetableScraper do
 
   scraper = BusTimetableScraper.new
-  # route_4_timetables = scraper.timetables(6)
   let(:route_1_page) { scraper.timetable_pages[0] }
   let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
   let(:titles) { ["Liberation Station - Gorey Pier - Outbound - Monday-Friday",
@@ -53,12 +56,9 @@ describe BusTimetableScraper do
                   "Gorey Pier - Liberation Station  - Inbound - Saturday",
                   "Liberation Station - Gorey Pier - Outbound - Sunday",
                   "Gorey Pier - Liberation Station  - Inbound - Sunday"] }
-  let(:route_1_bound_days) { [['Outbound', 'Monday-Friday'],
-                              ['Inbound', 'Monday-Friday'],
-                              ['Outbound', 'Saturday'],
-                              ['Inbound', 'Saturday'],
-                              ['Outbound', 'Sunday'],
-                              ['Inbound', 'Sunday']] }
+  let(:route_1_bounds) { %w(Outbound Inbound Outbound Inbound Outbound Inbound)}
+  let(:route_15_bounds) { Array.new(3) { 'Outbound' } }
+  let(:route_1_days) { ['Monday-Friday', 'Monday-Friday', 'Saturday', 'Saturday', 'Sunday', 'Sunday'] }
   let(:special_days) { [[nil, 'School Days Only', nil, nil, nil, nil, nil, nil, nil, nil, 'School Days Only', nil, nil, nil, nil],
                         [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil]] }
 
@@ -96,8 +96,6 @@ describe BusTimetableScraper do
                                     ["2794", "18:26"], ["2539", "18:27"], ["2548", "18:27"], ["3498", "18:32"], ["2454", "18:32"],
                                     ["3762", "18:33"], ["2785", "18:35"], ["2598", "18:35"], ["2594", "18:36"], ["2465", "18:45"]]
                                 ] }
-
-  let(:route_15_bound_days) { [['Outbound', 'Monday-Friday'], ['Outbound', 'Saturday'], ['Outbound', 'Sunday']] }
 
   context '#new' do
     it 'returns an instance of the class' do
@@ -137,7 +135,7 @@ describe BusTimetableScraper do
 
   context '#timetable_pages' do
     it 'returns an array of Mechanize::Pages for each route timetable page' do
-      expect(scraper.timetable_pages[0].title).to eq 'Liberty Bus - Timetables'
+      expect(scraper.timetable_pages.all? { |e| e.class == Mechanize::Page}).to eq true
     end
   end
 
@@ -147,19 +145,25 @@ describe BusTimetableScraper do
     end
   end
 
-  context '#bound_days' do
-    it 'returns a 2D array ["Inbound"/"Outbound", days] for the given route index' do
-      expect(scraper.bound_days(0)).to eq route_1_bound_days
+  context '#bounds' do
+    it 'returns an array of "Inbound" or "Outbound" for each timetable for the given route index' do
+      expect(scraper.bounds(0)).to eq route_1_bounds
     end
 
     it 'correctly identifies routes with all Outbound journeys' do
-      expect(scraper.bound_days(15)).to eq route_15_bound_days
+      expect(scraper.bounds(15)).to eq route_15_bounds
     end
   end
 
-  context '#header_table_rows' do
+  context '#days' do
+    it 'returns an array of days for each timetable for the given route index' do
+      expect(scraper.days(0)).to eq route_1_days
+    end
+  end
+
+  context '#header_trs' do
     it 'returns a 2D array of headers table rows for each timetable for the given route index' do
-      expect(scraper.header_table_rows(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
+      expect(scraper.header_trs(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
     end
   end
 
@@ -169,16 +173,9 @@ describe BusTimetableScraper do
     end
   end
 
-  # context '#special_days' do
-  #   it 'returns a 2D array of the special days for each bus in each timetable for a given route index' do
-  #     pp scraper.special_days(16)
-  #     expect(scraper.special_days(16)).to eq special_days
-  #   end
-  # end
-
-  context '#times_table_rows' do
+  context '#times_trs' do
     it 'returns the times tables for the given timetable' do
-      expect(scraper.times_table_rows(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
+      expect(scraper.times_trs(6).map &:count).to eq [52, 35, 40, 27] # no Sunday service for route 4
     end
   end
 
@@ -188,38 +185,24 @@ describe BusTimetableScraper do
     end
   end
 
+  context '#special_day' do
+    it 'returns nil if the given route, timetable have no special days, for any column' do
+      expect(scraper.special_day(16, 0, 0)).to be_nil
+    end
+
+    it 'returns the special day if the given route, timetable and column index is special' do
+      expect(scraper.special_day(16, 0, 1)).to eq 'School Days Only'
+    end
+
+    it 'returns the special day if the given route, timetable and column index is special for routes which have special days in more than 1 timetable' do
+      expect(scraper.special_day(8, 0, 14)).to eq 'Fridays Only'
+    end
+  end
+
   context '#buses' do
     it 'returns a 3D array of bus data for a given route index' do
       expect(scraper.buses(16)[1].last).to eq bus_19_last_on_saturday
     end
   end
-
-  # context '#data' do
-  #   it 'returns a 2D array of stop code and arrival time data for given route and timetable indices' do
-  #     expect(scraper.data(6, 0).first).to eq ['2757', [nil, nil, nil, nil, nil, '15:15', nil, nil, nil, nil]]
-  #   end
-  # end
-
-  # context '#timetables' do
-  #   it 'returns an array of 4 element arrays - one for each timetable for the given route index' do
-  #     expect(route_4_timetables.all? { |e| e.size == 4 }).to eq true
-  #   end
-
-  #   it 'the value for the array first element is the route number' do
-  #     expect(route_4_timetables.map &:first).to eq ['4', '4', '4', '4']
-  #   end
-
-  #   it 'the value for the array second element is "In" or "Out"' do
-  #     expect(route_4_timetables.map { |e| e[1] }).to eq %w(Outbound Inbound Outbound Inbound)
-  #   end
-
-  #   it 'the value for the array third element is "Monday-Friday", "Saturday" or "Sunday"' do
-  #     expect(route_4_timetables.map { |e| e[2] }).to eq %w(Monday-Friday Monday-Friday Saturday Saturday)
-  #   end
-
-  #    it 'the value for the array fourth element is an 2D array of stop codes and times' do
-  #     expect(route_4_timetables.map { |e| e[3] }.last.last).to eq ["2465", ["08:30", "10:00", "12:00", "14:00", "15:20", "16:50", "17:35", "19:05", "20:30"]]
-  #   end
-  # end
 
 end
