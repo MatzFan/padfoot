@@ -6,8 +6,9 @@ class JavascriptVarsParser
   RGX = /(var day.+;\n\s+var columns.+\n\s+var add.+)function load_maps/m
   CSS_COLOURS = {'dusk' => 'school', 'gold' => 'nonschool', 'sky' => 'friday' }
 
-  def initialize(source)
+  def initialize(source, route_nums)
     @source = source
+    @route_nums = route_nums
   end
 
   def js_vars_for_special_days
@@ -16,7 +17,7 @@ class JavascriptVarsParser
 
   def route_tt_index(var)
     arr = var.split("'")[1].split('-')[0..1]
-    [arr[0].downcase, arr[1].to_i]
+    [@route_nums.index(arr[0].downcase), arr[1].to_i]
   end
 
   def column_days(var)
@@ -24,7 +25,12 @@ class JavascriptVarsParser
   end
 
   def days(var)
-    var.scan(/'([a-z]+)'/).flatten.map { |e| CSS_COLOURS[e] }
+    var.scan(/'([a-z]+)'/).flatten.map { |e| day_from_css(e) }
+  end
+
+  def day_from_css(klass)
+    raise ArgumentError, "New JS CSS class: #{klass}" unless CSS_COLOURS[klass]
+    CSS_COLOURS[klass]
   end
 
   def special_days_data
@@ -44,9 +50,9 @@ class BusTimetableScraper
   def initialize
     @agent = Mechanize.new
     @main_page = main_page
-    @parser = parser
     @routes = routes
     @route_nums = route_nums
+    @parser = parser
     @special_days = special_days
     @links = links
     @p = timetable_pages
@@ -57,11 +63,11 @@ class BusTimetableScraper
   end
 
   def parser
-    JavascriptVarsParser.new(@main_page.body)
+    JavascriptVarsParser.new(@main_page.body, @route_nums)
   end
 
   def special_days
-    @parser.special_days_data.map { |e| e[0][0] }
+    @parser.special_days_data
   end
 
   def main_title

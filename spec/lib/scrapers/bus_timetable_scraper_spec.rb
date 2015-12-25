@@ -1,7 +1,8 @@
 describe JavascriptVarsParser do
 
   let(:source) { Mechanize.new.get 'http://www.libertybus.je/routes_times/timetables'}
-  let(:parser) { JavascriptVarsParser.new(source.body) }
+  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
+  let(:parser) { JavascriptVarsParser.new(source.body, route_numbers) }
 
   context '#new' do
     it 'returns an instance of the class' do
@@ -16,8 +17,8 @@ describe JavascriptVarsParser do
   end
 
   context '#route_tt_index' do
-    it 'returns an array of the route number and timetable index the special day(s) apply to' do
-      expect(parser.route_tt_index("var day='1G-0-friday';")).to eq ['1g', 0]
+    it 'returns an array of the route index and timetable index the special day(s) apply to' do
+      expect(parser.route_tt_index("var day='1G-0-friday';")).to eq [2, 0]
     end
   end
 
@@ -33,7 +34,7 @@ describe JavascriptVarsParser do
     end
 
     it 'where each array has 3 element; 1) [route_num, tt_index] 2) ' do
-      expect(parser.special_days_data[17]).to eq [['19', 0], [[4, 'school'], [13, 'school']]]
+      expect(parser.special_days_data[17]).to eq [[16, 0], [[4, 'school'], [13, 'school']]]
     end
   end
 
