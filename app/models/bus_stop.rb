@@ -3,9 +3,10 @@ class BusStop < Sequel::Model
   extend Mappable
 
   unrestrict_primary_key
+  many_to_many :buses, left_key: :code, right_key: :id
 
   def before_validation
-    self.geom = set_geom(self.latitude, self.longitude)
+    self.geom = set_geom(self.latitude, self.longitude) if self.latitude && self.longitude
     super
   end
 

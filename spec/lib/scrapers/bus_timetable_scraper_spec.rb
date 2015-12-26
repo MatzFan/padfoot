@@ -89,6 +89,19 @@ describe BusTimetableScraper do
                       ['2465', '07:55']]
                     }
 
+  let(:stop_times_with_stops_missed) { [["3596", '07:40'],
+                                        ["2542", '07:40'],
+                                        ["3492", '07:41'],
+                                        ["2924", '07:42'],
+                                        ["2474", '07:43'],
+                                        ["2325", '07:45'],
+                                        ["4362", '07:46'],
+                                        ["2378", '07:50'],
+                                        ["3525", '07:51'],
+                                        ["2789", '08:02'],
+                                        ["2594", '08:04'],
+                                        ["2465", '08:12']] }
+
   let(:bus_19_last_on_saturday) { ["19", "Outbound", "Saturday", [
                                     ["4524", "18:10"], ["2462", "18:13"], ["3524", "18:14"], ["3847", "18:16"], ["3549", "18:17"],
                                     ["3479", "18:17"], ["2639", "18:17"], ["3276", "18:18"], ["2532", "18:19"], ["2568", "18:20"],
@@ -180,8 +193,12 @@ describe BusTimetableScraper do
   end
 
   context '#stop_times' do
-    it 'returns an array of stop codes and times for a given route index, timetable index and column index' do
+    it 'returns an array of stop codes stop times for a given route index, timetable index and column index' do
       expect(scraper.stop_times(16, 1, 0)).to eq stop_times
+    end
+
+    it "omits stops if the bus doesn't stop at them" do
+      expect(scraper.stop_times(19, 1, 0)).to eq stop_times_with_stops_missed
     end
   end
 

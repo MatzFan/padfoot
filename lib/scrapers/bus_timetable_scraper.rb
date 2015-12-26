@@ -136,15 +136,19 @@ class BusTimetableScraper
     header_trs(i)[tt_index].size
   end
 
-  def time(row, column)
-    time = row./(".//td")[column + COL_OFFSET].text
-    time if time != ' - ' # ' - ' to nils
+  def time(row, column_index)
+    t = row./(".//td")[column_index + COL_OFFSET].text
+    string_to_time(t) if t != ' - ' # ' - ' to nils
+  end
+
+  def string_to_time(time_string)
+    Sequel::SQLTime.create *(time_string.split(':') << 0)
   end
 
   def stop_times(i, t, column)
     (0...num_stops(i, t)).map do |row_num|
       [code(header_trs(i)[t][row_num]), time(times_trs(i)[t][row_num], column)]
-    end
+    end.select &:last # removes stops with no time
   end
 
   def special_day(i, t, c)
@@ -167,10 +171,6 @@ class BusTimetableScraper
 
   def build_array(i, t, c)
     [@route_nums[i], bounds(i)[t], day(i, t, c), stop_times(i, t, c)]
-  end
-
-  def schedule
-    (0...routes.size).map { |i| buses(i) }
   end
 
 end
