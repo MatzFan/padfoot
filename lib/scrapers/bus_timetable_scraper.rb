@@ -50,10 +50,13 @@ class BusTimetableScraper
   TIMETABLES_PAGE = '/routes_times/timetables'
   COL_OFFSET = 3 # offset of the first times column in a timetable
 
+  attr_reader :num_routes
+
   def initialize
     @agent = Mechanize.new
     @main_page = main_page
     @routes = routes
+    @num_routes = @routes.size
     @route_nums = route_nums
     @parser = parser
     @special_days = special_days
@@ -164,6 +167,10 @@ class BusTimetableScraper
 
   def build_array(i, t, c)
     [@route_nums[i], bounds(i)[t], day(i, t, c), stop_times(i, t, c)]
+  end
+
+  def schedule
+    (0...routes.size).map { |i| buses(i) }
   end
 
 end
