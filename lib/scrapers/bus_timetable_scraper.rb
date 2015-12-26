@@ -2,7 +2,6 @@ require 'mechanize'
 
 class JavascriptVarsParser
 
-  # RGX = /(var day.+;\n\s+var columns.+\n\s+var add.+)\n/
   RGX = /(var day.+;\n\s+var columns.+\n\s+var add.+)function load_maps/m
   CSS_COLOURS = {'dusk' => 'School Days Only',
                  'gold' => 'Non-School Days Only',
@@ -139,24 +138,32 @@ class BusTimetableScraper
     time if time != ' - ' # '-' to nils
   end
 
-  def stop_times(i, tt_index, column)
-    (0...num_stops(i, tt_index)).map do |row_num|
-      [code(header_trs(i)[tt_index][row_num]), time(times_trs(i)[tt_index][row_num], column)]
+  def stop_times(i, t, column)
+    (0...num_stops(i, t)).map do |row_num|
+      [code(header_trs(i)[t][row_num]), time(times_trs(i)[t][row_num], column)]
     end
   end
 
-  def special_day(i, tt_index, col)
-    s = @special_days.select { |e| e[0][0] == i && e[0][1] == tt_index }
-    s.each { |a| a.last.each { |a| return a[1] if a[0] == col } } if !s.empty?
-    nil
+  def special_day(i, t, c)
+    s_days(i, t).each { |a| a.last.each { |a| return a[1] if a[0] == c } }; nil
+  end
+
+  def s_days(i, tt_index) # special day data for given route & tt, may be []
+    @special_days.select { |e| e[0][0] == i && e[0][1] == tt_index }
+  end
+
+  def day(i, t, c)
+    special_day(i, t, c) || days(i)[t]
   end
 
   def buses(i)
     bus_nums(i).each_with_index.map do |num_buses, tt_index|
-      (0...num_buses).map do |column|
-        [@route_nums[i], bounds(i)[tt_index], (special_day(i, tt_index, column) || days(i)[tt_index]), stop_times(i, tt_index, column)]
-      end
+      (0...num_buses).map { |c| build_array(i, tt_index, c) }
     end
+  end
+
+  def build_array(i, t, c)
+    [@route_nums[i], bounds(i)[t], day(i, t, c), stop_times(i, t, c)]
   end
 
 end
