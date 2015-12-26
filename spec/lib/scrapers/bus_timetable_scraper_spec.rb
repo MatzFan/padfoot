@@ -48,7 +48,7 @@ end
 describe BusTimetableScraper do
 
   scraper = BusTimetableScraper.new
-  let(:route_1_page) { scraper.timetable_pages[0] }
+  let(:route_1_page) { scraper.pages[0] }
   let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
   let(:titles) { ["Liberation Station - Gorey Pier - Outbound - Monday-Friday",
                   "Gorey Pier - Liberation Station  - Inbound - Monday-Friday",
@@ -133,9 +133,9 @@ describe BusTimetableScraper do
     end
   end
 
-  context '#timetable_pages' do
+  context '#pages' do
     it 'returns an array of Mechanize::Pages for each route timetable page' do
-      expect(scraper.timetable_pages.all? { |e| e.class == Mechanize::Page}).to eq true
+      expect(scraper.pages.all? { |e| e.class == Mechanize::Page}).to eq true
     end
   end
 

@@ -58,7 +58,7 @@ class BusTimetableScraper
     @parser = parser
     @special_days = special_days
     @links = links
-    @p = timetable_pages
+    @pages = pages
   end
 
   def main_page
@@ -74,11 +74,11 @@ class BusTimetableScraper
   end
 
   def main_title
-    @main_page.search("//div[@id='col-default-editor']/h2").text
+    @main_page./("//div[@id='col-default-editor']/h2").text
   end
 
   def routes
-    @main_page.search("//ul[@id='main-timetable-list']/li/a")
+    @main_page./("//ul[@id='main-timetable-list']/li/a")
   end
 
   def links
@@ -93,12 +93,12 @@ class BusTimetableScraper
     @routes.map { |e| e.children[3].text }
   end
 
-  def timetable_pages
+  def pages
     (0...@links.size).map { |i| @agent.get(ROOT + @links[i]) }
   end
 
   def titles(i)
-    @p[i].search("//div[@class='t-table']/h2").children.map(&:text).map &:strip
+    @pages[i]./("//div[@class='t-table']/h2").children.map(&:text).map &:strip
   end
 
   def bounds(i)
@@ -110,7 +110,7 @@ class BusTimetableScraper
   end
 
   def header_trs(i)
-    @p[i]./(".//table[@class='headers']").map { |e| e./(".//tr") }
+    @pages[i]./(".//table[@class='headers']").map { |e| e./(".//tr") }
   end
 
   def bus_nums(i)
@@ -126,7 +126,7 @@ class BusTimetableScraper
   end
 
   def times_trs(i)
-    @p[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
+    @pages[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
   end
 
   def num_stops(i, tt_index)
@@ -135,7 +135,7 @@ class BusTimetableScraper
 
   def time(row, column)
     time = row./(".//td")[column + COL_OFFSET].text
-    time if time != ' - ' # '-' to nils
+    time if time != ' - ' # ' - ' to nils
   end
 
   def stop_times(i, t, column)
