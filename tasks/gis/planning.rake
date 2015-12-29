@@ -7,7 +7,7 @@ namespace :sq do
       conn_hash = {host: uri.host, port: uri.port, dbname: uri.path[1..-1], user: uri.user || `whoami`.chomp, password: uri.password}
       conn_hash.select! { |k, v| v } # don't overide GisScraper defaults will nils :)
       GisScraper.configure conn_hash.merge(srs: 'EPSG:3109')
-      range = index ? (index..index) : (2..42) # all except Gazetteer & Landparcels
+      range = index ? (index.to_i..index.to_i) : (2..42) # all except Gazetteer & Landparcels
       (range).each do |i|
         Layer.new("https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/#{i}").output_to_db
       end
