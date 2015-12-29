@@ -12,7 +12,7 @@ end
 
 class IdsDontMatchError < StandardError; end
 
-class GisScraper
+class ArcGisScraper
 
   Linguistics.use(:en) # for plural method
 

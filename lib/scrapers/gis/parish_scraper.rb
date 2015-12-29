@@ -1,6 +1,6 @@
-require_relative 'gis_scraper'
+require_relative 'arc_gis_scraper'
 
-class ParishScraper < GisScraper
+class ParishScraper < ArcGisScraper
 
   URL = 'arcgis/rest/services/StatesOfJersey/JerseyMappingOL/MapServer/6/query'
 
