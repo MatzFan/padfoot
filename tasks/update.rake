@@ -14,9 +14,9 @@ namespace :sq do
   # , 'sq:apps:docs']
   desc "Runs listed rake tasks & emails an output report: #{tasks.join(', ')}"
   task update: :environment do
-    t = Time.now
     exit if Date.today.wday < 2 # runs Tuesday thru Saturday
     sleep 3600 if !t.dst? # Heroku Scheduler runs on UTC
+    t = Time.now
     report = tasks.map { |task| capture_stdout { Rake::Task[task].invoke } }
     if report.include? 'ERROR'
       Padfoot::App.deliver(:rake_error_report, :daily_report_email, report)
