@@ -29,7 +29,7 @@ gem 'aws-sdk', '2.1.26', require: 'aws-sdk'
 gem 'curb', '0.8.6'
 gem 'linguistics', '2.0.3'
 gem 'stripe', '1.21.0'
-gem 'gis_scraper', '0.1.5.pre'
+gem 'gis_scraper', '0.1.6.pre'
 
 group :test do
   gem 'rspec', '3.1.0'
