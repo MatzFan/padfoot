@@ -9,7 +9,9 @@ namespace :sq do
       GisScraper.configure conn_hash.merge(srs: 'EPSG:3109')
       range = args.index ? (args.index.to_i..args.index.to_i) : (2..42) # all except Gazetteer & Landparcels
       (range).each do |i|
-        Layer.new("https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/#{i}").output_to_db
+        DB.transaction do
+          Layer.new("https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/#{i}").output_to_db
+        end
       end
     end
   end
