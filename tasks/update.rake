@@ -15,7 +15,6 @@ namespace :sq do
   desc "Runs listed rake tasks & emails an output report: #{tasks.join(', ')}"
   task update: :environment do
     exit if Date.today.wday < 2 # runs Tuesday thru Saturday
-    sleep 3600 if !Time.now.dst? # Heroku Scheduler runs on UTC
     t = Time.now
     report = tasks.map { |task| capture_stdout { Rake::Task[task].invoke } }
     if report.include? 'ERROR'
