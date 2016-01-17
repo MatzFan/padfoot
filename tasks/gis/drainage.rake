@@ -2,7 +2,7 @@ require_relative '_gis_helper'
 
 namespace :sq do
   namespace :gis do
-    desc 'Creates and populates 22 tables from JerseyUtilities/JerseyUtilities TTS Drainage MapServer layers'
+    desc 'Creates and populates 21 tables from JerseyUtilities/JerseyUtilities TTS Drainage MapServer layers'
     task :drainage do
       GisHelper.configure
       DB.transaction do
