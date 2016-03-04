@@ -1,7 +1,7 @@
 describe JavascriptVarsParser do
 
   let(:source) { Mechanize.new.get 'http://www.libertybus.je/routes_times/timetables'}
-  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
+  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23 28) }
   let(:parser) { JavascriptVarsParser.new(source.body, route_numbers, 3) }
 
   context '#new' do
@@ -49,7 +49,7 @@ describe BusTimetableScraper do
 
   scraper = BusTimetableScraper.new
   let(:route_1_page) { scraper.pages[0] }
-  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23) }
+  let(:route_numbers) { %w(1 1a 1g 2 2a 3 4 5 7 7a 8 9 12 13 15 16 19 21 22 x22 23 28) }
   let(:titles) { ["Liberation Station - Gorey Pier - Outbound - Monday-Friday",
                   "Gorey Pier - Liberation Station  - Inbound - Monday-Friday",
                   "Liberation Station - Gorey Pier - Outbound - Saturday",
@@ -123,8 +123,8 @@ describe BusTimetableScraper do
   end
 
   context '#routes' do
-    it 'returns an array of <a> elements for the 21 routes' do
-      expect(scraper.routes.count).to eq 21
+    it 'returns an array of <a> elements for the 22 routes' do
+      expect(scraper.routes.count).to eq 22
     end
   end
 
