@@ -35,6 +35,7 @@ class AddressScraper
 
   def source(page_num)
     url = "#{BASEURL}&string=#{@search_string}&search=#{FIND}&first=#{page_num}"
+
     open(url).read.force_encoding(Encoding::UTF_8)
   end
 

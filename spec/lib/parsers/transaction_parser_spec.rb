@@ -1,131 +1,77 @@
 describe TransactionParser do
+  FIXTURE = '/Users/me/Documents/JPS/PRIDE/2012_1.txt'.freeze
+  TRANSACTION = ["\n>Surname/ Corporate Name<\n>Howard-Houston<\n>Forename(s)<\n>Lilly Jane<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n>UPRN should be 69205893<\n>Book no/Suffix<\n>1289<\n>Folio/Suffix<\n>910<\n>Date Registered<\n>06/01/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n", "\n>69205893<\n>St. Clement<\n>St George's,<\n>2 Le Clos de Rocquebert,<\n><\n"].freeze
+  "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n"
 
-  file = "#{Padrino.root}/spec/fixtures/trans_details.html"
-  let(:parser) { TransactionParser.new(file) }
-  let(:party_hash) { [{:role=>"Vendor - Realty", :surname=>"BROWN", :maiden_name=>nil, :forename=>"Phillip Andrew", :ext_text=>"or Philip Andrew"},
-                      {:role=>"Vendor - Realty", :surname=>"Brown", :maiden_name=>"Sowden", :forename=>"Nicolle Stephanie Cubitt", :ext_text=>nil},
-                      {:role=>"Purchaser - Realty", :surname=>"Thorne", :maiden_name=>nil, :forename=>"Nicholas Edward", :ext_text=>nil},
-                      {:role=>"Purchaser - Realty", :surname=>"Plunkett-Cole", :maiden_name=>nil, :forename=>"Anna Rachel", :ext_text=>nil}] }
-  let(:property_hash) { {property_uprn: '69117812', parish: 'St. Helier',
-                         address: 'Almeda, 7 La Rue de Podêtre,'} }
+  PARTY1 = { role: 'Vendor - Realty',
+             surname: 'Gavey',
+             forename: 'Timothy Christopher',
+             maiden_name: '',
+             ext_text: '' }.freeze
+
+  PARTY2 = { role: 'Vendor - Realty',
+             surname: 'Hussey',
+             forename: 'Catherine Nicola',
+             maiden_name: '',
+             ext_text: '' }.freeze
+
+  PARTY3 = { role: 'Vendor - Realty',
+             surname: 'Gavey',
+             forename: 'Catherine Nicola',
+             maiden_name: 'Hussey',
+             ext_text: '' }.freeze
+
+  PARTY4 = { role: 'Purchaser - Realty',
+             surname: 'Howard-Houston',
+             forename: 'Lilly Jane',
+             maiden_name: '',
+             ext_text: '' }.freeze
+
+  PARTY5 = { role: 'Purchaser - Realty',
+             surname: 'Ash',
+             forename: 'Lilly Jane',
+             maiden_name: 'Howard-Houston',
+             ext_text: '' }.freeze
+
+  PARTIES = [PARTY1, PARTY2, PARTY3, PARTY4, PARTY5]
+
+  PROPERTIES = [{ property_uprn: '69205893',
+                  parish: 'St. Clement',
+                  add_1: "St George's,",
+                  add_2: '2 Le Clos de Rocquebert,',
+                  add_3: ''}]
+
+  let(:parser) { TransactionParser.new FIXTURE }
 
   context '#new' do
     it 'should return an instance of the class' do
-      expect(parser.class).to eq(TransactionParser)
+      expect(parser.class).to eq TransactionParser
     end
   end
 
-  context '#page' do
-    it 'should return the Mechanize::Page for an html file' do
-      expect(parser.page.class).to eq(Mechanize::Page)
+  context '#transactions' do
+    it 'returns a collection whose size equals the number of transactions' do
+      expect(parser.transactions.size).to eq 400
+    end
+
+    it 'returns a collection holding the text of each transaction' do
+      expect(parser.transactions.first).to eq TRANSACTION
+    end
+
+    it 'returns a collection each of which has 3 elements' do
+      expect(parser.transactions.all? { |e| e.size == 3 }).to eq true
     end
   end
 
-  context '#tables' do
-    it 'should return 8 tables for a page' do
-      expect(parser.tables.count).to eq(8)
+  context '#parties(transaction)' do
+    it 'returns a collection of party data hashes for the transaction' do
+      expect(parser.parties(TRANSACTION)).to eq PARTIES
     end
   end
 
-  context 'header data' do
-    context '#header_trs' do
-      it 'should have 7 elements' do
-        expect(parser.header_trs.size).to eq(7)
-      end
-    end
-
-    context '#extended_text' do
-      it "returns the extended text field" do
-        expect(parser.extended_text).to be_nil
-      end
-    end
-
-    context '#summary_details' do
-      it "returns the summary details field" do
-        expect(parser.summary_details).to be_nil
-      end
-    end
-
-    context '#doc_num' do
-      it "should return 1" do
-        expect(parser.doc_num).to eq(1)
-      end
-    end
-
-    context '#doc_type' do
-      it "should return 'Realty - Sale'" do
-        expect(parser.doc_type).to eq('Realty - Sale')
-      end
-    end
-
-    context '#book_page_suffix' do
-      it "returns an 3-element array of book and page integers and nil if there is no suffix" do
-        expect(parser.book_page_suffix).to eq([1271, 699, nil])
-      end
-
-      it "returns an 3-element array of book and page integers and the page_num suffix if there is one" do
-        p = parser
-        allow(p).to receive(:book_page_text) { ["                1271", "                699/A"] }
-        expect(p.book_page_suffix).to eq([1271, 699, 'A'])
-      end
-    end
-
-    context '#reg_date' do
-      it "returns the registration date" do
-        expect(parser.reg_date.to_s).to eq('2011-01-07')
-      end
-    end
-
-  end
-
-  context 'party data' do
-    context '#party_trs' do
-      it 'should have 6 elements' do
-        expect(parser.party_trs.size).to eq(6)
-      end
-    end
-
-    context '#parties' do
-      it 'should return 5 parties' do
-        expect(parser.parties.count).to eq(5)
-      end
-    end
-
-    context '#parties_less_maidens' do
-      it 'raises an error if any maiden names have associated extended text' do
-        parser.instance_variable_set(:@maiden_names, [["Vendor - Realty", "Sowden", nil, "Nicolle Stephanie Cubitt", 'some ext text']])
-        expect(->{parser.parties_less_maidens}).to raise_error
-      end
-
-      it 'returns @parties less any maiden names' do
-        expect(parser.parties_less_maidens.count).to eq(4)
-      end
-    end
-
-    context '#parties_data' do
-      it 'returns an array of party data hashes' do
-        expect(parser.parties_data).to eq(party_hash)
-      end
-    end
-
-  end
-
-  context '#prop_trs' do
-    it 'should have 2 elements' do
-      expect(parser.prop_trs.size).to eq(2)
+  context '#properties(transaction)' do
+    it 'returns a collection of property data hashes for the transaction' do
+      expect(parser.properties(TRANSACTION)).to eq PROPERTIES
     end
   end
-
-  context '#properties' do
-    it "returns a 2D 'property' array with a single element (one property)" do
-      expect(parser.properties.count).to eq(1)
-    end
-  end
-
-  context '#properties_data' do
-    it "returns an array of property data hashes" do
-      expect(parser.properties_data[0]).to eq(property_hash)
-    end
-  end
-
 end
