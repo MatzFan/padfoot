@@ -3,6 +3,12 @@ describe TransactionParser do
   TRANSACTION = ["\n>Surname/ Corporate Name<\n>Howard-Houston<\n>Forename(s)<\n>Lilly Jane<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n>UPRN should be 69205893<\n>Book no/Suffix<\n>1289<\n>Folio/Suffix<\n>910<\n>Date Registered<\n>06/01/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n", "\n>69205893<\n>St. Clement<\n>St George's,<\n>2 Le Clos de Rocquebert,<\n><\n"].freeze
   "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n"
 
+  DETAILS = { summary_details: 'UPRN should be 69205893',
+              book_num: '1289',
+              page_num: '910',
+              page_suffix: '',
+              date: '06/01/2012'}
+
   PARTY1 = { role: 'Vendor - Realty',
              surname: 'Gavey',
              forename: 'Timothy Christopher',
@@ -60,6 +66,22 @@ describe TransactionParser do
 
     it 'returns a collection each of which has 3 elements' do
       expect(parser.transactions.all? { |e| e.size == 3 }).to eq true
+    end
+  end
+
+  context '#details(transaction)' do
+    it 'returns a collection of detail data hashes for the transaction' do
+      expect(parser.details(TRANSACTION)).to eq DETAILS
+    end
+  end
+
+  context '#split_suffix(page_num_string)' do
+    it 'returns a 2-element array: page number and suffix' do
+      expect(parser.split_suffix('123/A')).to eq %w(123 A)
+    end
+
+    it 'returns page number and "", if there is no suffix' do
+      expect(parser.split_suffix('123')).to eq ['123', '']
     end
   end
 
