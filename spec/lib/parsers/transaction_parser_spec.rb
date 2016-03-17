@@ -1,10 +1,11 @@
 describe TransactionParser do
   FIXTURE = '/Users/me/Documents/JPS/PRIDE/2012_1.txt'.freeze
   TRANS = ["\n>Surname/ Corporate Name<\n>Howard-Houston<\n>Forename(s)<\n>Lilly Jane<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n>UPRN should be 69205893<\n>Book no/Suffix<\n>1289<\n>Folio/Suffix<\n>910<\n>Date Registered<\n>06/01/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n", "\n>69205893<\n>St. Clement<\n>St George's,<\n>2 Le Clos de Rocquebert,<\n><\n"].freeze
-  "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n"
+  TRANS_ODD_PROP = ["\n>Surname/ Corporate Name<\n>Hall<\n>Forename(s)<\n>Rose Anne Avril<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n><\n>Book no/Suffix<\n>1290<\n>Folio/Suffix<\n>983<\n>Date Registered<\n>03/02/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Black Labradors Limited<\n><\n><\n><\n>Purchaser - Realty<\n>Hall<\n>Rose Anne Avril<\n><\n><\n>Purchaser - Realty<\n>Mitchell<\n>Rose Anne Avril<\n>Hall<\n><\n", "\n>69119482<\n>St. Brelade<\n>Holly Cottage,<\n>La Rue du Crocquet,<\n><\n>St. Brelade<\n>Parking Space adjoining Blue Ridge,<\n>La Rue du Crocquet,<\n><\n"].freeze
   DETAILS_TEXT = TRANS[0]
   PARTIES_TEXT = TRANS[1]
   PROPERTIES_TEXT = TRANS[2]
+  ODD_PROPERTIES_TEXT = TRANS_ODD_PROP[2]
 
   DETAILS = { summary_details: 'UPRN should be 69205893',
               book_num: '1289',
@@ -50,6 +51,17 @@ describe TransactionParser do
              add_1: "St George's,",
              add_2: '2 Le Clos de Rocquebert,',
              add_3: '' }].freeze
+
+  ODD_PROPS = [{ property_uprn: '69119482',
+                 parish: 'St. Brelade',
+                 add_1: 'Holly Cottage,',
+                 add_2: 'La Rue du Crocquet,',
+                 add_3: '' },
+                { property_uprn: '',
+                  parish: 'St. Brelade',
+                  add_1: 'Parking Space adjoining Blue Ridge,',
+                  add_2: 'La Rue du Crocquet,',
+                  add_3: '' }].freeze
 
   let(:parser) { TransactionParser.new FIXTURE }
 
@@ -98,6 +110,10 @@ describe TransactionParser do
   context '#properties(transaction)' do
     it 'returns a collection of property data hashes for the transaction' do
       expect(parser.properties(PROPERTIES_TEXT)).to eq PROPS
+    end
+
+    it "correctly deals with a list of properties missing 1 or more UPRN's" do
+      expect(parser.properties(ODD_PROPERTIES_TEXT)).to eq ODD_PROPS
     end
   end
 
