@@ -55,7 +55,7 @@ class TransactionParser
     arr[1] ? arr : arr << ''
   end
 
-  def parties(party_text)
+  def parties(party_text) # checks fields are multiple of 5
     raise ParserError unless (f = split_newlines(party_text)).size % PAR_N == 0
     f.each_slice(PAR_N).map { |a| partify(a) }
   end
@@ -66,9 +66,18 @@ class TransactionParser
 
   def properties(props_text)
     return [] if props_text == "\n\n" # there are no properties
-    # raise ParserError unless (f = split_newlines(props_text)).size % PROP_N == 0
-    f = split_newlines(props_text)
+    raise ParserError unless (f = parse_props(props_text)).size % PROP_N == 0
     f.each_slice(PROP_N).map { |a| propify(a) }
+  end
+
+  def parse_props(props_text)
+    fields = split_newlines(props_text)
+    n = 0
+    loop do
+      return fields unless fields[n]
+      fields.insert(n, '><') unless fields[n] =~ /\d{8}/
+      n += 5
+    end
   end
 
   def propify(arr)
