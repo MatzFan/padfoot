@@ -5,7 +5,9 @@ describe TransactionParser do
   DETAILS_TEXT = TRANS[0]
   PARTIES_TEXT = TRANS[1]
   PROPERTIES_TEXT = TRANS[2]
+  BAD_PROPERTY_TEXT = "\n>69123456<\n>St. Brelade<\n>add1,<\n>add2,<\n><\n>NOT A PARISH<\n>a1,<\n>a2,<\n><\n".freeze
   ODD_PROPERTIES_TEXT = TRANS_ODD_PROP[2]
+  ERR = TransactionParser::ParserError
 
   DETAILS = { summary_details: 'UPRN should be 69205893',
               book_num: '1289',
@@ -63,88 +65,92 @@ describe TransactionParser do
                   add_2: 'La Rue du Crocquet,',
                   add_3: '' }].freeze
 
-  let(:parser) { TransactionParser.new FIXTURE }
+  let(:p) { TransactionParser.new FIXTURE }
 
   context '#new' do
     it 'should return an instance of the class' do
-      expect(parser.class).to eq TransactionParser
+      expect(p.class).to eq TransactionParser
     end
   end
 
   context '#transactions' do
     it 'returns a collection whose size equals the number of transactions' do
-      expect(parser.transactions.size).to eq 400
+      expect(p.transactions.size).to eq 400
     end
 
     it 'returns a collection holding the text of each transaction' do
-      expect(parser.transactions.first).to eq TRANS
+      expect(p.transactions.first).to eq TRANS
     end
 
     it 'returns a collection each of which has 3 elements' do
-      expect(parser.transactions.all? { |e| e.size == 3 }).to eq true
+      expect(p.transactions.all? { |e| e.size == 3 }).to eq true
     end
   end
 
   context '#details(details_text)' do
     it 'returns a collection of detail data hashes from details text' do
-      expect(parser.details(DETAILS_TEXT)).to eq DETAILS
+      expect(p.details(DETAILS_TEXT)).to eq DETAILS
     end
   end
 
   context '#split_suffix(page_num_string)' do
     it 'returns a 2-element array: page number and suffix' do
-      expect(parser.split_suffix('123/A')).to eq %w(123 A)
+      expect(p.split_suffix('123/A')).to eq %w(123 A)
     end
 
     it 'returns page number and "", if there is no suffix' do
-      expect(parser.split_suffix('123')).to eq ['123', '']
+      expect(p.split_suffix('123')).to eq ['123', '']
     end
   end
 
   context '#parties(transaction)' do
     it 'returns a collection of party data hashes for the transaction' do
-      expect(parser.parties(PARTIES_TEXT)).to eq PARTIES
+      expect(p.parties(PARTIES_TEXT)).to eq PARTIES
     end
   end
 
   context '#properties(transaction)' do
     it 'returns a collection of property data hashes for the transaction' do
-      expect(parser.properties(PROPERTIES_TEXT)).to eq PROPS
+      expect(p.properties(PROPERTIES_TEXT)).to eq PROPS
     end
 
-    it "correctly deals with a list of properties missing 1 or more UPRN's" do
-      expect(parser.properties(ODD_PROPERTIES_TEXT)).to eq ODD_PROPS
+    context 'where a UPRN field is missing in property text' do
+      it 'inserts an empty UPRN field' do
+        expect(p.properties(ODD_PROPERTIES_TEXT)).to eq ODD_PROPS
+      end
+
+      it 'raises ParserError if the first field is not a Parish name' do
+        expect(-> { p.properties(BAD_PROPERTY_TEXT) }).to raise_error ERR
+      end
     end
   end
 
   context '#transaction_data(transaction)' do
     it 'returns a 2D collection of all data hashes for a given transaction' do
-      expect(parser.transaction_data(TRANS)).to eq [DETAILS, PARTIES, PROPS]
+      expect(p.transaction_data(TRANS)).to eq [DETAILS, PARTIES, PROPS]
     end
 
     it 'properties part may be empty (no properties specified)' do
-      p = parser
-      trans = p.instance_variable_get(:@transactions)[378]
-      expect(p.transaction_data(trans).last).to be_empty
+      parser = p
+      trans = parser.instance_variable_get(:@transactions)[378]
+      expect(parser.transaction_data(trans).last).to be_empty
     end
   end
 
   context '#data' do
     it 'returns a collection of all transaction data hashes' do
-      expect(parser.data.size).to eq 400
+      expect(p.data.size).to eq 400
     end
 
     it 'returns a collection whose 1st elements are a hash (details)' do
-      expect(parser.data.all? { |e| e[0].class == Hash }).to eq true
+      expect(p.data.all? { |e| e[0].class == Hash }).to eq true
     end
 
     it 'returns a collection whose 2nd elements are collections of hashes' do
-      p = parser
       expect(p.data.all? { |e| e[1].all? { |f| f.class == Hash } }).to eq true
     end
 
     it 'returns a collection whose 3rd elements are collections of hashes' do
-      p = parser
       expect(p.data.all? { |e| e[2].all? { |f| f.class == Hash } }).to eq true
     end
   end
