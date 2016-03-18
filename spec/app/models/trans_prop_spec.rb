@@ -1,5 +1,4 @@
 describe TransProp do
-
   uprn = 98123456
   let(:property) { build(:property, uprn: uprn) }
   let(:trans_prop) { build(:trans_prop, property_uprn: 98123456) }

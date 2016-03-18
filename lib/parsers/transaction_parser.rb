@@ -53,16 +53,20 @@ class TransactionParser
   end
 
   def detailify(arr)
-    Hash[DET_KEYS.zip(process_page_suffix(remove_delims(arr).map(&:strip)))]
+    Hash[DET_KEYS.zip(process_details(remove_delims(arr).map(&:strip)))]
   end
 
-  def process_page_suffix(arr)
-    arr[0..1] + split_suffix(arr[2]) + arr[3..4]
+  def process_details(arr)
+    [arr[0], arr[1].to_i] + split_suffix(arr[2]) << datify(arr[3]) << arr[4]
+  end
+
+  def datify(string)
+    Date.new(*string.split('/').map(&:to_i).reverse)
   end
 
   def split_suffix(string)
-    arr = string.split('/')
-    arr[1] ? arr : arr << ''
+    page, suffix = *string.split('/')
+    suffix ? [page.to_i, suffix] : [page.to_i, nil]
   end
 
   def parties(party_text) # checks fields are multiple of 5
@@ -94,7 +98,11 @@ class TransactionParser
   end
 
   def propify(arr)
-    Hash[PROP_KEYS.zip(remove_delims(arr).map(&:strip))]
+    Hash[PROP_KEYS.zip(process_prop(remove_delims(arr).map(&:strip)))]
+  end
+
+  def process_prop(arr)
+    [arr[0].empty? ? nil : arr[0].to_i] + arr[1..-1]
   end
 
   private

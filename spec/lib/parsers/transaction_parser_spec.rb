@@ -3,6 +3,7 @@ describe TransactionParser do
   TRANS = ["\n>Surname/ Corporate Name<\n>Howard-Houston<\n>Forename(s)<\n>Lilly Jane<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n>UPRN should be 69205893<\n>Book no/Suffix<\n>1289<\n>Folio/Suffix<\n>910<\n>Date Registered<\n>06/01/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Gavey<\n>Timothy Christopher<\n><\n><\n>Vendor - Realty<\n>Hussey<\n>Catherine Nicola<\n><\n><\n>Vendor - Realty<\n>Gavey<\n>Catherine Nicola<\n>Hussey<\n><\n>Purchaser - Realty<\n>Howard-Houston<\n>Lilly Jane<\n><\n><\n>Purchaser - Realty<\n>Ash<\n>Lilly Jane<\n>Howard-Houston<\n><\n", "\n>69205893<\n>St. Clement<\n>St George's,<\n>2 Le Clos de Rocquebert,<\n><\n"].freeze
   TRANS_ODD_PROP = ["\n>Surname/ Corporate Name<\n>Hall<\n>Forename(s)<\n>Rose Anne Avril<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n><\n>Book no/Suffix<\n>1290<\n>Folio/Suffix<\n>983<\n>Date Registered<\n>03/02/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n", "\n>Vendor - Realty<\n>Black Labradors Limited<\n><\n><\n><\n>Purchaser - Realty<\n>Hall<\n>Rose Anne Avril<\n><\n><\n>Purchaser - Realty<\n>Mitchell<\n>Rose Anne Avril<\n>Hall<\n><\n", "\n>69119482<\n>St. Brelade<\n>Holly Cottage,<\n>La Rue du Crocquet,<\n><\n>St. Brelade<\n>Parking Space adjoining Blue Ridge,<\n>La Rue du Crocquet,<\n><\n"].freeze
   DETAILS_TEXT = TRANS[0]
+  DETAILS_PAGE_SUFFIX_TEXT = "\n>Surname/ Corporate Name<\n>Howard-Houston<\n>Forename(s)<\n>Lilly Jane<\n>Extended Text<\n><\n>Maiden Name<\n><\n>Summary Details<\n>UPRN should be 69205893<\n>Book no/Suffix<\n>1289<\n>Folio/Suffix<\n>910/A<\n>Date Registered<\n>06/01/2012<\n>Register Type<\n>Table<\n>Parish<\n><\n>Number of Emargements<\n>0<\n>Doc Type<\n>Realty - Sale<\n>Number of Corrections<\n>0<\n>Party Code<\n>Purchaser - Realty<\n>Number of Rectifications<\n>0<\n"
   PARTIES_TEXT = TRANS[1]
   PROPERTIES_TEXT = TRANS[2]
   BAD_PROPERTY_TEXT = "\n>69123456<\n>St. Brelade<\n>add1,<\n>add2,<\n><\n>NOT A PARISH<\n>a1,<\n>a2,<\n><\n".freeze
@@ -10,11 +11,18 @@ describe TransactionParser do
   ERR = TransactionParser::ParserError
 
   DETAILS = { summary_details: 'UPRN should be 69205893',
-              book_num: '1289',
-              page_num: '910',
-              page_suffix: '',
-              date: '06/01/2012',
+              book_num: 1289,
+              page_num: 910,
+              page_suffix: nil,
+              date: Date.new(2012, 01, 06),
               type: 'Realty - Sale' }.freeze
+
+  DETAILS_PAGE_SUFFIX = { summary_details: 'UPRN should be 69205893',
+                          book_num: 1289,
+                          page_num: 910,
+                          page_suffix: 'A',
+                          date: Date.new(2012, 01, 06),
+                          type: 'Realty - Sale' }.freeze
 
   PARTY1 = { role: 'Vendor - Realty',
              surname: 'Gavey',
@@ -48,18 +56,18 @@ describe TransactionParser do
 
   PARTIES = [PARTY1, PARTY2, PARTY3, PARTY4, PARTY5].freeze
 
-  PROPS = [{ property_uprn: '69205893',
+  PROPS = [{ property_uprn: 69205893,
              parish: 'St. Clement',
              add_1: "St George's,",
              add_2: '2 Le Clos de Rocquebert,',
              add_3: '' }].freeze
 
-  ODD_PROPS = [{ property_uprn: '69119482',
+  ODD_PROPS = [{ property_uprn: 69119482,
                  parish: 'St. Brelade',
                  add_1: 'Holly Cottage,',
                  add_2: 'La Rue du Crocquet,',
                  add_3: '' },
-                { property_uprn: '',
+                { property_uprn: nil,
                   parish: 'St. Brelade',
                   add_1: 'Parking Space adjoining Blue Ridge,',
                   add_2: 'La Rue du Crocquet,',
@@ -91,15 +99,25 @@ describe TransactionParser do
     it 'returns a collection of detail data hashes from details text' do
       expect(p.details(DETAILS_TEXT)).to eq DETAILS
     end
+
+    it 'correctly handles a page suffix' do
+      expect(p.details(DETAILS_PAGE_SUFFIX_TEXT)).to eq DETAILS_PAGE_SUFFIX
+    end
   end
 
   context '#split_suffix(page_num_string)' do
     it 'returns a 2-element array: page number and suffix' do
-      expect(p.split_suffix('123/A')).to eq %w(123 A)
+      expect(p.split_suffix('123/A')).to eq [123, 'A']
     end
 
     it 'returns page number and "", if there is no suffix' do
-      expect(p.split_suffix('123')).to eq ['123', '']
+      expect(p.split_suffix('123')).to eq [123, nil]
+    end
+  end
+
+  context '#datify(string)' do
+    it 'converts a string to a date' do
+      expect(p.datify('06/01/2012')).to eq Date.new(2012, 01, 06)
     end
   end
 
