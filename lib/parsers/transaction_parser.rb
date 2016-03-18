@@ -2,7 +2,7 @@
 class TransactionParser
   class ParserError < StandardError; end
 
-  DETAILS_KEYS = [:summary_details, :book_num,
+  DET_KEYS = [:summary_details, :book_num,
                   :page_num, :page_suffix, :date, :type].freeze
   PARTY_KEYS = [:role, :surname, :forename, :maiden_name, :ext_text].freeze
   PROP_KEYS = [:property_uprn, :parish, :add_1, :add_2, :add_3].freeze
@@ -14,6 +14,7 @@ class TransactionParser
   D2 = '<'.freeze
   EMPTY_FIELD = D1 + D2
   TABLE_REGEX = /#{D2}[A-Z]{3}#{D1}/
+  UPRN_REGEX = /\d{8}/
 
   def initialize(file_path)
     @file_path = file_path
@@ -52,7 +53,7 @@ class TransactionParser
   end
 
   def detailify(arr)
-    Hash[DETAILS_KEYS.zip(process_page_suffix(remove_delims(arr)))]
+    Hash[DET_KEYS.zip(process_page_suffix(remove_delims(arr).map(&:strip)))]
   end
 
   def process_page_suffix(arr)
@@ -70,7 +71,7 @@ class TransactionParser
   end
 
   def partify(arr)
-    Hash[PARTY_KEYS.zip(remove_delims(arr))]
+    Hash[PARTY_KEYS.zip(remove_delims(arr).map(&:strip))]
   end
 
   def properties(props_text)
@@ -84,7 +85,7 @@ class TransactionParser
     n = 0
     loop do
       return fields unless fields[n]
-      if fields[n] !~ /\d{8}/
+      if fields[n] !~ UPRN_REGEX
         raise ParserError unless parishes.any? { |p| fields[n] == D1 + p + D2 }
         fields.insert(n, EMPTY_FIELD)
       end
@@ -93,7 +94,7 @@ class TransactionParser
   end
 
   def propify(arr)
-    Hash[PROP_KEYS.zip(remove_delims(arr))]
+    Hash[PROP_KEYS.zip(remove_delims(arr).map(&:strip))]
   end
 
   private
