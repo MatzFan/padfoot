@@ -19,4 +19,11 @@ class TransactionLoader
   def write_trans
     @trans.update(summary_details: @details[:summary_details])
   end
+
+  def write_parties
+  end
+
+  def write_properties
+    @properties.each { |p| @trans.add_trans_prop(TransProp.new(p)) }
+  end
 end
