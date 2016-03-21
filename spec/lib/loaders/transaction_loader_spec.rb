@@ -1,4 +1,5 @@
 describe TransactionLoader do
+  T = Transaction
   ERR = TransactionLoader::LoadError
   DATA = [{ summary_details: 'UPRN should be 69205893',
             book_num: 1289,
@@ -38,7 +39,7 @@ describe TransactionLoader do
              add_3: '' }]
           ].freeze
 
-  let(:trans) { Transaction.new(book_num: 1289, page_num: 910) }
+  let(:trans) { T.new(book_num: 1289, page_num: 910) }
   let(:loader) { TransactionLoader.new(DATA) }
 
   before(:each) { trans.save }
@@ -46,6 +47,11 @@ describe TransactionLoader do
   context '#new' do
     it 'should return an instance of the class' do
       expect(loader.class).to eq TransactionLoader
+    end
+
+    it "raises LoaderError if the transaction can't be found" do
+      T.first.delete
+      expect(-> { loader }).to raise_error TransactionLoader::LoadError
     end
   end
 
@@ -81,14 +87,38 @@ describe TransactionLoader do
   context '#write_trans(details data)' do
     it 'writes the summary details for the transaction, if any' do
       loader.write_trans
-      expect(Transaction.first[:summary_details]).to eq 'UPRN should be 69205893'
+      expect(T.first[:summary_details]).to eq 'UPRN should be 69205893'
+    end
+  end
+
+  context '#write_parties(parties data)' do
+    it 'adds a new Name record for each party which does not have one' do
+      loader.write_parties
+      expect(Name.count).to eq 5
+    end
+
+    it 'adds a NamesTransaction record for each party' do
+      loader.write_parties
+      expect(NamesTransaction.count).to eq 5
+    end
+
+    it 'writes no NamesTransaction data if there are no parties' do
+      loader.instance_variable_set(:@parties, [])
+      loader.write_parties
+      expect(NamesTransaction.count).to eq 0
     end
   end
 
   context '#write_properties(properties data)' do
-    it 'writes data for the transaction properties, if any' do
+    it 'writes data for the transaction properties' do
       loader.write_properties
-      expect(Transaction.first.trans_props.count).to eq 1
+      expect(T.first.trans_props.count).to eq 1
+    end
+
+    it 'writes no Property data if there are no properties' do
+      loader.instance_variable_set(:@properties, [])
+      loader.write_properties
+      expect(T.first.trans_props.count).to eq 0
     end
   end
 end
