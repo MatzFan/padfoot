@@ -94,7 +94,7 @@ class TransactionParser
         raise ParserError unless parishes.any? { |p| fields[n] == D1 + p + D2 }
         fields.insert(n, EMPTY_FIELD)
       end
-      n += 5
+      n += PROP_N
     end
   end
 

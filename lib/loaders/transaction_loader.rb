@@ -13,6 +13,12 @@ class TransactionLoader
     @t = @trans.id
   end
 
+  def write
+    write_trans
+    write_parties
+    write_properties
+  end
+
   def trans
     t = T.find(book_num: @bk, page_num: @page, page_suffix: @suf)
     t ? t : (raise LoadError, "Transaction not found: #{@bk}, #{@page}/#{@suf}")
