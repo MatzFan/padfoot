@@ -3,7 +3,7 @@ class TransactionParser
   class ParserError < StandardError; end
 
   DET_KEYS = [:summary_details, :book_num,
-                  :page_num, :page_suffix, :date, :type].freeze
+              :page_num, :page_suffix, :date, :type].freeze
   PARTY_KEYS = [:role, :surname, :forename, :maiden_name, :ext_text].freeze
   PROP_KEYS = [:property_uprn, :parish, :add_1, :add_2, :add_3].freeze
   METHODS = [:details, :parties, :properties].freeze
@@ -13,7 +13,7 @@ class TransactionParser
   D1 = '>'.freeze
   D2 = '<'.freeze
   EMPTY_FIELD = D1 + D2
-  TABLE_REGEX = /#{D2}[A-Z]{3}#{D1}/
+  TABLE_REGEX = /<[A-Z]{3}>/
   UPRN_REGEX = /\d{8}/
 
   def initialize(file_path)
@@ -47,8 +47,8 @@ class TransactionParser
     string.split(TABLE_REGEX)[1..-1]
   end
 
-  def details(details_text) # returns sum_dets, book, page(suffix), date, type
-    raise ParserError unless (f = split_newlines(details_text)).size == DET_N
+  def details(t) # returns sum_dets, book, page(suffix), date, type
+    raise ParserError, t unless (f = split_newlines(t)).size == DET_N
     detailify f.values_at(9, 11, 13, 15, 23)
   end
 
@@ -69,8 +69,9 @@ class TransactionParser
     suffix ? [page.to_i, suffix] : [page.to_i, nil]
   end
 
-  def parties(party_text) # checks fields are multiple of 5
-    raise ParserError unless (f = split_newlines(party_text)).size % PAR_N == 0
+  def parties(t)
+    return [] if t == "\n\n" # there are no parties
+    raise ParserError, t unless (f = split_newlines(t)).size % PAR_N == 0
     f.each_slice(PAR_N).map { |a| partify(a) }
   end
 
@@ -78,9 +79,9 @@ class TransactionParser
     Hash[PARTY_KEYS.zip(remove_delims(arr).map(&:strip))]
   end
 
-  def properties(props_text)
-    return [] if props_text == "\n\n" # there are no properties
-    raise ParserError unless (f = missing_uprns(props_text)).size % PROP_N == 0
+  def properties(t)
+    return [] if t == "\n\n" # there are no properties
+    raise ParserError, t unless (f = missing_uprns(t)).size % PROP_N == 0
     f.each_slice(PROP_N).map { |a| propify(a) }
   end
 
