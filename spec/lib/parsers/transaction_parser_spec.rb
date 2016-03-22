@@ -8,6 +8,7 @@ describe TransactionParser do
   PROPERTIES_TEXT = TRANS[2]
   BAD_PROPERTY_TEXT = "\n>69123456<\n>St. Brelade<\n>add1,<\n>add2,<\n><\n>NOT A PARISH<\n>a1,<\n>a2,<\n><\n".freeze
   ODD_PROPERTIES_TEXT = TRANS_ODD_PROP[2]
+  ODD_PARISH_TEXT = "\n>St. Martin, St. Saviour<\n>Strip of land adjoining Streatham,<\n>La Grande Route de St Martin,<\n><\n".freeze
   ERR = TransactionParser::ParserError
 
   DETAILS = { summary_details: 'UPRN should be 69205893',
@@ -27,32 +28,32 @@ describe TransactionParser do
   PARTY1 = { role: 'Vendor - Realty',
              surname: 'Gavey',
              forename: 'Timothy Christopher',
-             maiden_name: '',
-             ext_text: '' }.freeze
+             maiden_name: nil,
+             ext_text: nil }.freeze
 
   PARTY2 = { role: 'Vendor - Realty',
              surname: 'Hussey',
              forename: 'Catherine Nicola',
-             maiden_name: '',
-             ext_text: '' }.freeze
+             maiden_name: nil,
+             ext_text: nil }.freeze
 
   PARTY3 = { role: 'Vendor - Realty',
              surname: 'Gavey',
              forename: 'Catherine Nicola',
              maiden_name: 'Hussey',
-             ext_text: '' }.freeze
+             ext_text: nil }.freeze
 
   PARTY4 = { role: 'Purchaser - Realty',
              surname: 'Howard-Houston',
              forename: 'Lilly Jane',
-             maiden_name: '',
-             ext_text: '' }.freeze
+             maiden_name: nil,
+             ext_text: nil }.freeze
 
   PARTY5 = { role: 'Purchaser - Realty',
              surname: 'Ash',
              forename: 'Lilly Jane',
              maiden_name: 'Howard-Houston',
-             ext_text: '' }.freeze
+             ext_text: nil }.freeze
 
   PARTIES = [PARTY1, PARTY2, PARTY3, PARTY4, PARTY5].freeze
 
@@ -60,18 +61,24 @@ describe TransactionParser do
              parish: 'St. Clement',
              add_1: "St George's,",
              add_2: '2 Le Clos de Rocquebert,',
-             add_3: '' }].freeze
+             add_3: nil }].freeze
 
   ODD_PROPS = [{ property_uprn: 69119482,
                  parish: 'St. Brelade',
                  add_1: 'Holly Cottage,',
                  add_2: 'La Rue du Crocquet,',
-                 add_3: '' },
+                 add_3: nil },
                 { property_uprn: nil,
                   parish: 'St. Brelade',
                   add_1: 'Parking Space adjoining Blue Ridge,',
                   add_2: 'La Rue du Crocquet,',
-                  add_3: '' }].freeze
+                  add_3: nil }].freeze
+
+  ODD_PARISH = [{ property_uprn: nil,
+                  parish: 'St. Martin, St. Saviour',
+                  add_1: 'Strip of land adjoining Streatham,',
+                  add_2: 'La Grande Route de St Martin,',
+                  add_3: nil }].freeze
 
   let(:p) { TransactionParser.new FIXTURE }
 
@@ -135,6 +142,10 @@ describe TransactionParser do
     context 'where a UPRN field is missing in property text' do
       it 'inserts an empty UPRN field' do
         expect(p.properties(ODD_PROPERTIES_TEXT)).to eq ODD_PROPS
+      end
+
+      it 'deals with multiple comma-separated parishes in the parish field' do
+        expect(p.properties(ODD_PARISH_TEXT)).to eq ODD_PARISH
       end
 
       it 'raises ParserError if the first field is not a Parish name' do

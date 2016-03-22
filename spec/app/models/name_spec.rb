@@ -1,10 +1,9 @@
 describe Name do
-
   let(:name) { build(:name) }
   let(:entity_name) { build(:name, surname: 'ACME Ltd', forename: nil) }
   let(:person_name) { build(:name, surname: 'Doe', forename: 'John') }
-  let(:married_name) { build(:name, surname: 'Doe', forename: 'Jane', maiden_name: 'Bloggs') }
-  let(:maiden_name) { build(:name, surname: 'Bloggs', forename: 'Jane') }
+  let(:married) { build(:name, surname: 'D', forename: 'J', maiden_name: 'B') }
+  let(:maiden_name) { build(:name, surname: 'B', forename: 'J') }
 
   context '#create' do
     it 'can be created' do
@@ -12,20 +11,28 @@ describe Name do
       expect(Name.count).to eq 1
     end
 
-    it 'creates a new Entity record if self.forename is nil' do
-      entity_name.save
-      expect(Entity.count).to eq 1
+    context 'if forename is nil' do
+      it 'creates a new Entity record' do
+        entity_name.save
+        expect(Entity.count).to eq 1
+      end
     end
 
-    it 'creates a new Person record if forename is not nil and maiden name does not exist' do
-      person_name.save
-      expect(Person.count).to eq 1
-    end
+    context 'if forename is not nil' do
+      context 'and maiden name does not exist in database' do
+        it 'creates a new Person' do
+          person_name.save
+          expect(Person.count).to eq 1
+        end
+      end
 
-    it 'does NOT create a new Person record if forename is not nil and maiden name DOES exist' do
-      married_name.save
-      maiden_name.save
-      expect(Person.count).to eq 1
+      context 'and maiden name already exists in database' do
+        it 'does NOT create a new Person record' do
+          married.save
+          maiden_name.save
+          expect(Person.count).to eq 1
+        end
+      end
     end
   end
 
@@ -52,5 +59,4 @@ describe Name do
       expect(Name.first.person.class).to eq Person
     end
   end
-
 end

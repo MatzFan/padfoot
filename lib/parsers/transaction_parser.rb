@@ -20,7 +20,7 @@ class TransactionParser
     @file_path = file_path
     @file_text = file_text
     @transactions = transactions
-    @parishes = parishes
+    @prsh = prsh
   end
 
   def file_text
@@ -31,7 +31,7 @@ class TransactionParser
     @file_text.split("|\n").map { |s| details_parties_properties s }
   end
 
-  def parishes
+  def prsh
     Parish.select_map :name
   end
 
@@ -53,7 +53,11 @@ class TransactionParser
   end
 
   def detailify(arr)
-    Hash[DET_KEYS.zip(process_details(remove_delims(arr).map(&:strip)))]
+    Hash[DET_KEYS.zip(process_details(nils(remove_delims(arr).map(&:strip))))]
+  end
+
+  def nils(arr)
+    arr.map { |string| string.empty? ? nil : string }
   end
 
   def process_details(arr)
@@ -76,7 +80,7 @@ class TransactionParser
   end
 
   def partify(arr)
-    Hash[PARTY_KEYS.zip(remove_delims(arr).map(&:strip))]
+    Hash[PARTY_KEYS.zip(nils(remove_delims(arr).map(&:strip)))]
   end
 
   def properties(t)
@@ -85,25 +89,29 @@ class TransactionParser
     f.each_slice(PROP_N).map { |a| propify(a) }
   end
 
-  def missing_uprns(props_text)
-    fields = split_newlines(props_text)
+  def missing_uprns(t)
+    fields = split_newlines(t)
     n = 0
     loop do
       return fields unless fields[n]
       if fields[n] !~ UPRN_REGEX
-        raise ParserError unless parishes.any? { |p| fields[n] == D1 + p + D2 }
+        raise ParserError, t unless parish? fields[n].split(D1)[1].split(D2)[0]
         fields.insert(n, EMPTY_FIELD)
       end
       n += PROP_N
     end
   end
 
+  def parish?(string) # matches a single or comma-separated list of parishes
+    string.split(', ').all? { |s| @prsh.any? { |p| p == s } }
+  end
+
   def propify(arr)
-    Hash[PROP_KEYS.zip(process_prop(remove_delims(arr).map(&:strip)))]
+    Hash[PROP_KEYS.zip(process_prop(nils(remove_delims(arr).map(&:strip))))]
   end
 
   def process_prop(arr)
-    [arr[0].empty? ? nil : arr[0].to_i] + arr[1..-1]
+    [(arr[0].to_i if arr[0])] + arr[1..-1] # convert all UPRNs to integers
   end
 
   private
