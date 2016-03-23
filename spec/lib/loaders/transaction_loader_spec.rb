@@ -84,9 +84,9 @@ describe TransactionLoader do
     end
   end
 
-  context '#write_trans(details data)' do
+  context '#write_transaction(details data)' do
     it 'writes the summary details for the transaction, if any' do
-      loader.write_trans
+      loader.write_transaction
       expect(T.first[:summary_details]).to eq 'UPRN should be 69205893'
     end
   end

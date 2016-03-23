@@ -14,7 +14,7 @@ class TransactionLoader
   end
 
   def write
-    write_trans
+    write_transaction
     write_parties
     write_properties
   end
@@ -24,7 +24,7 @@ class TransactionLoader
     t ? t : (raise LoadError, "Transaction not found: #{@bk}, #{@page}/#{@suf}")
   end
 
-  def write_trans
+  def write_transaction
     @trans.update(summary_details: @details[:summary_details])
   end
 
