@@ -17,7 +17,7 @@ Sequel.migration do
     end
 
     alter_table :party_roles do
-      add_foreign_key :type, :role_types, type: String
+      add_foreign_key :role_type, :role_types, type: String
     end
 
     alter_table :people do
@@ -35,7 +35,7 @@ Sequel.migration do
     end
 
     alter_table :party_roles do
-      drop_column :type
+      drop_column :role_type
     end
 
     alter_table :people do
