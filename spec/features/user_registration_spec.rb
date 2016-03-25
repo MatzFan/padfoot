@@ -1,7 +1,6 @@
 require_relative 'features_helper'
 
 describe 'Registering a new user', type: :feature do
-
   let(:user) { build(:user, email: 'test@example.com') }
 
   before do
@@ -28,9 +27,9 @@ describe 'Registering a new user', type: :feature do
     expect(page).to have_content 'your registration has been confirmed'
   end
 
-  it "sends an email with a link allows the user to subscribe" do
+  it 'sends an email with a link allows the user to subscribe' do
     id = User.first.id
     current_email.click_link ''
-    expect(page).to have_link('subscribe', :href => "/users/#{id}/subscribe")
+    expect(page).to have_link('subscribe', href: "/users/#{id}/subscribe")
   end
 end

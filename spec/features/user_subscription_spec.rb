@@ -2,7 +2,7 @@ require_relative 'features_helper'
 require_relative 'pay_stripe_helper'
 
 describe 'Subscribing', type: :feature, js: true do
-  after(:suite) { Stripe::Customer.all(limit: 100).each(&:delete) } # tidy up
+  after(:each) { Stripe::Customer.all(limit: 1).each(&:delete) } # tidy up
 
   context 'a confirmed user' do
     context 'by visiting the subscription page' do

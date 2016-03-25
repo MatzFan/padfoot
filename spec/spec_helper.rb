@@ -1,4 +1,5 @@
-RACK_ENV = 'test' unless defined?(RACK_ENV)
+RACK_ENV = 'test'.freeze unless defined?(RACK_ENV)
+DONT_CLEAN = %w(parishes spatial_ref_sys).freeze
 
 require File.expand_path(__dir__ + '/../config/boot')
 Dir[File.expand_path(__dir__ + '/factories/**/*.rb')].each(&method(:require))
@@ -9,17 +10,16 @@ def session
 end
 
 RSpec.configure do |config|
-
   config.include Rack::Test::Methods
 
   config.include FactoryGirl::Syntax::Methods
   FactoryGirl.define do # FG uses save!, Sequel uses 'save'..
-    to_create { |instance| instance.save }
+    to_create(&:save)
   end
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation, { except: %w[parishes spatial_ref_sys] }
-    DatabaseCleaner.clean_with(:truncation, { except: %w[parishes spatial_ref_sys] })
+    DatabaseCleaner.strategy = :truncation, { except: DONT_CLEAN }
+    DatabaseCleaner.clean_with(:truncation, except: DONT_CLEAN)
   end
 
   config.around(:each) do |example|
@@ -27,7 +27,6 @@ RSpec.configure do |config|
       example.run
     end
   end
-
 end
 
 # You can use this method to custom specify a Rack app

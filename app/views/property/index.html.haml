@@ -1,0 +1,8 @@
+#table-placeholder
+
+:javascript
+  $.getJSON("index.json", function(data) {
+    drawPropertiesTable(data, function() {
+      var table = $('#tbl').DataTable();
+    });
+  });

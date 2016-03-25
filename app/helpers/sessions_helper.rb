@@ -1,5 +1,5 @@
+# sessions helper
 module SessionsHelper
-
   def current_user=(user)
     @current_user = user
   end
@@ -20,7 +20,6 @@ module SessionsHelper
   def signed_in? # critical method used throughout for access control :))
     !current_user.nil?
   end
-
 end
 
 Padfoot::App.helpers SessionsHelper

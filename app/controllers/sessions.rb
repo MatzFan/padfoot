@@ -1,5 +1,4 @@
 Padfoot::App.controllers :sessions do
-
   get :new, map: '/login' do
     render :new, locals: { error: false }
   end
@@ -8,9 +7,9 @@ Padfoot::App.controllers :sessions do
     @user = User.find(email: params[:email])
     if @user && @user.confirmation && @user.password == params[:password]
       if @user.subscription
-        if (params[:remember_me])
+        if params[:remember_me]
           @user.authenticity_token = SecureRandom.hex
-          thirty_days_in_seconds = 30*24*60*60
+          thirty_days_in_seconds = 30 * 24 * 60 * 60
           response.set_cookie('permanent_cookie', value:
                                         { domain: 'jerseypropertyservices.com', path: '/'},
                                         max_age: "#{thirty_days_in_seconds}")
@@ -32,5 +31,4 @@ Padfoot::App.controllers :sessions do
     flash[:notice] = 'You have successfully logged out.'
     redirect '/'
   end
-
 end

@@ -1,4 +1,4 @@
-function drawTable(data, callback) {
+function drawAppsTable(data, callback) {
   var columns = data.columns;
   var appData = data.app_data;
   var thDivs = $(columns).map(function() {

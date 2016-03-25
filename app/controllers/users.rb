@@ -1,5 +1,4 @@
 Padfoot::App.controllers :users do
-
   before :edit, :update  do
     redirect('/login') unless signed_in?
     @user = User[params[:id].to_i]
@@ -14,11 +13,12 @@ Padfoot::App.controllers :users do
   post :create do
     @user = User.new(params[:user])
     if @user.save
-      deliver(:confirmation, :confirmation_email,
-        @user.name,
-        @user.email,
-        @user.id,
-        @user.confirmation_code) unless @user.confirmation # check confirmed
+      deliver(:confirmation,
+              :confirmation_email,
+              @user.name,
+              @user.email,
+              @user.id,
+              @user.confirmation_code) unless @user.confirmation # confirmed?
       flash[:notice] = 'Message sent'
       redirect('/')
     else
@@ -27,19 +27,19 @@ Padfoot::App.controllers :users do
   end
 
   get :confirm, map: '/confirm/:id/:code' do
-    redirect('/') unless @user = User[params[:id].to_i] # if user is nil
+    redirect('/') unless (@user = User[params[:id].to_i])
     redirect('/') unless @user.authenticate(params[:code].to_s)
     render :confirm
   end
 
   get :edit, map: '/users/:id/edit' do
-    @user = User[params[:id].to_i]
+    # @user = User[params[:id].to_i] # in before hook
     render :edit
   end
 
   put :update, map: '/users/:id' do
-    @user = User[params[:id].to_i]
-    if @user == nil
+    # @user = User[params[:id].to_i] # in before hook
+    if @user.nil?
       flash[:error] = 'User is not registered.'
       render :edit
     end
@@ -61,7 +61,7 @@ Padfoot::App.controllers :users do
   post :payment_confirmation, map: '/users/:id/payment_confirmation' do
     user = User[params[:id].to_i]
     token = params[:stripeToken]
-    stripe_cust_id = user.stripe_cust_id
+    self.stripe_cust_id = user.stripe_cust_id
     customer = Stripe::Customer.create(source: token, plan: 'annual')
     if customer
       user.update(subscription: true, stripe_cust_id: customer.id)
@@ -72,5 +72,4 @@ Padfoot::App.controllers :users do
       render :subscription
     end
   end
-
 end

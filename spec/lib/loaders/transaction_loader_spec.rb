@@ -1,6 +1,6 @@
 describe TransactionLoader do
-  T = Transaction
-  ERR = TransactionLoader::LoadError
+  SUM_DET = 'UPRN should be 69205893'
+  TL_ERR = TransactionLoader::LoadError
   DATA = [{ summary_details: 'UPRN should be 69205893',
             book_num: 1289,
             page_num: 910,
@@ -39,7 +39,7 @@ describe TransactionLoader do
              add_3: '' }]
           ].freeze
 
-  let(:trans) { T.new(book_num: 1289, page_num: 910) }
+  let(:trans) { Transaction.new(book_num: 1289, page_num: 910) }
   let(:loader) { TransactionLoader.new(DATA) }
 
   before(:each) { trans.save }
@@ -50,8 +50,8 @@ describe TransactionLoader do
     end
 
     it "raises LoaderError if the transaction can't be found" do
-      T.first.delete
-      expect(-> { loader }).to raise_error TransactionLoader::LoadError
+      Transaction.first.delete
+      expect(-> { loader }).to raise_error TL_ERR
     end
   end
 
@@ -76,7 +76,7 @@ describe TransactionLoader do
   context '#trans' do
     it 'raises an error if the Transactions record is not found' do
       loader.instance_variable_set(:@bk, 9999)
-      expect(-> { loader.trans }).to raise_error ERR
+      expect(-> { loader.trans }).to raise_error TL_ERR
     end
 
     it 'returns a Transaction if the record is found' do
@@ -87,7 +87,7 @@ describe TransactionLoader do
   context '#write_transaction(details data)' do
     it 'writes the summary details for the transaction, if any' do
       loader.write_transaction
-      expect(T.first[:summary_details]).to eq 'UPRN should be 69205893'
+      expect(Transaction.first[:summary_details]).to eq SUM_DET
     end
   end
 
@@ -112,13 +112,13 @@ describe TransactionLoader do
   context '#write_properties(properties data)' do
     it 'writes data for the transaction properties' do
       loader.write_properties
-      expect(T.first.trans_props.count).to eq 1
+      expect(Transaction.first.trans_props.count).to eq 1
     end
 
     it 'writes no Property data if there are no properties' do
       loader.instance_variable_set(:@properties, [])
       loader.write_properties
-      expect(T.first.trans_props.count).to eq 0
+      expect(Transaction.first.trans_props.count).to eq 0
     end
   end
 end

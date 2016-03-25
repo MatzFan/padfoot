@@ -9,7 +9,7 @@ describe TransactionParser do
   BAD_PROPERTY_TEXT = "\n>69123456<\n>St. Brelade<\n>add1,<\n>add2,<\n><\n>NOT A PARISH<\n>a1,<\n>a2,<\n><\n".freeze
   ODD_PROPERTIES_TEXT = TRANS_ODD_PROP[2]
   ODD_PARISH_TEXT = "\n>St. Martin, St. Saviour<\n>Strip of land adjoining Streatham,<\n>La Grande Route de St Martin,<\n><\n".freeze
-  ERR = TransactionParser::ParserError
+  TP_ERR = TransactionParser::ParserError
 
   DETAILS = { summary_details: 'UPRN should be 69205893',
               book_num: 1289,
@@ -149,7 +149,7 @@ describe TransactionParser do
       end
 
       it 'raises ParserError if the first field is not a Parish name' do
-        expect(-> { p.properties(BAD_PROPERTY_TEXT) }).to raise_error ERR
+        expect(-> { p.properties(BAD_PROPERTY_TEXT) }).to raise_error TP_ERR
       end
     end
   end

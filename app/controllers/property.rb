@@ -1,6 +1,12 @@
 Padfoot::App.controllers :property do
-
   before { redirect('/login') unless signed_in? }
+
+  get :index, map: 'properties/index', provides: [:html, :json] do
+    @arr = DB[:properties_owned]
+    @titles = [:uprn, :name_id, :date, :trans_type]
+    json = { columns: @titles.map { |t| { title: t } }, app_data: @arr }.to_json
+    content_type == :json ? json : render(:index) # assume html
+  end
 
   get :map, map: 'properties/map' do
     gon.data = []
@@ -25,5 +31,4 @@ Padfoot::App.controllers :property do
       ring_strings.map { |ring| ring.split(',').map { |coords| coords.split(' ').reverse } }
     end.to_json
   end
-
 end
