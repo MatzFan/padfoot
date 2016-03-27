@@ -1,3 +1,4 @@
+# stripe API helper
 module Padfoot
   class App
     module StripeHelper

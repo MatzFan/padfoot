@@ -10,9 +10,10 @@ Bundler.require(:default, RACK_ENV)
 
 Padrino::Logger::Config[:development][:log_level] = :devel
 
-credentials = Aws::Credentials.new(ENV['JPS_AWS_ACCESS_KEY_ID'], ENV['JPS_AWS_SECRET_ACCESS_KEY'])
+credentials = Aws::Credentials.new(ENV['JPS_AWS_ACCESS_KEY_ID'],
+                                   ENV['JPS_AWS_SECRET_ACCESS_KEY'])
 S3 = Aws::S3::Client.new(credentials: credentials, region: ENV['AWS_REGION'])
-BUCKET = 'meetingdocuments'
+BUCKET = 'meetingdocuments'.freeze
 
 set :stripe_publishable_key, ENV['STRIPE_PUBLISHABLE_KEY']
 set :stripe_secret_key, ENV['STRIPE_SECRET_KEY']

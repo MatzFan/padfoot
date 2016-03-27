@@ -61,7 +61,6 @@ Padfoot::App.controllers :users do
   post :payment_confirmation, map: '/users/:id/payment_confirmation' do
     user = User[params[:id].to_i]
     token = params[:stripeToken]
-    self.stripe_cust_id = user.stripe_cust_id
     customer = Stripe::Customer.create(source: token, plan: 'annual')
     if customer
       user.update(subscription: true, stripe_cust_id: customer.id)
