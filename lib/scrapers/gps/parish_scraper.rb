@@ -1,12 +1,12 @@
-require_relative 'arc_gis_scraper'
+require_relative 'gps_scraper'
 
-class ParishScraper < ArcGisScraper
+# scrapes parish data
+class ParishScraper < GpsScraper
+  URL = 'arcgis/rest/services/StatesOfJersey/JerseyMappingOL/MapServer/6/query'.freeze
 
-  URL = 'arcgis/rest/services/StatesOfJersey/JerseyMappingOL/MapServer/6/query'
+  KEYS = %w(OBJECTID FIND_NAME).freeze
 
-  KEYS = ['OBJECTID', 'FIND_NAME']
-
-  COLUMNS = [:object_id, :parish]
+  COLUMNS = [:object_id, :parish].freeze
 
   OBJ_IDS = [[3],[8],[1],[9,15],[17],[11],[4],[12],[6],[10,14],[2,13],[5,7,16]] # maps parish indices to GIS objectids
 
@@ -23,5 +23,4 @@ class ParishScraper < ArcGisScraper
     num = PARISHES.index(s)
     num + 1 if num
   end
-
 end

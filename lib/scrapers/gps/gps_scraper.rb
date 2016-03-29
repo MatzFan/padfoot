@@ -12,12 +12,14 @@ end
 
 class IdsDontMatchError < StandardError; end
 
-class ArcGisScraper
-
+# class to scrape gps.digimap.gg
+class GpsScraper
   Linguistics.use(:en) # for plural method
 
-  DOMAIN = 'https://gps.digimap.gg/'
-  URL, KEYS, COLUMNS = '', [], [] # subclasses must overide
+  DOMAIN = 'https://gps.digimap.gg/'.freeze
+  URL = ''
+  KEYS = []
+  COLUMNS = [] # subclasses must overide
 
   FIELDS = ['where', 'text', 'objectIds', 'time', 'inSR', 'relationParam',
     'outFields', 'maxAllowableOffset', 'geometryPrecision', 'outSR',
@@ -59,8 +61,9 @@ class ArcGisScraper
   end
 
   def validate
-    raise Error unless @form.fields.map(&:name) == FIELDS &&
-    @form.radiobuttons.map(&:name) == RADIOS
+    raise Error unless
+      @form.fields.map(&:name) == FIELDS &&
+      @form.radiobuttons.map(&:name) == RADIOS
   end
 
   def setup_hash_key_methods
@@ -74,8 +77,8 @@ class ArcGisScraper
       self.class.send(:define_method, key.en.plural) { @atts.map(&key.to_sym) }
     end
     # and for geometry - :xs, :ys
-    self.class.send(:define_method, 'xes') { geometry.map &:x }
-    self.class.send(:define_method, 'yes') { geometry.map &:y }
+    self.class.send(:define_method, 'xes') { geometry.map(&:x) }
+    self.class.send(:define_method, 'yes') { geometry.map(&:y) }
   end
 
   def features
@@ -96,7 +99,7 @@ class ArcGisScraper
 
   def set_query_params
     @form.fields[0].value = query_string # SQL 'WHERE' clause
-    @form.fields[6].value = self.class.const_get(:KEYS).join(',') # output fields
+    @form.fields[6].value = self.class.const_get(:KEYS).join(',') # outpt fields
     @form.field_with(name: 'f').options[1].select # for JSON
   end
 
@@ -112,7 +115,7 @@ class ArcGisScraper
     agent = Mechanize.new
     agent.pluggable_parser['text/plain'] = JSONParser
     form = agent.get(DOMAIN + self.class.const_get(:URL)).forms.first
-    form.fields[0].value = "OBJECTID > 0"
+    form.fields[0].value = 'OBJECTID > 0'
     form.radiobuttons[4].check # count only true
     form.field_with(name: 'f').options[1].select # for JSON
     form.submit(form.buttons[1]).json['count'].to_i
@@ -134,13 +137,12 @@ class ArcGisScraper
   end
 
   def hashy(key)
-    self.send(key.downcase.en.plural.to_sym).map do |e|
+    send(key.downcase.en.plural.to_sym).map do |e|
       Hash[@keys[key] => (e ? process(key, e) : nil)]
     end
   end
 
-  def process(k, d) # overide depending on processing needs of specific data
-    return d
+  def process(_k, d) # overide depending on processing needs of specific data
+    d
   end
-
 end
