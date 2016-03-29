@@ -2,22 +2,25 @@ describe GazetteerScraper do
   ID_0 = 'OBJECTID >= 1 AND OBJECTID <= 1'.freeze
   SINGLE_ID_RANGE = 'OBJECTID >= 1092 AND OBJECTID <= 1092'.freeze
   MULTI_ID_RANGE = 'OBJECTID >= 1 AND OBJECTID <= 2'.freeze
-  ATT_KEYS = GazetteerScraper.const_get :KEYS
-  ID_1092 = [{ x: 42_035.15699999966,
-               y: 65_219.985874999315,
-               object_id: 29_727,
-               guid: 10_593,
+  FIELDS = GazetteerScraper.const_get(:FIELD_COLUMN_HASH).keys
+  ID_1092 = [{ object_id: 1092,
+               guid: 10_879,
+               logical_status: 1,
                add1: '25 Pier Road',
                add2: nil,
                add3: nil,
                add4: nil,
                parish_num: 4,
                p_code: 'JE2 4XW',
+               island: 'Jersey',
                uprn: 69_003_083,
                usrn: 40_002_299,
                type: 'Commercial',
-               address1: '25 PIER ROAD,',
-               vingtaine: 'de Haut de la Ville' }].freeze
+               address1: '25 PIER ROAD',
+               x: 42_035.1,
+               y: 65_220.93,
+               vingtaine: 'de Haut de la Ville',
+               updated: 1_228_953_600_000 }].freeze
 
   let(:scraper) { GazetteerScraper.new }
   let(:scraper2) { GazetteerScraper.new(1, 2) }
@@ -74,21 +77,15 @@ describe GazetteerScraper do
     end
   end
 
-  context '#geometry' do
-    it 'returns an array of hashes, each of which has keys "x" and "y"' do
-      expect(scraper2.geometry.all? { |e| e.keys == %w(x y) }).to be true
-    end
-  end
-
   context '#attributes' do
-    it "returns an array of hashes, each of which has keys #{ATT_KEYS}" do
-      expect(scraper2.attributes.all? { |e| e.keys == ATT_KEYS }).to be true
+    it "returns an array of hashes, each of which has keys: #{FIELDS}" do
+      expect(scraper2.attributes.all? { |e| e.keys == FIELDS }).to be true
     end
   end
 
-  # xcontext '#data(query_string)' do
-  #   it 'returns 1,000 records with "OBJECTID > 0 AND OBJECTID < 1,001"' do
-  #     expect(scraper.data('OBJECTID > 0 AND OBJECTID < 1001')).to be > 1_000
-  #   end
-  # end
+  context '#data' do
+    it "for range (1092, 1092) returns: #{ID_1092}" do
+      expect(GazetteerScraper.new(1092, 1092).data).to eq ID_1092
+    end
+  end
 end

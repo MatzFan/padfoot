@@ -7,33 +7,26 @@ class JSONParser < Mechanize::File
   def initialize(uri = nil, response = nil, body = nil, code = nil)
     super(uri, response, body, code)
     @json = JSON.parse(body)
-    # @features = features
   end
 end
 
-# class to scrape gis.digimap.gg
+# class to scrape a range of OBJECTID's from gis.digimap.gg
 class DigimapScraper
   attr_reader :num_records
 
   DOMAIN = 'http://gis.digimap.je/ArcGIS/rest/services/'.freeze
   URL = ''.freeze # subclass overides
-  KEYS = [].freeze # subclass overides
+  FIELD_COLUMN_HASH = {}.freeze # subclass overides
 
   def initialize(min = 1, max = 1)
     raise ArgumentError, 'min < 1' if min < 1
     raise ArgumentError, 'min > max' if min > max
     @min = min
     @max = max
-    @range = range
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser
     @form = form
-    @json = json
-    @features = features
   end
-
-  # def data
-  # end
 
   def range
     "OBJECTID >= #{@min} AND OBJECTID <= #{@max}"
@@ -44,7 +37,7 @@ class DigimapScraper
   end
 
   def num_records
-    json(true)['count']
+    json(true)['count'] # count_only true
   end
 
   def json(count_only = false)
@@ -54,20 +47,28 @@ class DigimapScraper
 
   def fill_form(count_only)
     @form.radiobutton_with(name: 'returnCountOnly').check if count_only
-    @form.field_with(name: 'where').value = count_only ? 'OBJECTID > 0' : @range
+    @form.field_with(name: 'where').value = count_only ? 'OBJECTID > 0' : range
     @form.field_with(name: 'outFields').value = '*'
     @form.field_with(name: 'f').value = 'pjson'
   end
 
   def features
-    @json['features']
-  end
-
-  def geometry
-    @features.map { |e| e['geometry'] }
+    json['features']
   end
 
   def attributes
-    @features.map { |e| e['attributes'] }
+    features.map { |e| e['attributes'] }
+  end
+
+  def data
+    attributes.map { |hash| process(swap_keys(hash)) }
+  end
+
+  def swap_keys(hash)
+    hash.map { |k, v| [self.class.const_get(:FIELD_COLUMN_HASH)[k], v] }.to_h
+  end
+
+  def process(hash) # can be overidden in subclass, but must call 'super'
+    hash.each { |k, v| hash[k] = (v.is_a?(String) && v.empty? ? nil : v) }
   end
 end
