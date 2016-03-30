@@ -15,6 +15,7 @@ gem 'yui-compressor', '0.12.0' # CSS compression
 gem 'bcrypt', '3.1.10', require: 'bcrypt'
 gem 'mechanize', '2.7.4'
 gem 'gon-sinatra', '0.1.2'
+gem 'parallel', '1.8.0'
 
 # Optional JSON codec (faster performance)
 # gem 'oj', '2.11.4', require: 'oj'
