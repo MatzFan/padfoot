@@ -2,7 +2,6 @@
 class TransactionLoader
   KEYS = [:book_num, :page_num, :page_suffix].freeze
   NAME_KEYS = [:forename, :surname, :maiden_name].freeze
-  T = Transaction
   class LoadError < StandardError; end
 
   def initialize(data) # TransactionParser.data
@@ -20,7 +19,7 @@ class TransactionLoader
   end
 
   def trans
-    t = T.find(book_num: @bk, page_num: @page, page_suffix: @suf)
+    t = Transaction.find(book_num: @bk, page_num: @page, page_suffix: @suf)
     t ? t : (raise LoadError, "Transaction not found: #{@bk}, #{@page}/#{@suf}")
   end
 

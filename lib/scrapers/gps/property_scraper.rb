@@ -2,7 +2,6 @@ require_relative 'gps_scraper'
 
 # scrapes property data
 class PropertyScraper < GpsScraper
-  PARISHES = Parish.select_map(:name)
   URL = 'arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'.freeze
 
   KEYS = %w(OBJECTID guid_ Add1 Add2 Add3 Add4 Parish Postcode UPRN USRN
@@ -22,7 +21,7 @@ class PropertyScraper < GpsScraper
   end
 
   def parish_num(s)
-    num = PARISHES.index(s.downcase.split(' ').map(&:capitalize).join(' '))
+    num = Parish.select_map(:name).index(s.downcase.split(' ').map(&:capitalize).join(' '))
     num + 1 if num
   end
 end

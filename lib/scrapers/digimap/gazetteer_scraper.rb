@@ -22,15 +22,13 @@ class GazetteerScraper < DigimapScraper
                         'Vingtaine' => :vingtaine,
                         'Updated' => :updated }.freeze
 
-  PARISH_HASH = Parish.to_hash(:name, :number)
-
   def initialize(min = 1, max = 1)
     super
   end
 
   def process(hash)
     super # replaces ''s with nils
-    hash[:parish_num] = PARISH_HASH[hash[:parish_num]]
+    hash[:parish_num] = Parish.to_hash(:name, :number)[hash[:parish_num]]
     hash[:updated] = Time.at(hash[:updated] / 1000)
     hash
   end

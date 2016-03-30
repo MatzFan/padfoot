@@ -1,7 +1,5 @@
 # represents transactor persons (individuals & entities)
 class Name < Sequel::Model
-  P = Person
-
   many_to_one :entity
   many_to_one :person
   many_to_many :transactions
@@ -12,11 +10,11 @@ class Name < Sequel::Model
   end
 
   def do_person
-    if maiden_name
-      self.person_id = P.find_or_create(forename: forename, surname: maiden_name).id
-    else
-      self.person_id = P.find_or_create(forename: forename, surname: surname).id
-    end
+    self.person_id = maiden_name ? p_id(maiden_name) : p_id(surname)
+  end
+
+  def p_id(name)
+    Person.find_or_create(forename: forename, surname: name).id
   end
 
   def do_entity

@@ -47,7 +47,7 @@ describe PropertyScraper do
 
   context '#num_records' do
     it 'returns the total number of properties' do
-      expect(scraper.num_records).to eq(67537)
+      expect(scraper.num_records).to eq(67_537)
     end
   end
 
@@ -65,7 +65,7 @@ describe PropertyScraper do
 
   context '#xes' do
     it 'returns array of x GIS coords for a single id range' do
-      expect(scraper.xes).to eq([42035.15699999966])
+      expect(scraper.xes).to eq([42_035.15699999966])
     end
 
     it 'returns array of x GIS coords for a multiple ids range' do
@@ -75,7 +75,7 @@ describe PropertyScraper do
 
   context '#yes' do
     it 'returns array of x GIS coords for a single id range' do
-      expect(scraper.yes).to eq([65219.985874999315])
+      expect(scraper.yes).to eq([65_219.985874999315])
     end
 
     it 'returns array of y GIS coords for a multiple ids range' do
@@ -85,7 +85,7 @@ describe PropertyScraper do
 
    context '#coords' do
     it 'returns array of x, y coordinate for a single id range' do
-      expect(scraper.coords).to eq([[{x: 42035.15699999966}, {y: 65219.985874999315}]])
+      expect(scraper.coords).to eq([[{x: 42_035.15699999966}, {y: 65_219.985874999315}]])
     end
 
     it 'returns array of y GIS coords for a multiple ids range' do
@@ -136,5 +136,4 @@ describe PropertyScraper do
       expect(scraper.rings).to be_nil
     end
   end
-
 end
