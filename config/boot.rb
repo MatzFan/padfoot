@@ -1,7 +1,8 @@
 # Defines our constants
-RACK_ENV = ENV['RACK_ENV'] ||= 'development'  unless defined?(RACK_ENV)
+RACK_ENV = ENV['RACK_ENV'] ||= 'development' unless defined?(RACK_ENV)
 PADRINO_ROOT = File.expand_path('../..', __FILE__) unless defined?(PADRINO_ROOT)
-PADRINO_LOGGER = { staging: { log_level: :info } } if RACK_ENV == 'staging'
+PADRINO_LOGGER = { staging: { log_level: :info } }.freeze if
+  RACK_ENV == 'staging'
 
 # Load our dependencies
 require 'rubygems' unless defined?(Gem)
@@ -23,8 +24,6 @@ Stripe.api_key = settings.stripe_secret_key
 #              '+x_0=40000 +y_0=70000 +ellps=GRS80 +units=m +no_defs'
 # JTM_FACTORY = RGeo::Cartesian.factory(srid: 3109, proj4: JMTPROJ4)
 # WGS84_FACTORY = RGeo::Geographic.spherical_factory(srid: 4326)
-
-PARISHES = %w(Grouville St.\ Brelade St.\ Clement St.\ Helier St.\ John St.\ Lawrence St.\ Martin St.\ Mary St.\ Ouen St.\ Peter St.\ Saviour Trinity)
 
 # Padrino::Logger::Config[:development][:log_static] = true
 #

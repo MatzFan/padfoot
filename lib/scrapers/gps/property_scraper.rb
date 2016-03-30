@@ -2,9 +2,11 @@ require_relative 'gps_scraper'
 
 # scrapes property data
 class PropertyScraper < GpsScraper
+  PARISHES = Parish.select_map(:name)
   URL = 'arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer/0/query'.freeze
 
-  KEYS = %w(OBJECTID guid_ Add1 Add2 Add3 Add4 Parish Postcode UPRN USRN Property_Type Address1 Vingtaine).freeze
+  KEYS = %w(OBJECTID guid_ Add1 Add2 Add3 Add4 Parish Postcode UPRN USRN
+            Property_Type Address1 Vingtaine).freeze
 
   COLUMNS = [:object_id, :guid, :add1, :add2, :add3, :add4, :parish_num,
              :p_code, :uprn, :usrn, :type, :address1, :vingtaine].freeze

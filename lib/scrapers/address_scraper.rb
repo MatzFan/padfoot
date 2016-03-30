@@ -47,21 +47,19 @@ class AddressScraper
   end
 
   def parish_num(string)
-    num = PARISHES.index(string)
-    num += 1 if num
+    num = Parish.select_map(:name).index(string)
+    num + 1 if num
   end
 
   def htmlify(arr) # arr is from 4 to 9 elements
     s = arr[0]
     n = arr.length - 4
     (1..n).each { |i| s += int?(arr[i - 1]) ? ' ' + arr[i] : '<br/>' + arr[i] }
-    s + (arr[-3].empty? ? '' : '<br/>' + arr[-3]) + '<br/>' + arr[-1] # add parish and postcode
+    # add parish & postcode
+    s + (arr[-3].empty? ? '' : '<br/>' + arr[-3]) + '<br/>' + arr[-1]
   end
 
   def int?(string)
     string.to_i.to_s == string
   end
 end
-
-# s = AddressScraper.new('baal')
-# s.addresses.map { |e| puts e[1] }

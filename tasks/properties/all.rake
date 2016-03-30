@@ -4,7 +4,7 @@ namespace :sq do
     task :all do
       num_props = GazetteerScraper.new.num_records
       DB.transaction do
-        (1..num_props).each_slice(1000).map do |arr|
+        (1..1000).each_slice(1000).map do |arr|
           data = GazetteerScraper.new(arr[0], arr[-1]).data
           data.map do |h| # update or create each
             (p = Property[h[:uprn]]) ? p.update(h) : Property.create(h)

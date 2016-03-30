@@ -115,7 +115,7 @@ describe PropertyScraper do
 
   context '#process' do
     it 'processes a valid parish name to return its parish num if key is "Parish"' do
-      PARISHES.map(&:upcase).each_with_index do |parish, i|
+      Parish.select_map(:name).map(&:upcase).each_with_index do |parish, i|
         expect(scraper.process('Parish', parish)).to eq(i + 1)
       end
     end

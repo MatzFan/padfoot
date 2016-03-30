@@ -20,7 +20,7 @@ class ParishScraper < GpsScraper
 
   def parish_num(s)
     s = (s[0..2] == 'St ' ? s.split(' ').join('. ') : s) # add '.' to 'St'
-    num = PARISHES.index(s)
+    num = Parish.select_map(:name).index(s)
     num + 1 if num
   end
 end
