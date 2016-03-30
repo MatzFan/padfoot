@@ -1,11 +1,11 @@
 require 'mechanize'
 
+# parses JS vars
 class JavascriptVarsParser
-
   RGX = /(var day.+;\n\s+var columns.+\n\s+var add.+)function load_maps/m
-  CSS_COLOURS = {'dusk' => 'School Days Only',
-                 'gold' => 'Non-School Days Only',
-                 'sky' => 'Fridays Only' }
+  CSS_COLOURS = { 'dusk' => 'School Days Only',
+                  'gold' => 'Non-School Days Only',
+                  'sky' => 'Fridays Only' }.freeze
 
   def initialize(source, route_nums, col_offset)
     @source = source
@@ -40,14 +40,12 @@ class JavascriptVarsParser
       [route_tt_index(a[0]), column_days(a[1])]
     end.select { |e| e[0][0] } # rejects routes which no longer exist
   end
-
 end
 
-
+# scrapes bus timetable data
 class BusTimetableScraper
-
-  ROOT = 'http://www.libertybus.je'
-  TIMETABLES_PAGE = '/routes_times/timetables'
+  ROOT = 'http://www.libertybus.je'.freeze
+  TIMETABLES_PAGE = '/routes_times/timetables'.freeze
   COL_OFFSET = 3 # offset of the first times column in a timetable
 
   attr_reader :num_routes
@@ -101,7 +99,7 @@ class BusTimetableScraper
   end
 
   def titles(i)
-    @pages[i]./("//div[@class='t-table']/h2").children.map(&:text).map &:strip
+    @pages[i]./("//div[@class='t-table']/h2").children.map(&:text).map(&:strip)
   end
 
   def bounds(i)
@@ -113,15 +111,16 @@ class BusTimetableScraper
   end
 
   def header_trs(i)
-    @pages[i]./(".//table[@class='headers']").map { |e| e./(".//tr") }
+    @pages[i]./(".//table[@class='headers']").map { |e| e./('.//tr') }
   end
 
   def bus_nums(i)
-    times_trs(i).map(&:first).map { |e| e./(".//td").size - COL_OFFSET - 1 }
+    times_trs(i).map(&:first).map { |e| e./('.//td').size - COL_OFFSET - 1 }
   end
 
   def code(row)
-    row./(".//td/span").map(&:text).select { |e| e =~ /\d{4}/ }.first
+    # row./('.//td/span').map(&:text).select { |e| e =~ /\d{4}/ }.first
+    row./('.//td/span').map(&:text).find { |e| e =~ /\d{4}/ }
   end
 
   def tt_codes(route_index, tt_index)
@@ -129,7 +128,7 @@ class BusTimetableScraper
   end
 
   def times_trs(i)
-    @pages[i]./(".//div[@class='scroll']/table").map { |e| e./(".//tr") }
+    @pages[i]./(".//div[@class='scroll']/table").map { |e| e./('.//tr') }
   end
 
   def num_stops(i, tt_index)
@@ -137,22 +136,23 @@ class BusTimetableScraper
   end
 
   def time(row, column_index)
-    t = row./(".//td")[column_index + COL_OFFSET].text
+    t = row./('.//td')[column_index + COL_OFFSET].text
     string_to_time(t) if t != ' - ' # ' - ' to nils
   end
 
   def string_to_time(time_string)
-    Sequel::SQLTime.create *(time_string.split(':') << 0)
+    Sequel::SQLTime.create * (time_string.split(':') << 0)
   end
 
   def stop_times(i, t, column)
     (0...num_stops(i, t)).map do |row_num|
       [code(header_trs(i)[t][row_num]), time(times_trs(i)[t][row_num], column)]
-    end.select &:last # removes stops with no time
+    end.select(&:last) # removes stops with no time
   end
 
   def special_day(i, t, c)
-    s_days(i, t).each { |a| a.last.each { |a| return a[1] if a[0] == c } }; nil
+    s_days(i, t).each { |a| a.last.each { |b| return b[1] if b[0] == c } }
+    nil
   end
 
   def s_days(i, tt_index) # special day data for given route & tt, may be []
@@ -172,5 +172,4 @@ class BusTimetableScraper
   def build_array(i, t, c)
     [@route_nums[i], bounds(i)[t], day(i, t, c), stop_times(i, t, c)]
   end
-
 end
