@@ -1,8 +1,9 @@
 describe GazetteerScraper do
+  GS = GazetteerScraper
   ID_0 = 'OBJECTID >= 1 AND OBJECTID <= 1'.freeze
   SINGLE_ID_RANGE = 'OBJECTID >= 1092 AND OBJECTID <= 1092'.freeze
   MULTI_ID_RANGE = 'OBJECTID >= 1 AND OBJECTID <= 2'.freeze
-  FIELDS = GazetteerScraper.const_get(:FIELD_COLUMN_HASH).keys
+  FIELDS = GS.const_get(:FIELD_COLUMN_HASH).keys
   ID_1092 = [{ object_id: 1092,
                guid: 10_879,
                logical_status: 1,
@@ -22,24 +23,45 @@ describe GazetteerScraper do
                vingtaine: 'de Haut de la Ville',
                updated: 1_228_953_600_000 }].freeze
 
-  let(:scraper) { GazetteerScraper.new }
-  let(:scraper2) { GazetteerScraper.new(1, 2) }
+  let(:scraper) { GS.new }
+  let(:scraper2) { GS.new(1, 2) }
 
   context '#new(min, max)' do
     it 'can be instantiated with no args' do
-      expect(GazetteerScraper.new.class).to eq GazetteerScraper
+      expect(GS.new.class).to eq GS
     end
 
     it 'can be instantiated with min and max (OBJECTID) args' do
-      expect(scraper2.class).to eq GazetteerScraper
+      expect(scraper2.class).to eq GS
     end
 
-    it 'raises ArgumentError of min > max' do
-      expect(-> { GazetteerScraper.new(2, 1) }).to raise_error ArgumentError
+    it 'raises ArgumentError if min > max' do
+      expect(-> { GS.new(2, 1) }).to raise_error ArgumentError
     end
 
-    it 'raises ArgumentError of min < 1' do
-      expect(-> { GazetteerScraper.new(0, 1) }).to raise_error ArgumentError
+    it 'raises ArgumentError if min < 1' do
+      expect(-> { GS.new(0, 1) }).to raise_error ArgumentError
+    end
+
+    it "raises InvalidParserError if the fields list doesn't match FIELDS" do
+      allow_any_instance_of(GS).to receive(:fields).and_return []
+      expect(-> { scraper }).to raise_error GS::InvalidParserError
+    end
+
+    it 'raises InvalidParserError if query form is missing expected fields' do
+      allow_any_instance_of(GS).to receive(:form_fields_ok?).and_return false
+      expect(-> { scraper }).to raise_error GS::InvalidParserError
+    end
+
+    it 'raises InvalidParserError if query form is missing expected radios' do
+      allow_any_instance_of(GS).to receive(:form_radios_ok?).and_return false
+      expect(-> { scraper }).to raise_error GS::InvalidParserError
+    end
+  end
+
+  context '#fields' do
+    it 'returns the fields used by the Feature Layer' do
+      expect(scraper.fields).to eq FIELDS
     end
   end
 
@@ -51,7 +73,7 @@ describe GazetteerScraper do
 
   context '#range' do
     it "returns #{ID_0} for a scraper instantiated without params" do
-      expect(GazetteerScraper.new.range).to eq ID_0
+      expect(GS.new.range).to eq ID_0
     end
 
     it "returns #{MULTI_ID_RANGE} for a scraper instantiated with (0, 1000)" do
@@ -85,7 +107,7 @@ describe GazetteerScraper do
 
   context '#data' do
     it "for range (1092, 1092) returns: #{ID_1092}" do
-      expect(GazetteerScraper.new(1092, 1092).data).to eq ID_1092
+      expect(GS.new(1092, 1092).data).to eq ID_1092
     end
   end
 end

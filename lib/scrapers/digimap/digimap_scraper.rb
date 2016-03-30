@@ -12,20 +12,55 @@ end
 
 # class to scrape a range of OBJECTID's from gis.digimap.gg
 class DigimapScraper
+  class InvalidParserError < StandardError; end
+
   attr_reader :num_records
 
   DOMAIN = 'http://gis.digimap.je/ArcGIS/rest/services/'.freeze
+  JSON = '?f=json&pretty=true'.freeze
   URL = ''.freeze # subclass overides
   FIELD_COLUMN_HASH = {}.freeze # subclass overides
+  F = 'f'.freeze
+  WHERE = 'where'.freeze
+  OUT_FIELDS = 'outFields'.freeze
+  RETURN_COUNT_ONLY = 'returnCountOnly'.freeze
 
   def initialize(min = 1, max = 1)
     raise ArgumentError, 'min < 1' if min < 1
     raise ArgumentError, 'min > max' if min > max
     @min = min
     @max = max
+    @url = DOMAIN + self.class.const_get(:URL)
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser
     @form = form
+    validate_fields
+    validate_form
+  end
+
+  def fields_from_constant
+    self.class.const_get(:FIELD_COLUMN_HASH).keys
+  end
+
+  def validate_fields
+    raise InvalidParserError unless fields == fields_from_constant
+  end
+
+  def fields
+    reject_shape @agent.get(@url + JSON).json['fields'].map { |e| e['name'] }
+  end
+
+  def validate_form
+    raise InvalidParserError unless form_fields_ok?
+    raise InvalidParserError unless form_radios_ok?
+  end
+
+  def form_fields_ok?
+    [F, WHERE, OUT_FIELDS].all? { |s| @form.fields.map(&:name).include? s }
+  end
+
+  def form_radios_ok?
+    @form.radiobuttons.map(&:name).include? RETURN_COUNT_ONLY
   end
 
   def range
@@ -33,7 +68,11 @@ class DigimapScraper
   end
 
   def form
-    @agent.get(DOMAIN + self.class.const_get(:URL)).forms.first
+    @agent.get(@url + '/query').forms.first
+  end
+
+  def reject_shape(arr)
+    arr.reject { |e| e == 'Shape' }
   end
 
   def num_records
@@ -46,10 +85,10 @@ class DigimapScraper
   end
 
   def fill_form(count_only)
-    @form.radiobutton_with(name: 'returnCountOnly').check if count_only
-    @form.field_with(name: 'where').value = count_only ? 'OBJECTID > 0' : range
-    @form.field_with(name: 'outFields').value = '*'
-    @form.field_with(name: 'f').value = 'pjson'
+    @form.radiobutton_with(name: RETURN_COUNT_ONLY).check if count_only
+    @form.field_with(name: WHERE).value = count_only ? 'OBJECTID > 0' : range
+    @form.field_with(name: OUT_FIELDS).value = '*'
+    @form.field_with(name: F).value = 'pjson'
   end
 
   def features
