@@ -12,7 +12,7 @@ class GazetteerScraper < DigimapScraper
                         'Add4' => :add4,
                         'Parish' => :parish_num,
                         'Postcode' => :p_code,
-                        'Island' => :island,
+                        'Island' => :island_name,
                         'UPRN' => :uprn,
                         'USRN' => :usrn,
                         'Property_Type' => :type,
@@ -30,6 +30,8 @@ class GazetteerScraper < DigimapScraper
 
   def process(hash)
     super # replaces ''s with nils
-    hash.merge(parish_num: PARISH_HASH[hash[:parish_num]])
+    hash[:parish_num] = PARISH_HASH[hash[:parish_num]]
+    hash[:updated] = Time.at(hash[:updated] / 1000)
+    hash
   end
 end

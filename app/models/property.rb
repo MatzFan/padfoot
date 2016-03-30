@@ -1,5 +1,5 @@
+# a Gazetteer entry
 class Property < Sequel::Model
-
   extend Mappable
   extend PushpinPlottable
 
@@ -9,28 +9,26 @@ class Property < Sequel::Model
   many_to_one :parish, key: :parish_num
   many_to_one :road_name, key: :road
   many_to_one :property_type, key: :type
+  many_to_one :island, key: :island_name
 
-  PUSHIN_COLUMNS = [:vingtaine, :road, :road, :address1, :prop_lat, :prop_long]
+  PUSHIN_COLUMNS = [:vingtaine, :road, :road, :address1,
+                    :prop_lat, :prop_long].freeze
 
   def before_save
-    DB.transaction do
-      PropertyType.find_or_create(name: self.type) if self.type
-      RoadName.find_or_create(name: self.road) if self.road
-      Postcode.find_or_create(code: self.p_code) if self.p_code
-    end
-    if self.x && self.y
-      self.prop_lat, self.prop_long = self.class.lat_long(self.x, self.y)
-      self.geom = DB["SELECT ST_SetSRID(ST_Point(#{self.x}, #{self.y}),3109)::geometry"]
+    update_parent_tables
+    if x && y
+      self.prop_lat, self.prop_long = self.class.lat_long(x, y)
+      self.geom = DB["SELECT ST_SetSRID(ST_Point(#{x}, #{y}),3109)::geometry"]
     end
     super
   end
 
-  def self.pushpin_colours_hash
-
+  def update_parent_tables
+    DB.transaction do
+      PropertyType.find_or_create(name: type) if type
+      RoadName.find_or_create(name: road) if road
+      Postcode.find_or_create(code: p_code) if p_code
+      Island.find_or_create(name: island_name) if island_name
+    end
   end
-
-  def self.pushpin_letters_hash
-
-  end
-
 end

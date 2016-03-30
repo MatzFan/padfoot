@@ -13,7 +13,7 @@ describe GazetteerScraper do
                add4: nil,
                parish_num: 4,
                p_code: 'JE2 4XW',
-               island: 'Jersey',
+               island_name: 'Jersey',
                uprn: 69_003_083,
                usrn: 40_002_299,
                type: 'Commercial',
@@ -21,7 +21,7 @@ describe GazetteerScraper do
                x: 42_035.1,
                y: 65_220.93,
                vingtaine: 'de Haut de la Ville',
-               updated: 1_228_953_600_000 }].freeze
+               updated: Time.at(1_228_953_600) }].freeze
 
   let(:scraper) { GS.new }
   let(:scraper2) { GS.new(1, 2) }

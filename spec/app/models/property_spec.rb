@@ -1,5 +1,4 @@
 describe Property do
-
   let(:prop) { build(:property) }
   let(:near_prop) { Property.create(uprn: 69127661, add1: 'near', x: 33423.2999999998, y: 64858.1999999993) }
   let(:far_prop) { Property.create(uprn: 69003083, add1: 'far', x: 42035.15699999966, y: 65219.985874999315) }
@@ -81,5 +80,4 @@ describe Property do
       expect(Property.nearest_to(33470.0999999996, 64844.5999999996).add1).to eq('near')
     end
   end
-
 end
