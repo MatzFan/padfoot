@@ -14,8 +14,6 @@ end
 class DigimapScraper
   class InvalidParserError < StandardError; end
 
-  attr_reader :num_records
-
   DOMAIN = 'http://gis.digimap.je/ArcGIS/rest/services/'.freeze
   JSON = '?f=json&pretty=true'.freeze
   URL = ''.freeze # subclass overides
