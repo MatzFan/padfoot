@@ -1,6 +1,6 @@
 Sequel.migration do
   change do
-    create_view :properties_owned, DB[:properties].join(
+    create_view :property_owners, DB[:properties].join(
       :trans_props, property_uprn: :uprn).join(
         :transactions, id: :transaction_id).join(
           :names_transactions, transaction_id: :id).join(
