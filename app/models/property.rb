@@ -3,6 +3,8 @@ class Property < Sequel::Model
   extend Mappable
   extend PushpinPlottable
 
+  TABLE_TITLES = %w(UPRN Name_Id Date Type).freeze
+
   unrestrict_primary_key
   one_to_one :trans_prop, key: :property_uprn
   many_to_one :postcode, key: :p_code

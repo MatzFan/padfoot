@@ -1,5 +1,5 @@
+# represents planning applications
 class PlanningApp < Sequel::Model
-
   extend Mappable
   extend PushpinPlottable
 
@@ -15,28 +15,28 @@ class PlanningApp < Sequel::Model
   many_to_many :documents, left_key: :app_ref, right_key: :id
 
   def before_validation
-    # populate derivative fields
-    code_year_number = self.app_ref.split('/')
+    code_year_number = app_ref.split('/')
     self.app_code = code_year_number[0]
     self.app_year = code_year_number[1].to_i
     self.app_number = code_year_number[2].to_i
-    self.order = self.app_year * 10000 + self.app_number
+    self.order = app_year * 10_000 + app_number
     self.app_full_address = build_address
     self.app_address_of_applicant = build_address_of_applicant
-    self.mapped = self.latitude && self.longitude
-    self.geom = set_geom(self.latitude, self.longitude) if mapped
+    self.mapped = latitude && longitude
+    self.geom = set_geom(latitude, longitude) if mapped
     self.list_app_constraints = breakify(all_constraints)
     super
   end
 
   def before_save
-    DB.transaction do # populate parent tables first if need be, so FK's linked
-      Category.find_or_create(code: self.app_category) if self.app_category
-      Officer.find_or_create(name: self.app_officer) if self.app_officer
-      Status.find_or_create(name: self.app_status) if self.app_status
-      ParishAlias.find_or_create(name: self.app_parish) if self.app_parish
-      AgentAlias.find_or_create(name: self.app_agent) if self.app_agent
-      self.parish = parish_alias.parish.name if parish_alias && parish_alias.parish
+    DB.transaction do
+      Category.find_or_create(code: app_category) if app_category
+      Officer.find_or_create(name: app_officer) if app_officer
+      Status.find_or_create(name: app_status) if app_status
+      ParishAlias.find_or_create(name: app_parish) if app_parish
+      AgentAlias.find_or_create(name: app_agent) if app_agent
+      self.parish = parish_alias.parish.name if
+        parish_alias && parish_alias.parish
       self.list_app_meetings = (doc_links ? breakify(doc_links) : nil)
     end
     super
@@ -46,21 +46,20 @@ class PlanningApp < Sequel::Model
     add_constraints
   end
 
-  PUSHIN_COLUMNS = [:app_ref, :app_status, :app_category, :app_full_address, :latitude, :longitude]
+  TABLE_COLS = [:order, :valid_date, :app_ref, :app_code, :app_status,
+                :app_full_address, :app_description, :app_address_of_applicant,
+                :app_agent, :app_officer, :parish, :list_app_constraints,
+                :list_app_meetings].freeze
 
-  DETAILS_TABLE_TITLES = ['Reference',
-                          'Category',
-                          'Status',
-                          'Officer',
-                          'Applicant',
-                          'Description',
-                          'ApplicationAddress',
-                          'RoadName',
-                          'Parish',
-                          'PostCode',
-                          'Constraints',
-                          'Agent',
-                          ]
+  TABLE_TITLES = %w(Order Date Ref Code Status Address Description Applicant
+                    Agent Officer Parish Constraints Meetings).freeze
+
+  PUSHIN_COLUMNS = [:app_ref, :app_status, :app_category,
+                    :app_full_address, :latitude, :longitude].freeze
+
+  DETAILS_TABLE_TITLES = %w(Reference Category Status Officer Applicant
+                            Description ApplicationAddress RoadName Parish
+                            PostCode Constraints Agent).freeze
 
   DETAILS_FIELDS = [:app_ref,
                     :app_category,
@@ -73,17 +72,11 @@ class PlanningApp < Sequel::Model
                     :app_parish,
                     :app_postcode,
                     :app_constraints,
-                    :app_agent,
-                   ]
+                    :app_agent].freeze
 
-  DATES_TABLE_TITLES = ['ValidDate',
-                        'AdvertisedDate',
-                        'endpublicityDate',
-                        'SitevisitDate',
-                        'CommitteeDate',
-                        'Decisiondate',
-                        'Appealdate',
-                        ]
+  DATES_TABLE_TITLES = %w(ValidDate AdvertisedDate endpublicityDate
+                          SitevisitDate CommitteeDate Decisiondate
+                          Appealdate).freeze
 
   DATES_FIELDS = [:valid_date,
                   :advertised_date,
@@ -91,8 +84,7 @@ class PlanningApp < Sequel::Model
                   :site_visit_date,
                   :committee_date,
                   :decision_date,
-                  :appeal_date,
-                 ]
+                  :appeal_date].freeze
 
   def self.pushpin_colours_hash
     Status.select_hash(:name, :colour)
@@ -108,20 +100,20 @@ class PlanningApp < Sequel::Model
   end
 
   def self.latest_app_num_for(year)
-    self.where(app_year: year).order(:order).last[:app_number]
+    where(app_year: year).order(:order).last[:app_number]
   end
 
   def build_address
-    arr = [self.app_address, self.app_road, self.app_parish, self.app_postcode]
+    arr = [app_address, app_road, app_parish, app_postcode]
     breakify(arr)
   end
 
   def build_address_of_applicant
-    breakify(splitify(self.app_applicant))
+    breakify(splitify(app_applicant))
   end
 
   def splitify(string)
-    string.split(',').map { |str| str.strip } if string
+    string.split(',').map(&:strip) if string
   end
 
   def breakify(string_arr)
@@ -129,16 +121,16 @@ class PlanningApp < Sequel::Model
   end
 
   def all_constraints
-    splitify(self.app_constraints).sort rescue nil
+    splitify(app_constraints).sort rescue nil
   end
 
   def add_constraints # populate constraints after, as app_ref FK in join table
     all_constraints.each do |c|
       Constraint.find_or_create(name: c) # before populating join table
-      attributes = { name: c, app_ref: self.app_ref }
+      attributes = { name: c, app_ref: app_ref }
       num_records = DB[:constraints_planning_apps].where(attributes).count
       DB[:constraints_planning_apps].insert(attributes) if num_records == 0
-    end if self.app_constraints
+    end if app_constraints
   end
 
   def doc_links
@@ -150,9 +142,10 @@ class PlanningApp < Sequel::Model
   end
 
   def doc_list
-    self.documents.map do |doc|
-      [DB[:documents_planning_apps].where(id: doc.id, app_ref: self.app_ref).select_map(:page_link).first, doc.name]
-    end unless self.documents.empty?
+    documents.map do |doc|
+      [DB[:documents_planning_apps].where(
+        id: doc.id, app_ref: app_ref).select_map(
+          :page_link).first, doc.name]
+    end unless documents.empty?
   end
-
 end
