@@ -20,8 +20,13 @@ describe Property do
     end
 
     it 'fields prop_lat and prop_long are set after saving, if x and y are present' do
-      Property.new(uprn: 12345678, x: 47479, y: 63374).save
+      Property.new(uprn: 12345678, x: 47_479, y: 63_374).save
       expect([Property.first.prop_lat, Property.first.prop_long]).to eq([49.165375, -2.032449])
+    end
+
+    it 'has the "current" field set to true by default' do
+      Property.create(uprn: 12345678)
+      expect(Property.first.current).to eq true
     end
   end
 

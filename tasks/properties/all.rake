@@ -3,10 +3,14 @@ namespace :sq do
     desc 'Populates properties table from Digimap Gazetteer layer'
     task :all do
       data = GazetteerScraper.new.all_data
-      Transaction do
-        data.map do |h| # update or create each
+      us = data.map { |e| e[:uprn] }
+      DB.transaction do # update or create each
+        data.map do |h|
           (p = Property[h[:uprn]]) ? p.update(h) : Property.create(h)
         end
+      end
+      DB.transaction do # mark missing properties as not current
+        Property.map { |p| p.update(current: false) unless us.include? p.uprn }
       end
     end
   end

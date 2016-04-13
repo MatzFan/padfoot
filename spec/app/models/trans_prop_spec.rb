@@ -31,5 +31,4 @@ describe TransProp do
       expect(TransProp.first.property).to eq Property.first
     end
   end
-
 end
