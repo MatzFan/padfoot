@@ -21,6 +21,18 @@ class GazetteerScraper < DigimapScraper
                         'Northing' => :y,
                         'Vingtaine' => :vingtaine,
                         'Updated' => :updated }.freeze
+  PARISHES = { 'Grouville' => 1,
+               'St. Brelade' => 2,
+               'St. Clement' => 3,
+               'St. Helier' => 4,
+               'St. John' => 5,
+               'St. Lawrence' => 6,
+               'St. Martin' => 7,
+               'St. Mary' => 8,
+               'St. Ouen' => 9,
+               'St. Peter' => 10,
+               'St. Saviour' => 11,
+               'Trinity' => 12 }.freeze
 
   def initialize(min = 1, max = 1)
     super
@@ -28,7 +40,7 @@ class GazetteerScraper < DigimapScraper
 
   def process(hash)
     super # replaces ''s with nils
-    hash[:parish_num] = Parish.to_hash(:name, :number)[hash[:parish_num]]
+    hash[:parish_num] = PARISHES[hash[:parish_num]]
     hash[:updated] = Time.at(hash[:updated] / 1000)
     hash
   end

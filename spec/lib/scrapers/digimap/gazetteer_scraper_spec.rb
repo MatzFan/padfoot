@@ -4,7 +4,7 @@ describe GazetteerScraper do
   MULTI_ID_RANGE = 'OBJECTID >= 1 AND OBJECTID <= 2'.freeze
   FIELDS = GazetteerScraper.const_get(:FIELD_COLUMN_HASH).keys
   ID_1092 = [{ object_id: 1092,
-               guid: 10_879,
+               guid: 10_881,
                logical_status: 1,
                add1: '25 Pier Road',
                add2: nil,
@@ -18,9 +18,10 @@ describe GazetteerScraper do
                type: 'Commercial',
                address1: '25 PIER ROAD',
                x: 42_035.1,
-               y: 65_220.93,
+               y: 65_219.75,
                vingtaine: 'de Haut de la Ville',
                updated: Time.at(1_228_953_600) }].freeze
+  THOU = (1..GazetteerScraper.const_get(:N)).inject([]) { |a, _e| a << {} }
 
   let(:scraper) { GazetteerScraper.new }
   let(:scraper2) { GazetteerScraper.new(1, 2) }
@@ -82,9 +83,9 @@ describe GazetteerScraper do
     end
   end
 
-  context '#num_records' do
+  context '#num' do
     it 'returns the total number of properties (> 60,000)' do
-      expect(scraper.num_records).to be > 60_000
+      expect(scraper.num).to be > 60_000
     end
   end
 
@@ -107,8 +108,21 @@ describe GazetteerScraper do
   end
 
   context '#data' do
+    it 'returns a collection of hashes the same size as param limits given' do
+      data = scraper2.data
+      expect(data.size == 2 && data.all? { |e| e.class == Hash }).to eq true
+    end
+
     it "for range (1092, 1092) returns: #{ID_1092}" do
       expect(GazetteerScraper.new(1092, 1092).data).to eq ID_1092
+    end
+  end
+
+  context '#all_data' do
+    it 'returns a collection of hash data for the whole layer' do
+      allow_any_instance_of(GazetteerScraper).to receive(:data).and_return THOU
+      allow_any_instance_of(GazetteerScraper).to receive(:num).and_return 2000
+      expect(GazetteerScraper.new.all_data.size).to eq 2000
     end
   end
 end

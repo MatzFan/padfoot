@@ -22,6 +22,7 @@ class DigimapScraper
   WHERE = 'where'.freeze
   OUT_FIELDS = 'outFields'.freeze
   RETURN_COUNT_ONLY = 'returnCountOnly'.freeze
+  N = 1000 # API limit for number of records returned per call
 
   def initialize(min = 1, max = 1)
     raise ArgumentError, 'min < 1' if min < 1
@@ -73,7 +74,7 @@ class DigimapScraper
     arr.reject { |e| e == 'Shape' }
   end
 
-  def num_records
+  def num
     json(true)['count'] # count_only true
   end
 
@@ -99,6 +100,10 @@ class DigimapScraper
 
   def data
     attributes.map { |hash| process(swap_keys(hash)) }
+  end
+
+  def all_data
+    (1..num).each_slice(N).map { |a| self.class.new(a[0], a[-1]).data }.flatten
   end
 
   def swap_keys(hash)
