@@ -1,12 +1,10 @@
 def capture_stdout
-  begin
-    old_stdout = $stdout
-    $stdout = StringIO.new
-    yield
-    $stdout.string
-  ensure
-    $stdout = old_stdout
-  end
+  old_stdout = $stdout
+  $stdout = StringIO.new
+  yield
+  $stdout.string
+ensure
+  $stdout = old_stdout
 end
 
 namespace :sq do
@@ -20,7 +18,7 @@ namespace :sq do
     if report.include? 'ERROR'
       Padfoot::App.deliver(:rake_error_report, :daily_report_email, report)
     else
-      report << "Completed in #{(Time.now - t).to_i/60} minutes"
+      report << "Completed in #{(Time.now - t).to_i / 60} minutes"
       Padfoot::App.deliver(:rake_success_report, :daily_report_email, report)
     end
   end

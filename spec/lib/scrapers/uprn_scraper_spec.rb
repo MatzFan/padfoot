@@ -1,4 +1,4 @@
-describe UprnScraper do
+# describe UprnScraper do
 
   # UPRNS = [69213704, 69213730, 69213735, 69115918, 69115917, 69115921,
   #          69200044, 69213705, 69213728, 69213733, 69213895, 69300127,
@@ -108,4 +108,4 @@ describe UprnScraper do
   #   end
   # end
 
-end
+# end
