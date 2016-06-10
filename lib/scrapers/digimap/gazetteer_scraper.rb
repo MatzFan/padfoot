@@ -2,7 +2,7 @@ require_relative 'digimap_scraper'
 
 # class to scrape gazetteer
 class GazetteerScraper < DigimapScraper
-  URL = 'Gazetteer2/MapServer/0'.freeze
+  URL = 'Gazetteer/MapServer/0'.freeze
   FIELD_COLUMN_HASH = { 'OBJECTID' => :object_id,
                         'guid_' => :guid,
                         'logicalstatus' => :logical_status,

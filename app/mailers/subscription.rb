@@ -1,5 +1,4 @@
 Padfoot::App.mailer :subscription do
-
   email :subscription_email do |name, email|
     from 'jerseypropertyservices@gmail.com'
     to email
@@ -10,5 +9,4 @@ Padfoot::App.mailer :subscription do
     #   File.open("#{Padrino.root}/app/assets/pdf/welcome.pdf") { |f| f.read }
     content_type :plain
   end
-
 end

@@ -1,10 +1,10 @@
 describe GazetteerScraper do
   ID_0 = 'OBJECTID >= 1 AND OBJECTID <= 1'.freeze
-  SINGLE_ID_RANGE = 'OBJECTID >= 1092 AND OBJECTID <= 1092'.freeze
+  SINGLE_ID_RANGE = 'OBJECTID >= 1119 AND OBJECTID <= 1119'.freeze
   MULTI_ID_RANGE = 'OBJECTID >= 1 AND OBJECTID <= 2'.freeze
   FIELDS = GazetteerScraper.const_get(:FIELD_COLUMN_HASH).keys
-  ID_1092 = [{ object_id: 1092,
-               guid: 10_881,
+  ID_1119 = [{ object_id: 1119,
+               guid: 10_922,
                logical_status: 1,
                add1: '25 Pier Road',
                add2: nil,
@@ -18,7 +18,7 @@ describe GazetteerScraper do
                type: 'Commercial',
                address1: '25 PIER ROAD',
                x: 42_035.1,
-               y: 65_219.75,
+               y: 65_221.08,
                vingtaine: 'de Haut de la Ville',
                updated: Time.at(1_228_953_600) }].freeze
   THOU = (1..GazetteerScraper.const_get(:N)).inject([]) { |a, _e| a << {} }
@@ -113,8 +113,8 @@ describe GazetteerScraper do
       expect(data.size == 2 && data.all? { |e| e.class == Hash }).to eq true
     end
 
-    it "for range (1092, 1092) returns: #{ID_1092}" do
-      expect(GazetteerScraper.new(1092, 1092).data).to eq ID_1092
+    it "for range (1119, 1119) returns: #{ID_1119}" do
+      expect(GazetteerScraper.new(1119, 1119).data).to eq ID_1119
     end
   end
 

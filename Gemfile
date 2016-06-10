@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
-ruby '2.3.0'
+ruby '2.3.1'
 
 group :production do
   gem 'unicorn', '5.0.1'
 end
 
-gem 'padrino', '0.13.1'
+gem 'padrino', '0.13.2'
 
 gem 'thin', '1.6.4'
 gem 'rake', '10.5.0'

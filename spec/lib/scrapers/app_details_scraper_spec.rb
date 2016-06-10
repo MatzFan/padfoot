@@ -1,5 +1,4 @@
 describe AppDetailsScraper do
-
   ex_ref = 'RW/2014/0548'
   bad_ref = 'A/bad/app_ref'
   scraper = AppDetailsScraper.new([ex_ref, bad_ref])
@@ -8,46 +7,54 @@ describe AppDetailsScraper do
 
   let(:space) { 'S/2014/1979' }
   let(:s_repeat_space) { AppDetailsScraper.new(space) }
-  let(:details) { ["RW/2014/0548",
-                   "RW",
-                   "Upheld",
-                   "Richard Greig",
-                   "Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA",
-                   "Replace 5 No. windows on South elevation..... REQUEST FOR RECONSIDERATION for refusal of planning permission.",
-                   "Homewood",
-                   "Le Mont Sohier",
-                   "St. Brelade",
-                   "JE3 8EA",
-                   "Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network",
-                   nil # no agent
-                   ] }
-  let(:dates) { ["2014-04-04", "2014-04-15", "2014-05-06", "",
-                 "2014-08-15", "2014-10-14", "2014-07-10"
-                ] }
+  let(:details) do
+    ['RW/2014/0548',
+     'RW',
+     'Upheld',
+     'Richard Greig',
+     'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA',
+     'Replace 5 No. windows on South elevation..... REQUEST FOR '\
+       'RECONSIDERATION for refusal of planning permission.',
+     'Homewood',
+     'Le Mont Sohier',
+     'St. Brelade',
+     'JE3 8EA',
+     'Built-Up Area, Green Backdrop Zone, Potential Listed Building, '\
+       'Primary Route Network',
+     nil]
+  end
+  let(:dates) do
+    ['2014-04-04', '2014-04-15', '2014-05-06', '',
+     '2014-08-15', '2014-10-14', '2014-07-10']
+  end
   let(:app_coords) { [49.185511, -2.191882] }
 
-  let(:app_data_hash) { { :app_applicant => 'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA',
-                          :app_address => 'Homewood',
-                          :app_category => 'RW',
-                          :app_constraints => 'Built-Up Area, Green Backdrop Zone, Potential Listed Building, Primary Route Network',
-                          :app_description => 'Replace 5 No. windows on South elevation..... REQUEST FOR RECONSIDERATION for refusal of planning permission.',
-                          :app_officer => 'Richard Greig',
-                          :app_parish => 'St. Brelade',
-                          :app_postcode => 'JE3 8EA',
-                          :app_ref => 'RW/2014/0548',
-                          :app_road => 'Le Mont Sohier',
-                          :app_status => 'Upheld',
-                          :app_agent => nil, # no agent in this example
-                          :latitude => 49.185511,
-                          :longitude => -2.191882,
-                          :valid_date => Date.parse('2014-04-04'),
-                          :advertised_date => Date.parse('2014-04-15'),
-                          :end_pub_date => Date.parse('2014-05-06'),
-                          :site_visit_date => nil, # no site visit date in this example
-                          :committee_date => Date.parse('2014-08-15'),
-                          :decision_date => Date.parse('2014-10-14'),
-                          :appeal_date => Date.parse('2014-07-10'),
-                      } }
+  let(:app_data_hash) do
+    { app_applicant: 'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade'\
+        ', JE3 8EA',
+      app_address: 'Homewood',
+      app_category: 'RW',
+      app_constraints: 'Built-Up Area, Green Backdrop Zone, Potential Listed '\
+        'Building, Primary Route Network',
+      app_description: 'Replace 5 No. windows on South elevation..... '\
+        'REQUEST FOR RECONSIDERATION for refusal of planning permission.',
+      app_officer: 'Richard Greig',
+      app_parish: 'St. Brelade',
+      app_postcode: 'JE3 8EA',
+      app_ref: 'RW/2014/0548',
+      app_road: 'Le Mont Sohier',
+      app_status: 'Upheld',
+      app_agent: nil, # no agent in this example
+      latitude: 49.185511,
+      longitude: -2.191882,
+      valid_date: Date.parse('2014-04-04'),
+      advertised_date: Date.parse('2014-04-15'),
+      end_pub_date: Date.parse('2014-05-06'),
+      site_visit_date: nil, # no site visit date in this example
+      committee_date: Date.parse('2014-08-15'),
+      decision_date: Date.parse('2014-10-14'),
+      appeal_date: Date.parse('2014-07-10') }
+  end
 
   context '#initialize' do
     it 'can be initialized with a single arguement' do
@@ -72,27 +79,27 @@ describe AppDetailsScraper do
   context '#table_ok?' do
     context "doesn't raise an error" do
       it 'if the details table format is ok' do
-        expect(lambda {scraper.table_ok?(0, 'details')}).not_to raise_error
+        expect(-> { scraper.table_ok?(0, 'details') }).not_to raise_error
       end
 
       it 'if the dates table format is ok' do
-        expect(lambda {scraper.table_ok?(0, 'dates')}).not_to raise_error
+        expect(-> { scraper.table_ok?(0, 'dates') }).not_to raise_error
       end
     end
 
-    context "does raise an error" do
+    context 'does raise an error' do
       it 'if the details table format is bad' do
         err = "Bad details table structure for #{ex_ref}"
         dat_page = single.instance_variable_get(:@dat_pages)[0]
         single.instance_variable_set(:@det_pages, [dat_page])
-        expect(lambda {single.table_ok?(0, 'details')}).to raise_error(err)
+        expect(-> { single.table_ok?(0, 'details') }).to raise_error err
       end
 
       it 'if the dates table format is bad' do
         err = "Bad dates table structure for #{ex_ref}"
         det_page = single.instance_variable_get(:@det_pages)[0]
         single.instance_variable_set(:@dat_pages, [det_page])
-        expect(lambda {single.table_ok?(0, 'dates')}).to raise_error(err)
+        expect(-> { single.table_ok?(0, 'dates') }).to raise_error err
       end
     end
   end
@@ -112,7 +119,7 @@ describe AppDetailsScraper do
   end
 
   it '#app_dates' do
-    expect(single.app_dates(0).map { |d| d.to_s }).to eq(dates)
+    expect(single.app_dates(0).map(&:to_s)).to eq dates
   end
 
   it '#coords' do
@@ -147,7 +154,7 @@ describe AppDetailsScraper do
   end
 
   context '#data' do
-    it 'returns an array of hashes the same size as the number of args provided' do
+    it 'returns an array of hashes the same size as the # of args' do
       expect(scraper.data.size).to eq(2)
       expect(single.data.size).to eq(1)
     end
@@ -160,5 +167,4 @@ describe AppDetailsScraper do
       expect(scraper.data[1]).to eq({})
     end
   end
-
 end
