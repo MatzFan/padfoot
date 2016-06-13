@@ -15,7 +15,7 @@ gem 'yui-compressor', '0.12.0' # CSS compression
 gem 'bcrypt', '3.1.10', require: 'bcrypt'
 gem 'mechanize', '2.7.4'
 gem 'gon-sinatra', '0.1.2'
-gem 'parallel', '1.8.0'
+gem 'parallel', '1.9.0'
 
 # Optional JSON codec (faster performance)
 # gem 'oj', '2.11.4', require: 'oj'
@@ -29,7 +29,7 @@ gem 'sequel_pg', '1.6.14', require: 'sequel'
 gem 'aws-sdk', '2.2.24', require: 'aws-sdk'
 gem 'linguistics', '2.1.0'
 gem 'stripe', '1.36.0'
-gem 'gis_scraper', '0.1.9.pre'
+gem 'gis_scraper', '0.1.10.pre'
 
 group :test do
   gem 'rspec', '3.4.0'
