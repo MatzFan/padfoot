@@ -4,23 +4,23 @@ describe GazetteerScraper do
   MULTI_ID_RANGE = 'OBJECTID >= 1 AND OBJECTID <= 2'.freeze
   FIELDS = GazetteerScraper.const_get(:FIELD_COLUMN_HASH).keys
   ID_1119 = [{ object_id: 1119,
-               guid: 10_922,
+               guid: 14_934,
                logical_status: 1,
-               add1: '25 Pier Road',
+               add1: '39 Chevalier Road',
                add2: nil,
                add3: nil,
                add4: nil,
                parish_num: 4,
-               p_code: 'JE2 4XW',
+               p_code: 'JE2 4LP',
                island_name: 'Jersey',
-               uprn: 69_003_083,
-               usrn: 40_002_299,
-               type: 'Commercial',
-               address1: '25 PIER ROAD',
-               x: 42_035.1,
-               y: 65_221.08,
-               vingtaine: 'de Haut de la Ville',
-               updated: Time.at(1_228_953_600) }].freeze
+               uprn: 69_003_156,
+               usrn: 40_002_068,
+               type: 'Base Property Unit',
+               address1: '39 CHEVALIER ROAD',
+               x: 42_431.6,
+               y: 65_993.2,
+               vingtaine: 'de Bas du Mont-au-Pretre',
+               updated: Time.at(1_075_420_800) }].freeze
   THOU = (1..GazetteerScraper.const_get(:N)).inject([]) { |a, _e| a << {} }
 
   let(:scraper) { GazetteerScraper.new }
@@ -114,6 +114,7 @@ describe GazetteerScraper do
     end
 
     it "for range (1119, 1119) returns: #{ID_1119}" do
+
       expect(GazetteerScraper.new(1119, 1119).data).to eq ID_1119
     end
   end
