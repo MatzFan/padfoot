@@ -1,17 +1,18 @@
 require 'json'
 
-class AppRefsScraper # scrapes app refs for a given year
-
-  ROOT = 'https://www.mygov.je/'
-  CURL = 'curl -s -X POST -H "Content-Type: application/json" -d'
-  URL = '"URL":'
-  SITE = '"https://www.mygov.je//Planning/Pages/Planning.aspx"'
-  COMMON = '"CommonParameters":'
-  SEARCH = '"SearchParameters":'
-  REQ_PAGE = '_layouts/15/PlanningAjaxServices/PlanningSearch.svc/Search'
-  RESULT = 'ResultHTML'
-  HEADER = 'HeaderHTML'
-  DETAILS_URL = '/Planning/Pages/PlanningApplicationDetail.aspx?s=1&amp;r='
+# scrapes app refs for a given year
+class AppRefsScraper
+  ROOT = 'https://www.mygov.je/'.freeze
+  CURL = 'curl -s -X POST -H "Content-Type: application/json" -d'.freeze
+  URL = '"URL":'.freeze
+  SITE = '"https://www.mygov.je//Planning/Pages/Planning.aspx"'.freeze
+  COMMON = '"CommonParameters":'.freeze
+  SEARCH = '"SearchParameters":'.freeze
+  REQ_PAGE = '_layouts/15/PlanningAjaxServices/PlanningSearch.svc/Search'.freeze
+  RESULT = 'ResultHTML'.freeze
+  HEADER = 'HeaderHTML'.freeze
+  DETAILS_URL = '/Planning/Pages/PlanningApplicationDetail.aspx?'.freeze
+  PARAMS = 's=1&amp;r='.freeze
 
   attr_reader :year, :start_page, :ref_num_string
 
@@ -23,7 +24,7 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
   def latest_app_num
-    PlanningApp.latest_app_num_for(year).to_s.rjust(4, "0") rescue '0000'
+    PlanningApp.latest_app_num_for(@year).to_s.rjust(4, '0') || '0000'
   end
 
   def refs
@@ -45,11 +46,11 @@ class AppRefsScraper # scrapes app refs for a given year
   end
 
   def num_pages
-    (num_apps/10.0).ceil
+    (num_apps / 10.0).ceil
   end
 
   def delimiter
-    'href="' + ROOT + DETAILS_URL
+    'href="' + ROOT + DETAILS_URL + PARAMS
   end
 
   def app_refs_array(page)
@@ -80,7 +81,6 @@ class AppRefsScraper # scrapes app refs for a given year
   private
 
   def include_latest_app_ref?(refs)
-    refs.any? { |r| r =~ /\/#{@year}\/#{@latest_app_num}$/ }
+    refs.any? { |r| r =~ %r{\/#{@year}\/#{@latest_app_num}$} }
   end
-
 end

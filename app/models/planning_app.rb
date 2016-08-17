@@ -100,7 +100,8 @@ class PlanningApp < Sequel::Model
   end
 
   def self.latest_app_num_for(year)
-    where(app_year: year).order(:order).last[:app_number]
+    apps = where(app_year: year).order(:order).last
+    apps.respond_to?(:[]) ? apps[:app_number] : nil
   end
 
   def build_address

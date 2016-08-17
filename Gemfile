@@ -42,6 +42,10 @@ group :test do
   gem 'selenium-webdriver', '2.52.0'
 end
 
+group :development do
+  gem 'derailed_benchmarks', '1.3.1'
+end
+
 group :test, :development do
   gem 'better_errors', '2.1.1', require: 'better_errors'
 end

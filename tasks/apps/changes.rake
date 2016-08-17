@@ -6,7 +6,8 @@ namespace :sq do
       t = Time.now
       old_apps = PlanningApp.where(app_status: args.type).all
       new_data = AppDetailsScraper.new(old_apps.map(&:app_ref)).data
-      # may contain {}'s if an app can no longer be scraped, so remove them and corresponding old_apps
+      # new_data may contain {}'s if an app can no longer be scraped.
+      # Remove these & corresponding old_apps
       deleted = 0
       (0...new_data.size).each do |i|
         if new_data[i].empty?
@@ -36,7 +37,7 @@ namespace :sq do
       rescue
         puts "ERROR in sq:apps:changes:\n\nnew_data[i] = #{new_data[i].inspect}\n\nnew_apps[i] = #{new_apps[i]}"
       end
-      puts "#{count} applications updated, #{deleted} applications deleted in #{(Time.now - t).to_i/60} minutes"
+      puts "#{count} applications updated, #{deleted} applications deleted in #{(Time.now - t).to_i / 60} minutes"
     end
   end
 end

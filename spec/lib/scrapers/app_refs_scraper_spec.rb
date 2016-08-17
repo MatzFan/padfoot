@@ -45,7 +45,14 @@ describe AppRefsScraper do
   end
 
   context '#latest_app_num' do
-    it 'should return "0000" if no applications in database' do
+    it 'should return "0020" if the highest app number is 20' do
+      PlanningApp.create(app_ref: 'P/2013/0019')
+      PlanningApp.create(app_ref: 'P/2013/0020')
+      PlanningApp.create(app_ref: 'P/2013/0018')
+      expect(scraper.latest_app_num).to eq('0020')
+    end
+
+    it 'should return "0000" if no applications for the year' do
       expect(scraper.latest_app_num).to eq('0000')
     end
   end

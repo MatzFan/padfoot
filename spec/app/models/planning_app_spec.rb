@@ -1,7 +1,4 @@
 describe PlanningApp do
-
-  extend Mappable
-
   let(:app) { create(:planning_app) }
   let(:near_app) { PlanningApp.create(app_ref: 'P/2015/1234', latitude: 49.178731, longitude: -2.225203) }
   let(:far_app) { PlanningApp.create(app_ref: 'A/2014/2345', latitude: 49.182016, longitude: -2.107085) }
@@ -41,9 +38,14 @@ describe PlanningApp do
   end
 
   context '.latest_app_num_for' do
+    it 'returns nil if there are no apps for the given year' do
+      expect(PlanningApp.latest_app_num_for(2013)).to be_nil
+    end
+
     it 'returns the latest app number for the given year' do
       create(:planning_app)
-      app_year, app_num = app.app_year, app.app_number #create another record with incremented ref (& number)
+      app_year = app.app_year # create 2nd record (will have incremented year)
+      app_num = app.app_number
       expect(PlanningApp.latest_app_num_for(app_year)).to eq(app_num)
     end
   end
@@ -71,5 +73,4 @@ describe PlanningApp do
       expect(app.geom).to eq(DB["SELECT ST_SetSRID(ST_Point(42035.137027, 65219.966892),3109)::geometry"])
     end
   end
-
 end
