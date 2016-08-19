@@ -5,7 +5,8 @@ require 'derailed_benchmarks'
 require 'derailed_benchmarks/tasks'
 
 namespace :perf do
-  task :rack_load do
+  desc 'loads the app for derailed_benchmarks'
+  task rack_load: :environment do
     require_relative '../config/boot'
     DERAILED_APP = Padfoot::App
   end

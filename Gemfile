@@ -5,10 +5,10 @@ group :production do
   gem 'unicorn', '5.0.1'
 end
 
-gem 'padrino', '0.13.2'
+gem 'padrino', '0.13.3'
 
 gem 'thin', '1.6.4'
-gem 'rake', '10.5.0'
+gem 'rake', '11.2.2'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '2.7.2' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
