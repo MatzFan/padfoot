@@ -68,16 +68,9 @@ module Padfoot
     #   end
     #
 
-    ##
-    # You can manage errors like:
-    #
-    #   error 404 do
-    #     render 'errors/404'
-    #   end
-    #
-    error 503 do
-      render 'errors/503'
+    error Sinatra::NotFound do # 404
+      # @title = 'Error 404'
+      render 'errors/404'
     end
-    #
   end
 end
