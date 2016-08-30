@@ -44,6 +44,8 @@ end
 
 group :development do
   gem 'derailed_benchmarks', '1.3.1'
+  gem 'memory_profiler', github: 'SamSaffron/memory_profiler', branch: 'master'
+  gem 'stackprof', '0.2.9'
 end
 
 group :test, :development do
