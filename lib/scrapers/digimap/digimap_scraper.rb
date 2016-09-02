@@ -10,7 +10,7 @@ class JSONParser < Mechanize::File
   end
 end
 
-# class to scrape a range of OBJECTID's from gis.digimap.gg
+# class to scrape a range of OBJECTID's from gis.digimap.je
 class DigimapScraper
   class InvalidParserError < StandardError; end
 

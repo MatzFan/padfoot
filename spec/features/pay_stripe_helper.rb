@@ -5,8 +5,7 @@ module PayStripeHelper
   CHECKOUT_DEFAULTS = { :email => 'test@example.com',
                         :card_number => '4242424242424242',
                         :'cc-exp' => '1218', # month & year
-                        :'cc-csc' => '123'
-                      }.freeze
+                        :'cc-csc' => '123' }.freeze
 
   def enable_stripe_event_capture
     port = Padrino::Application.settings.port
@@ -38,7 +37,7 @@ module PayStripeHelper
       enter('cc-csc', opts[:'cc-csc'])
       find('button[type="submit"]').click
     end
-    sleep 10 # wait for response from Stripe API - flaky..
+    sleep 12 # wait for response from Stripe API - flaky..
   end
 
   def enter(field_id, keys)

@@ -1,4 +1,5 @@
 module Padfoot
+  # the app
   class App < Padrino::Application
     register SassInitializer
     register Padrino::Mailer
@@ -15,7 +16,7 @@ module Padfoot
       port: 587,
       user_name: 'jerseypropertyservices@gmail.com',
       password: ENV['GMAIL_PASSWORD'],
-      authentication: :plain,
+      authentication: :plain
     }
 
     configure :development do
