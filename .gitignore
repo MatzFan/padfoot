@@ -9,3 +9,4 @@ db/*.db
 node_modules
 **/bower_components
 .env
+.bundle/config
