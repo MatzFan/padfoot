@@ -5,7 +5,7 @@ group :production do
   gem 'unicorn', '5.0.1'
 end
 
-gem 'padrino', '0.12.8'
+gem 'padrino', '0.13.3.2'
 
 gem 'thin', '1.6.4'
 gem 'rake', '11.2.2'
