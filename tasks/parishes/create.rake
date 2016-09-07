@@ -1,7 +1,7 @@
 namespace :sq do
   namespace :parishes do
     desc 'Populates parishes table with Jersey parishes'
-    task :create do
+    task create: :environment do
       PARISHES = ['Grouville', 'St. Brelade', 'St. Clement', 'St. Helier',
                   'St. John', 'St. Lawrence', 'St. Martin', 'St. Mary',
                   'St. Ouen', 'St. Peter', 'St. Saviour', 'Trinity'].freeze

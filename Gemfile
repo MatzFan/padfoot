@@ -13,7 +13,7 @@ gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '2.7.2' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
 gem 'bcrypt', '3.1.10', require: 'bcrypt'
-gem 'mechanize', '2.7.4'
+gem 'mechanize', '2.7.5'
 gem 'gon-sinatra', '0.1.2'
 gem 'parallel', '1.9.0'
 

@@ -1,7 +1,9 @@
+require_relative '../../lib/scrapers/app_refs_scraper'
+
 namespace :sq do
   namespace :apps do
     desc 'Verifies number of apps in db against Planning site, per year'
-    task :verify do
+    task verify: :environment do
       printf("%s %5s %5s\n", 'year', 'site', 'dbase')
       Time.now.year.downto(1986) do |year|
         range = Date.new(year, 1, 1)..Date.new(year, 12, 31)

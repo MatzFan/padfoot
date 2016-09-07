@@ -10,7 +10,7 @@ namespace :sq do
       GisHelper.configure
       range = args.index ? (args.index.to_i..args.index.to_i) : default_range
       range.each do |i|
-        DB.transaction { LayerWriter.new(url + i).output_to_db }
+        LayerWriter.new(url + i).output_to_db
       end
     end
   end

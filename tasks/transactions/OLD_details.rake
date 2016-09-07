@@ -1,7 +1,7 @@
 # namespace :sq do
 #   namespace :trans do
 #     desc 'Populates parties and properties from a transaction details page'
-#     task :details, [:filepath] do |t, args|
+#     task :details, [:filepath] => :environment do |t, args|
 #       args.with_default(filepath: :environment)
 #       file = File.expand_path(args[:filepath], __FILE__)
 #       parser = TransactionParser.new(file)

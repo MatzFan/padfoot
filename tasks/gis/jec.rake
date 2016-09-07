@@ -2,12 +2,12 @@ require_relative '_gis_helper'
 
 namespace :sq do
   namespace :gps do
-    desc 'Creates and populates table from JerseyUtilities/JerseyUtilities JEC MapServer layers'
+    desc 'Creates and populates table from JerseyUtilities/JerseyUtilities\
+      JEC MapServer layers'
     task :jec do
+      path = 'JerseyUtilities/JerseyUtilities/MapServer/142'
       GisHelper.configure
-      DB.transaction do
-        LayerWriter.new('https://gps.digimap.gg/arcgis/rest/services/JerseyUtilities/JerseyUtilities/MapServer/142').output_to_db
-      end
+      LayerWriter.new(SERVER + path).output_to_db
     end
   end
 end

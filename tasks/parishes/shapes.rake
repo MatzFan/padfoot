@@ -1,7 +1,9 @@
+require_relative '../../lib/scrapers/gps/parish_scraper'
+
 namespace :sq do
   namespace :parishes do
-    desc "Populates parishes table with shape geometry"
-    task :shapes do
+    desc 'Populates parishes table with shape geometry'
+    task shapes: :environment do
       (1..12).each do |i|
         parish = Parish[i]
         object_id_array = ParishScraper.const_get(:OBJ_IDS)[i - 1]

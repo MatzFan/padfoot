@@ -5,12 +5,11 @@ namespace :sq do
     desc 'Creates and populates 7 tables from JerseyMappingOL MapServer layers'
     task :base, [:index] do |_t, args|
       args.with_defaults(index: nil)
+      path = 'StatesOfJersey/JerseyMappingOL/MapServer/'
       GisHelper.configure
       range = args.index ? (args.index.to_i..args.index.to_i) : (0..6)
       range.each do |i|
-        DB.transaction do
-          LayerWriter.new("https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyMappingOL/MapServer/#{i}").output_to_db
-        end
+        LayerWriter.new("#{SERVER}#{path}#{i}").output_to_db
       end
     end
   end

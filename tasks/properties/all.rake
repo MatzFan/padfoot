@@ -1,7 +1,9 @@
+require_relative '../../lib/scrapers/digimap/gazetteer_scraper'
+
 namespace :sq do
   namespace :props do
     desc 'Populates properties table from Digimap Gazetteer layer'
-    task :all do
+    task all: :environment do
       data = GazetteerScraper.new.all_data
       us = data.map { |e| e[:uprn] }
       DB.transaction do # update or create each

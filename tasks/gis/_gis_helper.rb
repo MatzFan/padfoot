@@ -1,3 +1,7 @@
+require 'gis_scraper'
+
+SERVER = 'https://gps.digimap.gg/arcgis/rest/services/'.freeze
+
 # configurator for GpsScraper
 class GisHelper
   def self.configure

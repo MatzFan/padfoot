@@ -2,13 +2,11 @@ require_relative '_gis_helper'
 
 namespace :sq do
   namespace :gis do
-    desc 'Creates and populates tables for JsySmallBase2 layers'
+    desc 'Creates and populates tables for Gazetteer layer'
     task :gaz do
-      server = 'http://gis.digimap.je/ArcGIS/rest/services/Gazetteer/MapServer/0'
+      path = 'Gazetteer/MapServer/0'
       GisHelper.configure
-      DB.transaction do
-        LayerWriter.new(server).output_to_db
-      end
+      LayerWriter.new(SERVER + path).output_to_db
     end
   end
 end

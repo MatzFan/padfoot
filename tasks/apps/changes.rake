@@ -1,7 +1,9 @@
+require_relative '../../lib/scrapers/app_details_scraper'
+
 namespace :sq do
   namespace :apps do
     desc "Update all applications of a given status-type (default: 'Pending')"
-    task :changes, [:type] do |task_name, args|
+    task :changes, [:type] => :environment do |task_name, args|
       args.with_defaults(type: 'Pending')
       t = Time.now
       old_apps = PlanningApp.where(app_status: args.type).all
