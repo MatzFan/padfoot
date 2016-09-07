@@ -1,6 +1,9 @@
 describe BusStopParser do
+  array_3_d = ['2323', 'Gorey Common S', [49.193795, -2.034982]]
+  # gorey_common = { name: 'Gorey Common S',
+  #                  code: '2323',
+  #                  coords: [49.193795, -2.034982] }
 
-  hash = {name: 'Gorey Common S', code: '02323', coords: [49.193795, -2.034982]}
   let(:parser) { BusStopParser.new }
 
   context '#new' do
@@ -49,8 +52,7 @@ describe BusStopParser do
     end
 
     it 'returns 3D array of bus stop data [code, name, [coords]]' do
-      expect(parser.data.first).to eq ["2323", "Gorey Common S", [49.193795, -2.034982]]
+      expect(parser.data.first).to eq array_3_d
     end
   end
-
 end

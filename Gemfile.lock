@@ -237,6 +237,7 @@ DEPENDENCIES
   linguistics (= 2.1.0)
   mechanize (= 2.7.5)
   memory_profiler!
+  mime-types (>= 2.6.1)
   padrino (= 0.13.3.2)
   padrino-sprockets (= 0.0.3)
   parallel (= 1.9.0)

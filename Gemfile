@@ -5,6 +5,7 @@ group :production do
   gem 'unicorn', '5.0.1'
 end
 
+gem 'mime-types', '>= 2.6.1', require: 'mime/types/columnar' # save mem
 gem 'padrino', '0.13.3.2'
 
 gem 'thin', '1.6.4'

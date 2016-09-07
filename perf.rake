@@ -8,15 +8,16 @@ require 'derailed_benchmarks/tasks'
 class PadfootAuth < DerailedBenchmarks::AuthHelper
   def setup
     require_relative 'app/helpers/sessions_helper'
-    extend ::SessionsHelper # make :sign_in method available
+    extend ::SessionsHelper # makes :sign_in method available
   end
 
   def session
-    {}
+    { 'rack.session' => { current_user: User.first.id } }
   end
 
   def call(env)
     sign_in User.first
+    raise 'not signed in' unless signed_in?
     app.call(env)
   end
 end
