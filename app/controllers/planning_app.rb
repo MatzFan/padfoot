@@ -2,17 +2,7 @@ Padfoot::App.controllers :planning_app do
   before { redirect('/login') unless signed_in? }
 
   get :index, map: 'applications/index', provides: [:html, :json] do
-    refs = params[:refs] # a comma separated string of app_refs
-    apps = refs ? apps_ordered(refs.split(',')) : all_apps_ordered # helpers
-    @tits = PlanningApp::TABLE_TITLES
-    @apps = apps.select_map(PlanningApp::TABLE_COLS) # 2D array
-    classes_to_add = PlanningApp::TABLE_COLS.map do |c|
-      'long-text' if c == :app_description
-    end
-    # wrap txt in <div>s and add class to app_description for css formatting
-    @apps.map! { |app| div_wrap_strings_in(app, classes_to_add) }
-    json = { columns: @tits.map { |t| { title: t } }, app_data: @apps }.to_json
-    content_type == :json ? json : render(:index) # assume html
+    content_type == :json ? table_apps_json(params[:refs]) : render(:index)
   end
 
   post :index, map: 'applications/index' do
