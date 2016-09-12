@@ -12,8 +12,5 @@
         = f.label :password, :class => 'control-label'
         = f.password_field :password, :class => 'form-control'
         = error_message_on @user, :password, class: "form-control", :prepend => "The password "
-        = f.label :password_confirmation, :class => 'control-label'
-        = f.password_field :password_confirmation, :class => 'form-control'
-        = error_message_on @user, :password_confirmation, class: "form-control"
         %p
           = submit_tag "Register", :class => "btn btn-primary"

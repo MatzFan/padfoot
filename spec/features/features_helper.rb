@@ -8,7 +8,7 @@ def start_remote_selenium_server # ievms
   # bat_path = 'C:\Users\IEUser\Downloads\selenium.bat'
   cmd = 'c:\windows\system32\cmd.exe' # windows CLI
   arg = '/c start /d c:\Users\IEUser\Downloads selenium.bat' # /d runs detached
-  %x(VBoxManage guestcontrol '#{vm}' exec --image '#{cmd}' #{creds} -- '#{arg}')
+  `VBoxManage guestcontrol '#{vm}' exec --image '#{cmd}' #{creds} -- '#{arg}'`
   sleep 1
 end
 
@@ -30,11 +30,10 @@ if ENV['SELENIUM'] == 'remote'
   caps = Selenium::WebDriver::Remote::Capabilities.internet_explorer
   caps['javascriptEnabled'] = true
   Capybara.register_driver :remote_browser do |app|
-    Capybara::Selenium::Driver.new(
-      app,
-      browser: :remote,
-      url: url,
-      desired_capabilities: caps)
+    Capybara::Selenium::Driver.new(app,
+                                   browser: :remote,
+                                   url: url,
+                                   desired_capabilities: caps)
   end
   ip = '10.0.2.2' # default gateway..
   Capybara.app_host = "http://#{ip}:#{Capybara.server_port}"

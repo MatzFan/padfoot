@@ -7,40 +7,41 @@ RSpec.describe '/sessions' do
   end
 
   describe 'POST :create' do
-    let(:user) { build(:user) }
-    let(:params) { attributes_for(:user) } # FactoryGirl method
+    let(:pwd) { 'password' }
+    let(:user) { build(:user, password: pwd) }
+    let(:params) { user.values.merge(password: pwd) } # values includes digest
 
     it 'stay on page if user is not found' do
       allow(User).to receive(:find) { false }
-      post '/create', user.values
+      post '/create', params
       expect(last_response).to be_ok
     end
 
     it 'stay on login page if user is not confirmed' do
       user.confirmation = false
       allow(User).to receive(:find) { user }
-      post '/create', user.values
+      post '/create', params
       expect(last_response).to be_ok
     end
 
     it 'stay on login page if user has wrong email' do
       user.email = 'fake.email@gmail.com'
       allow(User).to receive(:find) { user }
-      post '/create', user.values
+      post '/create', params
       expect(last_response).to be_ok
     end
 
     it 'stay on login page if user has wrong password' do
       user.password = 'test'
       allow(User).to receive(:find) { user }
-      post '/create', user.values
+      post '/create', params
       expect(last_response).to be_ok
     end
 
     it 'redirect if user is correct' do
       user.confirmation = true
       allow(User).to receive(:find) { user }
-      post '/create', user.values
+      post '/create', params
       expect(last_response).to be_redirect
     end
   end

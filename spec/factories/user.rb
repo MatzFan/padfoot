@@ -7,7 +7,6 @@ FactoryGirl.define do
     name 'Test User'
     email
     password 'password'
-    password_confirmation 'password'
     confirmation_code 'none_sent_yet'
     authenticity_token ''
   end

@@ -1,5 +1,4 @@
 describe 'User Model' do
-
   let(:user) { build(:user) }
 
   it 'valid user can be created' do
@@ -17,18 +16,16 @@ describe 'User Model' do
     expect(user).not_to be_valid
   end
 
-  describe "passwords" do
-
-    it 'must not have a blank email' do
+  describe 'passwords' do
+    xit 'must not be blank' do
       user.password = ''
       expect(user).not_to be_valid
     end
 
-    it 'must be at least 8 characters' do
+    xit 'must be at least 8 characters' do
       user.password = '1234567'
       expect(user).not_to be_valid
     end
-
   end
 
   describe 'email address' do
@@ -74,5 +71,4 @@ describe 'User Model' do
       expect(user.authenticity_token).not_to be_empty
     end
   end
-
 end
