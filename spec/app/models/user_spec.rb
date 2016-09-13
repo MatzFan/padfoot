@@ -16,18 +16,6 @@ describe 'User Model' do
     expect(user).not_to be_valid
   end
 
-  describe 'passwords' do
-    xit 'must not be blank' do
-      user.password = ''
-      expect(user).not_to be_valid
-    end
-
-    xit 'must be at least 8 characters' do
-      user.password = '1234567'
-      expect(user).not_to be_valid
-    end
-  end
-
   describe 'email address' do
     it 'should not be valid, if already in the DB' do
       user.save

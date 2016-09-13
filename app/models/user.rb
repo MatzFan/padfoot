@@ -19,13 +19,7 @@ class User < Sequel::Model
     self.password_digest = Password.create(new_password)
   end
 
-  # def password_confirmation
-  #   Password.new(password_confirm_digest) if password_confirm_digest
-  # end
-
-  # def password_confirmation=(new_password_confirm)
-  #   self.password_confirm_digest = Password.create(new_password_confirm)
-  # end
+  def password_confirmation=(_arg); end # not required from form submit
 
   def before_create
     generate_auth_token # for cookies
@@ -33,12 +27,13 @@ class User < Sequel::Model
   end
 
   def before_save # callbacks must be defined, unlike ActiveRecord
-    encrypt_confirmation_code if :registered?
+    encrypt_confirmation_code if registered?
     super
   end
 
   def authenticate(confirmation_code)
-    return false unless @user =  User[id] # is the user in the DB?
+    @user = User[id]
+    return false unless @user # is the user in the DB?
     if @user.confirmation_code == confirmation_code
       self.confirmation = true
       save

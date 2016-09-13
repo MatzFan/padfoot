@@ -1,5 +1,6 @@
 # credit here: https://gist.github.com/nruth/b2500074749e9f56e0b7
 module PayStripeHelper
+  PASSWORD = 'password'.freeze
   FIELD_IDS = %w(email card_number cc-exp cc-csc).freeze
   # keys must be same as FIELD_IDS
   CHECKOUT_DEFAULTS = { :email => 'test@example.com',
@@ -16,7 +17,7 @@ module PayStripeHelper
   end
 
   def click_checkout_button
-    create(:user, confirmation: true)
+    create(:user, password: PASSWORD, confirmation: true)
     visit "/users/#{User.first.id}/subscribe"
     click_button 'Pay with Card'
     sleep 1
@@ -24,7 +25,7 @@ module PayStripeHelper
 
   def checkout(opts = {})
     opts = CHECKOUT_DEFAULTS.merge opts
-    sleep 5 # wait for frame to render - flaky..
+    sleep 7 # wait for frame to render - flaky..
     within_frame 'stripe_checkout_app' do # selenium
       enter('email', opts[:email])
       opts[:card_number].chars.each_slice(4) do |digits|

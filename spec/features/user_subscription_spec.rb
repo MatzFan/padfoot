@@ -37,7 +37,7 @@ describe 'Subscribing', type: :feature, js: true do
             it 'should be successful' do
               user = User.first
               fill_in('email', with: user.email)
-              fill_in('password', with: user.password)
+              fill_in('password', with: PayStripeHelper::PASSWORD)
               click_button 'Sign in'
               expect(current_path).to eq '/applications/index'
             end

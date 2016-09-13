@@ -1,16 +1,25 @@
 .container-fluid
   .col-md-4.col-md-offset-4.column
     %h1 Registration
-    = form_for(@user, '/users/create', :class => 'form', :role => 'form') do |f|
+    = form_for(@user, '/users/create', :class => 'form', :role => 'form', :'data-toggle' => 'validator') do |f|
       .form-group.has-warning
-        = f.label :name, :class => 'control-label'
-        = f.text_field :name, :class => 'form-control'
-        = error_message_on @user, :name, class: "form-control", :prepend => "The name "
-        = f.label :email, :class => 'control-label'
-        = f.text_field :email, :class => 'form-control'
-        = error_message_on @user, :email, class: "form-control", :prepend => "The email "
-        = f.label :password, :class => 'control-label'
-        = f.password_field :password, :class => 'form-control'
-        = error_message_on @user, :password, class: "form-control", :prepend => "The password "
-        %p
+        .form-group
+          = f.label :name, :class => 'control-label'
+          = f.text_field :name, :class => 'form-control', :required => ""
+          -# = error_message_on @user, :name, class: "form-control", :prepend => "The name "
+        .form-group
+          = f.label :email, :class => 'control-label'
+          = f.text_field :email, :class => 'form-control', :required => ""
+          -# = error_message_on @user, :email, class: "form-control", :prepend => "The email "
+        .form-group
+          .form-group
+            = f.label :password, :class => 'control-label'
+            = f.password_field :password, :class => 'form-control', :'data-minlength' => "8", :required => ""
+            .help-block minimum of 8 characters
+            -# = error_message_on @user, :password, class: "form-control", :prepend => "The password "
+          .form-group
+            = f.label :password_confirmation, :class => 'control-label'
+            = f.password_field :password_confirmation, :class => 'form-control', :'data-match' => "#user_password", :'data-match-error' => "passwords don't match!", :required => ""
+            .help-block.with-errors
+        .form-group
           = submit_tag "Register", :class => "btn btn-primary"
