@@ -1,6 +1,7 @@
 require_relative 's3_storable'
 require 'open-uri'
 
+# processes pdf's docs for planning meeting agendas & minutes
 class AppDocProcessor
   include S3storable
 
@@ -29,11 +30,11 @@ class AppDocProcessor
   end
 
   def new_doc_data
-    @new_doc_link_data.map { |hash| hash.reject { |k,v| k == :link } }
+    @new_doc_link_data.map { |hash| hash.reject { |k, _v| k == :link } }
   end
 
   def links
-    @new_doc_link_data.map { |hash| hash.select { |k,v| k == :link }[:link] }
+    @new_doc_link_data.map { |hash| hash.select { |k, _v| k == :link }[:link] }
   end
 
   def new_docs
@@ -63,8 +64,8 @@ class AppDocProcessor
   end
 
   def create_docs
-    docs_with_urls.compact.each &:save
-    docs_with_urls.count - docs_with_urls.compact.count # return number > 0 if any duplicates
+    docs_with_urls.compact.each(&:save)
+    docs_with_urls.count - docs_with_urls.compact.count # return > 0 if any dups
   end
 
   def create_doc_app_ref_links
@@ -75,17 +76,17 @@ class AppDocProcessor
 
   def link_apps(doc, page_refs)
     page_nums = page_refs.map(&:first)
-    refs = page_refs.map(&:last)  # refs is 2D array
+    refs = page_refs.map(&:last) # refs is 2D array
     page_nums.each_with_index.map do |page_num, i|
       refs[i].map do |ref|
-        app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create if not in DB
-        app ? add_app_to_doc(app, doc, page_num) : ref # return ref if app can't be scraped/created
+        app = PlanningApp[ref] || scrape_and_create_app(ref) # try to create
+        app ? add_app_to_doc(app, doc, page_num) : ref # ref if can't be scraped
       end
     end.flatten.compact
   end
 
   def add_app_to_doc(app, doc, page_num)
-    if !doc.planning_apps.include?(app)
+    unless doc.planning_apps.include?(app)
       doc.add_planning_app(app, page_link: "#{doc.url}#page=#{page_num}")
       app.save # needed to update :list_app_meetings field in PlanningApp
       nil
@@ -124,7 +125,7 @@ class AppDocProcessor
 
   def parse_meeting_num_from(doc_text)
     first_page_lines = doc_text.split("\u000C").first.split("\n")
-    arr = first_page_lines.map { |l| l.match /^Meeting No[:|.](.*)$/ }.compact
+    arr = first_page_lines.map { |l| l.match(/^Meeting No[:|.](.*)$/) }.compact
     arr.size == 1 ? arr[0][1].to_i : 0 # zero unless a single match
   end
 
@@ -135,5 +136,4 @@ class AppDocProcessor
     last = lines.map { |t| t.scan(/#{regex}$/).map(&:first) rescue nil }.compact.flatten
     (first + last).uniq
   end
-
 end
