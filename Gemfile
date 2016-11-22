@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.3.1'
+ruby '2.3.2'
 
 group :production do
   gem 'unicorn', '5.0.1'
@@ -24,7 +24,7 @@ gem 'parallel', '1.9.0'
 # Component requirements
 gem 'sass', '3.4.21'
 gem 'haml', '4.0.7'
-gem 'pg', '0.18.4'
+gem 'pg', '0.19.0'
 gem 'sequel', '4.32'
 gem 'sequel_pg', '1.6.14', require: 'sequel'
 gem 'aws-sdk', '2.2.24', require: 'aws-sdk'
@@ -45,7 +45,7 @@ end
 
 group :development do
   gem 'derailed_benchmarks', '1.3.1'
-  gem 'memory_profiler', github: 'SamSaffron/memory_profiler', branch: 'master'
+  gem 'memory_profiler', '0.9.7'
   gem 'stackprof', '0.2.9'
 end
 
