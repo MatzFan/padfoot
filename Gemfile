@@ -24,6 +24,7 @@ gem 'parallel', '1.9.0'
 # Component requirements
 gem 'sass', '3.4.21'
 gem 'haml', '4.0.7'
+gem 'therubyracer', '0.12.2' # needed for pg on Linux
 gem 'pg', '0.19.0'
 gem 'sequel', '4.32'
 gem 'sequel_pg', '1.6.14', require: 'sequel'
