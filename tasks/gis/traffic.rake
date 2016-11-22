@@ -6,7 +6,6 @@ namespace :sq do
       TTS Traffic Signals MapServer layers'
     task :traffic do
       path = 'JerseyUtilities/JerseyUtilities/MapServer/117'
-      GisHelper.configure
       LayerWriter.new(SERVER + path).output_to_db
     end
   end

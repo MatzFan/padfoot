@@ -5,7 +5,6 @@ namespace :sq do
     desc 'Creates and populates tables for SSSI layer'
     task :sssi do
       path = 'JsyBoreholes/MapServer/4'
-      GisHelper.configure
       LayerWriter.new(SERVER + path).output_to_db
     end
   end

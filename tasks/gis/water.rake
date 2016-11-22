@@ -6,7 +6,6 @@ namespace :sq do
       Jersey Water MapServer layers'
     task :water do
       path = 'JerseyUtilities/JerseyUtilities/MapServer/124'
-      GisHelper.configure
       LayerWriter.new(SERVER + path).output_to_db
     end
   end

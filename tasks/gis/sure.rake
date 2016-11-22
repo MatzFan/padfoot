@@ -6,7 +6,6 @@ namespace :sq do
       Sure MapServer layers'
     task :sure do
       path = 'JerseyUtilities/JerseyUtilities/MapServer/144'
-      GisHelper.configure
       LayerWriter.new(SERVER + path).output_to_db
     end
   end

@@ -6,7 +6,6 @@ namespace :sq do
       JEC MapServer layers'
     task :jec do
       path = 'JerseyUtilities/JerseyUtilities/MapServer/142'
-      GisHelper.configure
       LayerWriter.new(SERVER + path).output_to_db
     end
   end
