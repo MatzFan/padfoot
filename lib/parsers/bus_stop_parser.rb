@@ -2,7 +2,7 @@ require 'open-uri'
 
 class BusStopParser
 
-  URI = 'http://www.libertybus.je/jersey.php' # where bus stop data lives
+  URI = 'https://www.libertybus.je/jersey.php' # where bus stop data lives
 
   def initialize
     @source = source
