@@ -1,4 +1,4 @@
-Sequel::Model.plugin(:schema)
+# Sequel::Model.plugin(:schema) # derpecated in Sequel 5
 Sequel::Model.plugin(:json_serializer)
 Sequel::Model.raise_on_save_failure = false # Do not throw exceptions on failure
 DB = case Padrino.env

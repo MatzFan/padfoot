@@ -19,7 +19,7 @@ describe 'User Model' do
   describe 'email address' do
     it 'should not be valid, if already in the DB' do
       user.save
-      second_user = build(User)
+      second_user = build(:user)
       second_user.email = User.first.email
       expect(second_user).not_to be_valid
     end

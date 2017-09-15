@@ -1,5 +1,4 @@
 module Mappable
-
   def coords(lat, long)
     res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
       #{long}, #{lat}), 4326), 3109))"].first[:st_asgeojson]
@@ -58,9 +57,9 @@ module Mappable
     "ST_SetSRID(ST_MakePolygon(ST_GeomFromText(#{self.line_string(xys)})), 3109)::geometry"
   end
 
-  def multipolygon(xys_arr)
-    DB["SELECT ST_GeomFromText('MULTIPOLYGON((#{parse_3d_coords_arr(xys_arr)}))', 3109)"]
-  end
+  # def multipolygon(xys_arr) # Sequel 5 breaks
+  #   DB["SELECT ST_GeomFromText('MULTIPOLYGON((#{parse_3d_coords_arr(xys_arr)}))', 3109)"]
+  # end
 
   def nearest_to(x, y)
     self.new(DB["SELECT * FROM #{self.table_name} ORDER BY geom <-> 'SRID=3109;POINT(#{x} #{y})'::geometry LIMIT 1"].first)
@@ -73,5 +72,4 @@ module Mappable
       ST_GeographyFromText('SRID=4326;POINT(#{long} #{lat})'), #{x}))"
     ].map { |h| self.new(h) }
   end
-
 end

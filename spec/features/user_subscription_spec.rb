@@ -21,7 +21,7 @@ describe 'Subscribing', type: :feature, js: true do
           before(:each) { checkout } # pay_stripe_helper method
 
           it 'will assign the stripe customer id to the user' do
-            expect(User.first.stripe_cust_id).not_to be_blank
+            expect(User.first.stripe_cust_id).not_to be_empty
           end
 
           it 'will be subscribed to the annual plan' do
