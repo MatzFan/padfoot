@@ -17,7 +17,8 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
-    apps = PlanningApp.where(:mapped, app_ref: @all_refs).all
+    # apps = PlanningApp.where(:mapped, app_ref: @all_refs).all
+    apps = PlanningApp.where(mapped: true, app_ref: @all_refs).all
     gon.data = PlanningApp.pin_data_hash(apps)
     render :map
   end

@@ -1,8 +1,6 @@
-.map_container
-  #mapDiv.map_canvas
-  #toolbarContainer{"style" => "float:right"}
+=partial "layouts/map"
 
 :javascript
   $(function() {
-    GetMap(gon.data);
+    GetBingMap(gon.data);
   });

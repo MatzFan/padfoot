@@ -16,7 +16,8 @@ module Padfoot
       port: 587,
       user_name: 'jerseypropertyservices@gmail.com',
       password: ENV['GMAIL_PASSWORD'],
-      authentication: :plain
+      authentication: :plain,
+      enable_starttls_auto: true
     }
 
     configure :development do

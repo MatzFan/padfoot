@@ -1,4 +1,4 @@
-function GetMap(pinData) {
+function GetBingMap(pinData) {
   // pinLayer = new Microsoft.Maps.EntityCollection(); // global
   // infoboxLayer = new Microsoft.Maps.EntityCollection(); // global
   var mapOptions = {

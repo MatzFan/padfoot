@@ -100,11 +100,19 @@ function drawAppsTable(data, callback) {
             if(numSelected == 0) { // ALL 30,000 are plotted without this guard!!!!!!!
               alert("Select one or more applications by clicking on the row(s), or use 'Select all'.");
             } else {
+              // if(confirm(numSelected + " applications selected, do you want to plot these?") == true){
+              //   $('<form action="map" method="POST">' +
+              //   '<input type="hidden" name="tableData" value="' + sData + '">' +
+              //   '<input type="hidden" name="authenticity_token" value="' + token + '">' +
+              //   '</form>').submit();
+              // }
               if(confirm(numSelected + " applications selected, do you want to plot these?") == true){
-                $('<form action="map" method="POST">' +
+                var form = $('<form action="map" method="POST">' +
                 '<input type="hidden" name="tableData" value="' + sData + '">' +
                 '<input type="hidden" name="authenticity_token" value="' + token + '">' +
-                '</form>').submit();
+                '</form>');
+                form.appendTo('body'); // Chrome 56+
+                form.submit();
               }
             }
           }

@@ -8,7 +8,7 @@ end
 gem 'mime-types', '>= 2.6.1', require: 'mime/types/columnar' # save mem
 gem 'padrino', '0.14.1.1' #'0.13.3.4'
 
-gem 'thin', '1.7.0'
+gem 'thin', '1.7.2'
 gem 'rake', '12.1.0'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'uglifier', '3.2.0' # JS compression
@@ -26,7 +26,7 @@ gem 'sass', '3.5.1'
 gem 'haml', '5.0.3'
 gem 'therubyracer', '0.12.3' # needed for pg on Linux
 gem 'pg', '0.21.0'
-gem 'sequel', '4.49' #'4.32'
+gem 'sequel', '5.0.0'
 gem 'sequel_pg', '1.7.1', require: 'sequel'
 gem 'aws-sdk', '3.0.1', require: 'aws-sdk'
 gem 'linguistics', '2.1.0'
