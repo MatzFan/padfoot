@@ -9,6 +9,7 @@
     =javascript_include_tag 'https://code.jquery.com/ui/1.11.4/jquery-ui.min.js'
     =stylesheet_link_tag 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css'
     =include_gon.html_safe
+    =yield_content(:head)
   %body
     =partial "layouts/navigation"
     .container-fluid
@@ -24,4 +25,4 @@
       = yield
   %ul.nav.navbar-nav.navbar-fixed-bottom.navbar-right
     %li
-      %p.copyright &copy; 2015 jerseypropertyservices.com
+      %p.copyright &copy; 2017 jerseypropertyservices.com

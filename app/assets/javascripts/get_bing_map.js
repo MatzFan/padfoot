@@ -1,4 +1,4 @@
-function GetBingMap(pinData) {
+function GetBingMap() {
   // pinLayer = new Microsoft.Maps.EntityCollection(); // global
   // infoboxLayer = new Microsoft.Maps.EntityCollection(); // global
   var mapOptions = {
@@ -8,14 +8,19 @@ function GetBingMap(pinData) {
     mapTypeId: Microsoft.Maps.MapTypeId.aerial
   }
   map = new Microsoft.Maps.Map(document.getElementById('mapDiv'), mapOptions); // make map global
-  map.getMode().setOptions({ drawShapesInSingleLayer: true }); // THANK F*CK FOR SO : http://stackoverflow.com/questions/21737320/bing-maps-7-polygon-events-not-firing-when-pushed-to-entitycollection
+  // NO LONGER NEEDED IN V8?
+  // map.getMode().setOptions({ drawShapesInSingleLayer: true }); // THANK F*CK FOR SO : http://stackoverflow.com/questions/21737320/bing-maps-7-polygon-events-not-firing-when-pushed-to-entitycollection
 
   addDrawingTools();
   $(window).load(function() { addNavMenuButtons(); }); // add custom nav buttons when all DOM elements loaded
-
+  
+  var pinData = gon.data;
   $.each(pinData, function(i, data) { plotPin(data); });
 
   pinInfobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), {visible: false });
+
+  pinInfobox.setMap(map); // V8
+
   Microsoft.Maps.Events.addHandler(map, 'viewchange', hideInfobox);
   // infoboxLayer.push(pinInfobox);
   map.entities.push(pinInfobox);
@@ -108,7 +113,8 @@ function plotPin(data, shape) {
   pin.Description = data.infoboxContent; // set in mappable module
 
   Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
-  Microsoft.Maps.Events.addHandler(pin, 'rightclick', removePin);
+  //V8 BREAKS 'In V8, add pushpin to a Layer and add right click event to the layer.'
+  // Microsoft.Maps.Events.addHandler(pin, 'rightclick', removePin);
   if(typeof shape === 'undefined') {
     map.entities.push(pin);
   } else {

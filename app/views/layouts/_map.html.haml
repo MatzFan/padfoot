@@ -1,4 +1,8 @@
-=javascript_include_tag 'https://www.bing.com/api/maps/mapcontrol?callback=GetBingMap', :async => 'defer'
+-#- content_for(:head) do
+  -# =javascript_include_tag 'https://www.bing.com/api/maps/mapcontrol?callback=GetBingMap', :async => 'defer'
+  -# =javascript_include_tag 'get_bing_map'
 .map_container
   #mapDiv.map_canvas
   #toolbarContainer{"style" => "float:right"}
+=javascript_include_tag 'get_google_map'
+=javascript_include_tag 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=getGoogleMap'
