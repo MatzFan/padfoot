@@ -1,6 +1,5 @@
 describe PlanningAppHelper do
   before do
-    # helper class
     class PlanningAppHelperClass
       include PlanningAppHelper
     end
@@ -12,6 +11,16 @@ describe PlanningAppHelper do
   string = Faker::Lorem.paragraph
   let(:lines) { 4 }
   let(:div_string) { "<div>#{string}</div>" }
+
+  context '#apps_ordered(refs)' do
+    it 'should return a list of PlanningApps in descending order by :order' do
+      create(:planning_app, app_ref: 'P/2234/2017')
+      create(:planning_app, app_ref: 'A/1234/2017')
+      create(:planning_app, app_ref: 'RC/3234/2017')
+      refs = %w(P/2234/2017 X/1275/2018, A/1234/2017)
+      expect(@h.apps_ordered(refs).map(&:app_ref)).to eq ['P/2234/2017', 'A/1234/2017']
+    end
+  end
 
   context '#div_wrap' do
     it 'should wrap provided string in a <div>' do
