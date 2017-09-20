@@ -2,10 +2,11 @@ require_relative 'digimap_scraper'
 
 # class to scrape gazetteer
 class GazetteerScraper < DigimapScraper
-  URL = 'Gazetteer/MapServer/0'.freeze
+  URL = 'StatesOfJersey/JerseyMappingOL/MapServer/0'.freeze
+  FORM_FIELDS = %w[f where outFields].freeze
+  FORM_RADIOS = %w[returnCountOnly].freeze
   FIELD_COLUMN_HASH = { 'OBJECTID' => :object_id,
                         'guid_' => :guid,
-                        'logicalstatus' => :logical_status,
                         'Add1' => :add1,
                         'Add2' => :add2,
                         'Add3' => :add3,
@@ -15,12 +16,13 @@ class GazetteerScraper < DigimapScraper
                         'Island' => :island_name,
                         'UPRN' => :uprn,
                         'USRN' => :usrn,
-                        'Property_Type' => :type,
                         'Address1' => :address1,
                         'Easting' => :x,
                         'Northing' => :y,
                         'Vingtaine' => :vingtaine,
-                        'Updated' => :updated }.freeze
+                        'Updated' => :updated,
+                        'logicalstatus' => :logical_status,
+                        'Property_Type' => :type }.freeze
   PARISHES = { 'Grouville' => 1,
                'St. Brelade' => 2,
                'St. Clement' => 3,
@@ -34,7 +36,7 @@ class GazetteerScraper < DigimapScraper
                'St. Saviour' => 11,
                'Trinity' => 12 }.freeze
 
-  def initialize(min = 1, max = 1)
+  def initialize(min = 1, max = 1, validate_fields: true)
     super
   end
 

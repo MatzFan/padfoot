@@ -46,45 +46,30 @@ class PlanningApp < Sequel::Model
     add_constraints
   end
 
-  TABLE_COLS = [:order, :valid_date, :app_ref, :app_code, :app_status,
-                :app_full_address, :app_description, :app_address_of_applicant,
-                :app_agent, :app_officer, :parish, :list_app_constraints,
-                :list_app_meetings].freeze
+  TABLE_COLS = %i[order valid_date app_ref app_code app_status app_full_address
+                  app_description app_address_of_applicant app_agent app_officer
+                  parish list_app_constraints list_app_meetings].freeze
 
-  TABLE_TITLES = %w(Order Date Ref Code Status Address Description Applicant
-                    Agent Officer Parish Constraints Meetings).freeze
+  TABLE_TITLES = %w[Order Date Ref Code Status Address Description Applicant
+                    Agent Officer Parish Constraints Meetings].freeze
 
-  PUSHIN_COLUMNS = [:app_ref, :app_status, :app_category,
-                    :app_full_address, :latitude, :longitude].freeze
+  PUSHIN_COLUMNS = %i[app_ref app_status app_category app_full_address latitude
+                      longitude].freeze
 
-  DETAILS_TABLE_TITLES = %w(Reference Category Status Officer Applicant
+  DETAILS_TABLE_TITLES = %w[Reference Category Status Officer Applicant
                             Description ApplicationAddress RoadName Parish
-                            PostCode Constraints Agent).freeze
+                            PostCode Constraints Agent].freeze
 
-  DETAILS_FIELDS = [:app_ref,
-                    :app_category,
-                    :app_status,
-                    :app_officer,
-                    :app_applicant,
-                    :app_description,
-                    :app_address,
-                    :app_road,
-                    :app_parish,
-                    :app_postcode,
-                    :app_constraints,
-                    :app_agent].freeze
+  DETAILS_FIELDS = %i[app_ref app_category app_status app_officer app_applicant
+                      app_description app_address app_road app_parish
+                      app_postcode app_constraints app_agent].freeze
 
-  DATES_TABLE_TITLES = %w(ValidDate AdvertisedDate endpublicityDate
+  DATES_TABLE_TITLES = %w[ValidDate AdvertisedDate endpublicityDate
                           SitevisitDate CommitteeDate Decisiondate
-                          Appealdate).freeze
+                          Appealdate].freeze
 
-  DATES_FIELDS = [:valid_date,
-                  :advertised_date,
-                  :end_pub_date,
-                  :site_visit_date,
-                  :committee_date,
-                  :decision_date,
-                  :appeal_date].freeze
+  DATES_FIELDS = %i[valid_date advertised_date end_pub_date site_visit_date
+                    committee_date decision_date appeal_date].freeze
 
   def self.pushpin_colours_hash
     Status.select_hash(:name, :colour)
@@ -105,8 +90,7 @@ class PlanningApp < Sequel::Model
   end
 
   def build_address
-    arr = [app_address, app_road, app_parish, app_postcode]
-    breakify(arr)
+    breakify [app_address, app_road, app_parish, app_postcode]
   end
 
   def build_address_of_applicant

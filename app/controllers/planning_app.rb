@@ -1,7 +1,7 @@
 Padfoot::App.controllers :planning_app do
   before { redirect('/login') unless signed_in? }
 
-  get :index, map: 'applications/index', provides: [:html, :json] do
+  get :index, map: 'applications/index', provides: %i[html json] do
     content_type == :json ? table_apps_json(params[:refs]) : render(:index)
   end
 
@@ -17,10 +17,13 @@ Padfoot::App.controllers :planning_app do
 
   post :map, map: 'applications/map' do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
-    # apps = PlanningApp.where(:mapped, app_ref: @all_refs).all
     apps = PlanningApp.where(mapped: true, app_ref: @all_refs).all
     gon.data = PlanningApp.pin_data_hash(apps)
     render :map
+  end
+
+  get :find_location, map: 'applications/map/find_location', provides: :json do
+    geolocate_location(params[:address]).to_json
   end
 
   get :address, map: 'applications/description', provides: :json do

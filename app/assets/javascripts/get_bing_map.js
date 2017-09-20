@@ -106,7 +106,7 @@ function showPlottedAppsInTable() {
 
 function plotPin(data, shape) {
   var pushpinOptions = {icon: "../assets/pin_" +data.colour+ ".png", text: data.letter}
-  var location = new Microsoft.Maps.Location(data.latitude, data.longitude);
+  var location = new Microsoft.Maps.Location(data.lat, data.long);
   var pin = new Microsoft.Maps.Pushpin(location, pushpinOptions);
 
   pin.Title = data.infoboxTitle; // set in mappable module

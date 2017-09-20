@@ -12,6 +12,27 @@ function getGoogleMap() {
   $.each(pinData, function(i, data) { plotMarker(data); });
   addDrawingTools();
   addViewInTableButton();
+  // var geocoder = new google.maps.Geocoder();
+  document.getElementById('find-location').addEventListener('click', function() {
+  // findLocation(geocoder, map);
+    findLocation(map);
+  });
+}
+
+
+// function findLocation(geocoder, resultsMap) {
+function findLocation(resultsMap) {
+  var search_string = document.getElementById('location').value;
+
+  var results = $.getJSON( "map/find_location", {address: search_string})
+    .done(function(results) {
+      var location = results[0].geometry.location;
+      // results.setCenter(location);
+      var marker = new google.maps.Marker({
+        map: map,
+        position: location
+      });
+  });
 }
 
 
@@ -51,7 +72,7 @@ function viewInTableButton(div) {
   controlUI.style.cursor = 'pointer';
   controlUI.style.marginBottom = '22px';
   controlUI.style.textAlign = 'center';
-  controlUI.title = 'Click to view apps in table';
+  controlUI.title = 'Click to view plotted applications in table';
   div.appendChild(controlUI);
   // Set CSS for the control interior.
   var controlText = document.createElement('div');
@@ -61,7 +82,7 @@ function viewInTableButton(div) {
   controlText.style.lineHeight = '38px';
   controlText.style.paddingLeft = '5px';
   controlText.style.paddingRight = '5px';
-  controlText.innerHTML = 'View table';
+  controlText.innerHTML = 'View in table';
   controlUI.appendChild(controlText);
   // Setup the click event listener
   controlUI.addEventListener('click', function() {
@@ -71,8 +92,12 @@ function viewInTableButton(div) {
 
 
 function showPlottedAppsInTable() {
+  if(markers.length == 0) {
+    alert('There are no applications plotted on the map - draw a shape to plot them');
+    return;
+  }
   var token = $('meta[name="csrf-token"]').attr("content");
-  var refs = $.map(markers, function(marker) { return marker.title });
+  var refs = $.map(markers, function(marker) { return marker.title; });
   $('<form action="index" method="POST">' +
     '<input type="hidden" name="refs" value="' + refs + '">' + // comma-separated list
     '<input type="hidden" name="authenticity_token" value="' + token + '">' +
@@ -91,13 +116,13 @@ function containedApps(shape) {
     longs = [bounds.west, bounds.east, bounds.east, bounds.west, bounds.west]; // close shape
     plotMarkersInPoly(lats,longs);
   } else if(shape instanceof google.maps.Polygon) {
-    var bounds = shape.getPath().getArray();
-    var len = bounds.length;
-    var lats = [bounds[len -1].lat()]; // last point, to close shape
-    var longs = [bounds[len -1].lng()]; // last point, to close shape
-    $.each(bounds, function(i, values) { lats.push(values.lat()); });
-    $.each(bounds, function(i, values) { longs.push(values.lng()); });
-    plotMarkersInPoly(lats, longs)
+    var pathArray = shape.getPath().getArray();
+    var len = pathArray.length;
+    var lats = [pathArray[len -1].lat()]; // last point, to close shape
+    var longs = [pathArray[len -1].lng()]; // last point, to close shape
+    $.each(pathArray, function(i, values) { lats.push(values.lat()); });
+    $.each(pathArray, function(i, values) { longs.push(values.lng()); });
+    plotMarkersInPoly(lats, longs);
   } else {
     throw new Error("shape type not supported");
   }
@@ -127,11 +152,11 @@ function plotMarkersInPoly(lats, longs) {
 function plotMarker(data) {
   var markerIcon = {
     url: "../assets/pin_" + data.colour + ".png",
-    labelOrigin: new google.maps.Point(13,14)
-  }
+    labelOrigin: new google.maps.Point(13,14) // offset
+  };
   var marker = new google.maps.Marker({
     map: map,
-    position: new google.maps.LatLng(data.latitude, data.longitude),
+    position: new google.maps.LatLng(data.lat, data.long),
     title: data.infoboxTitle,
     icon: markerIcon,
     label: {

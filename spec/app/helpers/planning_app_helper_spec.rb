@@ -1,5 +1,6 @@
 describe PlanningAppHelper do
   before do
+    # including class
     class PlanningAppHelperClass
       include PlanningAppHelper
     end
@@ -17,7 +18,7 @@ describe PlanningAppHelper do
       create(:planning_app, app_ref: 'P/2234/2017')
       create(:planning_app, app_ref: 'A/1234/2017')
       create(:planning_app, app_ref: 'RC/3234/2017')
-      refs = %w(P/2234/2017 X/1275/2018, A/1234/2017)
+      refs = %w[P/2234/2017 X/1275/2018 A/1234/2017]
       expect(@h.apps_ordered(refs).map(&:app_ref)).to eq ['P/2234/2017', 'A/1234/2017']
     end
   end
@@ -44,6 +45,13 @@ describe PlanningAppHelper do
       values = p_app.to_hash.values
       non_str = values.reject(&stringy?)
       expect(@h.div_wrap_strings_in(values).reject(&stringy?)).to eq(non_str)
+    end
+  end
+
+  context '#geolocate_location(address)' do
+    it 'should find call #results_for on a GazetteerFinder object' do
+      allow_any_instance_of(GazetteerFinder).to receive(:results_for).with('ad')
+      expect(-> { @h.geolocate_location('ad') }).not_to raise_error
     end
   end
 end

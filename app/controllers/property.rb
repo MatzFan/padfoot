@@ -1,7 +1,7 @@
 Padfoot::App.controllers :property do
   before { redirect('/login') unless signed_in? }
 
-  get :index, map: 'properties/index', provides: [:html, :json] do
+  get :index, map: 'properties/index', provides: %i[html json] do
     @arr = DB[:property_owners].map(&:values)
     @titles = Property::TABLE_TITLES
     json = { columns: @titles.map { |t| { title: t } }, app_data: @arr }.to_json
@@ -14,13 +14,16 @@ Padfoot::App.controllers :property do
   end
 
   get :within_circle, map: 'properties/within_circle', provides: :json do
-    lat, long, radius = params[:lat], params[:long], params[:radius]
+    lat = params[:lat]
+    long = params[:long]
+    radius = params[:radius]
     props = Property.within_circle(lat.to_f, long.to_f, radius.to_f)
     Property.pin_data_hash(props).to_json # helper method
   end
 
   get :within_polygon, map: 'properties/within_polygon', provides: :json do
-    lats, longs = params[:lats], params[:longs]
+    lats = params[:lats]
+    longs = params[:longs]
     props = Property.within_polygon(Property.transform(lats, longs))
     Property.pin_data_hash(props).to_json
   end

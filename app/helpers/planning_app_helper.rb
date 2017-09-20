@@ -39,6 +39,10 @@ module PlanningAppHelper
   def trunc(t, n)
     t.split.size > 20 ? "#{t.split(/\s+/, n + 1)[0...n].join(' ')}..." : t
   end
+
+  def geolocate_location(search_string)
+    GazetteerFinder.new.results_for(search_string)
+  end
 end
 
 Padfoot::App.helpers PlanningAppHelper

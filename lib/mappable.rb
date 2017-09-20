@@ -1,3 +1,4 @@
+# adds transform methods
 module Mappable
   def coords(lat, long)
     res = DB["SELECT ST_AsGeoJSON(ST_Transform(ST_SetSRID(ST_MakePoint(
@@ -34,11 +35,11 @@ module Mappable
   end
 
   def transform(lats, longs)
-    lats.zip(longs).map { |arr| self.coords(arr[0], arr[1]) }
+    lats.zip(longs).map { |arr| coords(arr[0], arr[1]) }
   end
 
   def transform_xy(xs, ys)
-    xs.zip(ys).map { |arr| self.cartesian(arr[0], arr[1]) }
+    xs.zip(ys).map { |arr| cartesian(arr[0], arr[1]) }
   end
 
   def within_circle(lat, long, radius) # radius in meters

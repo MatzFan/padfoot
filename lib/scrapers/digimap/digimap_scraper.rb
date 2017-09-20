@@ -14,27 +14,33 @@ end
 class DigimapScraper
   class InvalidParserError < StandardError; end
 
-  DOMAIN = 'http://gis.digimap.je/ArcGIS/rest/services/'.freeze
-  JSON = '?f=json&pretty=true'.freeze
+  DOMAIN = 'http://dcw7.digimap.je/arcgis/rest/services/'.freeze
   URL = ''.freeze # subclass overides
+  JSON = '?f=json&pretty=true'.freeze
   FIELD_COLUMN_HASH = {}.freeze # subclass overides
+  FORM_FIELDS = nil # subclass must overide
   F = 'f'.freeze
   WHERE = 'where'.freeze
   OUT_FIELDS = 'outFields'.freeze
+  FORM_RADIOS = nil # subclass must overide
   RETURN_COUNT_ONLY = 'returnCountOnly'.freeze
   N = 1000 # API limit for number of records returned per call
 
-  def initialize(min = 1, max = 1)
-    raise ArgumentError, 'min < 1' if min < 1
-    raise ArgumentError, 'min > max' if min > max
+  def initialize(min = 1, max = 1, opts = {})
+    raise ArgumentError, 'min < 1' if min && min < 1
+    raise ArgumentError, 'min > max' if min && min > max
     @min = min
     @max = max
     @url = DOMAIN + self.class.const_get(:URL)
     @agent = Mechanize.new
     @agent.pluggable_parser['text/plain'] = JSONParser
     @form = form
-    validate_fields
+    validate_fields if opts[:validate_fields] # NOT set in finder subclasses
     validate_form
+  end
+
+  def defaults
+    { validate_fields: true }
   end
 
   def fields_from_constant
@@ -46,7 +52,7 @@ class DigimapScraper
   end
 
   def fields
-    reject_shape @agent.get(@url + JSON).json['fields'].map { |e| e['name'] }
+    reject_shape(@agent.get(@url + JSON).json['fields'].map { |e| e['name'] })
   end
 
   def validate_form
@@ -55,11 +61,12 @@ class DigimapScraper
   end
 
   def form_fields_ok?
-    [F, WHERE, OUT_FIELDS].all? { |s| @form.fields.map(&:name).include? s }
+    self.class.const_get(:FORM_FIELDS).all? { |s| @form.fields.map(&:name).include? s }
   end
 
   def form_radios_ok?
-    @form.radiobuttons.map(&:name).include? RETURN_COUNT_ONLY
+    # @form.radiobuttons.map(&:name).include? RETURN_COUNT_ONLY
+    self.class.const_get(:FORM_RADIOS).all? { |r| @form.radiobuttons.map(&:name).include? r }
   end
 
   def range
