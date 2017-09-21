@@ -40,7 +40,7 @@ module PlanningAppHelper
     t.split.size > 20 ? "#{t.split(/\s+/, n + 1)[0...n].join(' ')}..." : t
   end
 
-  def geolocate_location(search_string)
+  def geolocate(search_string)
     GazetteerFinder.new.results_for(search_string)
   end
 end

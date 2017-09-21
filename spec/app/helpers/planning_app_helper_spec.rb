@@ -48,10 +48,10 @@ describe PlanningAppHelper do
     end
   end
 
-  context '#geolocate_location(address)' do
+  context '#geolocate(search_string)' do
     it 'should find call #results_for on a GazetteerFinder object' do
       allow_any_instance_of(GazetteerFinder).to receive(:results_for).with('ad')
-      expect(-> { @h.geolocate_location('ad') }).not_to raise_error
+      expect(-> { @h.geolocate('ad') }).not_to raise_error
     end
   end
 end

@@ -12,6 +12,7 @@ Padfoot::App.controllers :planning_app do
 
   get :map, map: 'applications/map' do
     gon.data = []
+    @show_location_finder = true
     render :map
   end
 
@@ -23,7 +24,7 @@ Padfoot::App.controllers :planning_app do
   end
 
   get :find_location, map: 'applications/map/find_location', provides: :json do
-    geolocate_location(params[:address]).to_json
+    geolocate(params[:search_string]).to_json if params[:search_string]
   end
 
   get :address, map: 'applications/description', provides: :json do

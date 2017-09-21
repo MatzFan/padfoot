@@ -12,25 +12,27 @@ function getGoogleMap() {
   $.each(pinData, function(i, data) { plotMarker(data); });
   addDrawingTools();
   addViewInTableButton();
-  // var geocoder = new google.maps.Geocoder();
-  document.getElementById('find-location').addEventListener('click', function() {
-  // findLocation(geocoder, map);
-    findLocation(map);
-  });
+  document.getElementById('find-locations').onclick = findLocations;
 }
 
 
-// function findLocation(geocoder, resultsMap) {
-function findLocation(resultsMap) {
-  var search_string = document.getElementById('location').value;
-
-  var results = $.getJSON( "map/find_location", {address: search_string})
+function findLocations() {
+  var search_string = document.getElementById('search-string').value;
+  if(search_string == '') {
+    alert('Please enter some search text');
+    return;
+  }
+  var results = $.getJSON( "map/find_location", {search_string: search_string})
     .done(function(results) {
-      var location = results[0].geometry.location;
-      // results.setCenter(location);
+      var geometry = results[0].geometry
+      var attributes = results[0].attributes
+      var location = geometry.location;
+      map.setCenter(location);
+      map.setZoom(16)
       var marker = new google.maps.Marker({
-        map: map,
-        position: location
+        map: map, // RELIES ON GLOBAL VARAIABLE NAMESPACE!!!!!!!!!!!!
+        position: location,
+        title: attributes.Add1
       });
   });
 }
@@ -61,6 +63,7 @@ function addViewInTableButton() {
   viewInTableDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(viewInTableDiv);
 }
+
 
 function viewInTableButton(div) {
   // Set CSS for the control border.

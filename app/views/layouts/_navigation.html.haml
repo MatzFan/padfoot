@@ -20,7 +20,12 @@
         %li
           = link_to 'Map', url(:planning_app, :map)
       %ul.nav.navbar-nav.navbar-right
-        %li
+        - if @show_location_finder
+          %li
+            %form.navbar-form.navbar-left
+              .form-group
+                %input.form-control#search-string{placeholder: "Find location", type: "text"}
+                %input.btn.btn-default#find-locations{type: "button", value: 'Find'}
         - if signed_in?
           %li
             = link_to 'Edit Profile', url(:users, :edit, id: session[:current_user])
@@ -31,7 +36,7 @@
             = link_to 'Register', url(:users, :new)
           %li
             = link_to 'Login', url(:sessions, :new)
-        -# %form.navbar-form.navbar-left{:role => "search"}
-        -#   .form-group
-        -#     %input.form-control{:placeholder => "Search", :type => "text"}
-        -#   %button.btn.btn-default{:type => "submit"} Submit
+          -#%form.navbar-form.navbar-left{:role => "search"}
+            -#.form-group
+              -#%input.form-control{:placeholder => "Search", :type => "text"}
+            -#%button.btn.btn-default{:type => "submit"} Submit

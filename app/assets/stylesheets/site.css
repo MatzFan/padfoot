@@ -62,9 +62,7 @@ h1 {
 .map_container{
   position: relative;
   width: 100%;
-  /*height: -o-calc(100vh - 72px); /* opera */
-  /*height: calc(100% - 72px); /* firefox BROKEN */
-  /*height: -webkit-calc(100vh - 72px); /* google, safari */
+  /*height: calc(100% - 72px);*/
   padding-bottom: 46%; /* 52% for 16:9 screen */
 }
 
@@ -162,18 +160,4 @@ td div.long-text {
   z-index:1;
   left:20px;
   top:-1px;
-}
-
-#location-finder { /* for Geocoder */
-  position: absolute;
-  top: 10px;
-  left: 25%;
-  z-index: 5;
-  background-color: #fff;
-  padding: 5px;
-  border: 1px solid #999;
-  text-align: center;
-  font-family: 'Roboto','sans-serif';
-  line-height: 30px;
-  padding-left: 10px;
 }
