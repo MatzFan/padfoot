@@ -12,7 +12,7 @@ Padfoot::App.controllers :planning_app do
 
   get :map, map: 'applications/map' do
     gon.data = []
-    @show_location_finder = true
+    @show_location_finder = true # must precede render :map
     render :map
   end
 
@@ -20,7 +20,8 @@ Padfoot::App.controllers :planning_app do
     @all_refs = params[:tableData].split("\r\n") if params[:tableData]
     apps = PlanningApp.where(mapped: true, app_ref: @all_refs).all
     gon.data = PlanningApp.pin_data_hash(apps)
-    render :map
+    @show_location_finder = true
+    render :map # must precede render :map
   end
 
   get :find_location, map: 'applications/map/find_location', provides: :json do

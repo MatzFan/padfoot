@@ -1,6 +1,12 @@
 var map; // **global**
 var markers = []; // **global**
 
+
+var results;
+var locationSelect;
+
+
+
 function getGoogleMap() {
   var center = {lat: 49.210, lng: -2.135}; // Digimap center
   map = new google.maps.Map(document.getElementById('mapDiv'), {
@@ -12,7 +18,18 @@ function getGoogleMap() {
   $.each(pinData, function(i, data) { plotMarker(data); });
   addDrawingTools();
   addViewInTableButton();
+
   document.getElementById('find-locations').onclick = findLocations;
+
+  locationSelect = document.getElementById("location-select");
+  locationSelect.onchange = function() {
+    var selected_index = locationSelect.options[locationSelect.selectedIndex].value;
+    plotLocation(results[selected_index -1]);
+    // tidy up
+    document.getElementById('search-string').value = ''; // clear search field
+    locationSelect.innerHTML = ''; // remove options
+    locationSelect.style.visibility = "hidden"; // hide options
+  };
 }
 
 
@@ -22,18 +39,40 @@ function findLocations() {
     alert('Please enter some search text');
     return;
   }
-  var results = $.getJSON( "map/find_location", {search_string: search_string})
-    .done(function(results) {
-      var geometry = results[0].geometry
-      var attributes = results[0].attributes
-      var location = geometry.location;
-      map.setCenter(location);
-      map.setZoom(16)
-      var marker = new google.maps.Marker({
-        map: map, // RELIES ON GLOBAL VARAIABLE NAMESPACE!!!!!!!!!!!!
-        position: location,
-        title: attributes.Add1
-      });
+  // no var = 
+  $.getJSON( "map/find_location", {search_string: search_string})
+    .done(function(response) {
+      results = response;
+      createOptions(results);
+      locationSelect.style.visibility = "visible";
+  });
+}
+
+
+function createOptions(results) {
+  locationSelect.innerHTML = '' // delete existing options, from any previous search
+  var result_count = document.createElement("option");
+  result_count.innerHTML = results.length + ' results found';
+  locationSelect.appendChild(result_count);
+  $.each(results, function(i, result) {
+    var option = document.createElement("option");
+    option.value = i + 1;
+    option.innerHTML = result.attributes.Add1;
+    locationSelect.appendChild(option);
+  });
+}
+
+
+function plotLocation(location) {
+  var geometry = location.geometry
+  var attributes = location.attributes
+  var lat_long = geometry.location;
+  map.setCenter(lat_long);
+  map.setZoom(16)
+  var marker = new google.maps.Marker({
+    map: map, // RELIES ON GLOBAL VARAIABLE NAMESPACE!!!!!!!!!!!!
+    position: lat_long,
+    title: attributes.Add1
   });
 }
 

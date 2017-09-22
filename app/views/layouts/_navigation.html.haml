@@ -26,6 +26,8 @@
               .form-group
                 %input.form-control#search-string{placeholder: "Find location", type: "text"}
                 %input.btn.btn-default#find-locations{type: "button", value: 'Find'}
+              %div{style: "height: 0px"}
+                %select#location-select{style: "width: 100%; visibility: hidden"}
         - if signed_in?
           %li
             = link_to 'Edit Profile', url(:users, :edit, id: session[:current_user])
