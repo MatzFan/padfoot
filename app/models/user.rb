@@ -6,13 +6,13 @@ class User < Sequel::Model
 
   def validate
     super
-    validates_presence [:name, :email]
+    validates_presence %i[name email]
     validates_unique(:email) # CHECKS DB
     validates_format(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email)
   end
 
   def password
-    Password.new(password_digest) if password_digest
+    Password.new(password_digest) if password_digest # Password is BCrypt class
   end
 
   def password=(new_password)
