@@ -16,8 +16,8 @@ function getGoogleMap() {
   });
   var pinData = gon.data;
   $.each(pinData, function(i, data) { plotMarker(data); });
-  addDrawingTools();
-  addViewInTableButton();
+  var viewInTableControl = addViewInTableButton();
+  addDrawingTools(viewInTableControl);
 
   document.getElementById('find-locations').onclick = findLocations;
 
@@ -55,9 +55,10 @@ function createOptions(results) {
   result_count.innerHTML = results.length + ' results found';
   locationSelect.appendChild(result_count);
   $.each(results, function(i, result) {
+    var address = result.attributes.Add1 + ', ' + result.attributes.Add2;
     var option = document.createElement("option");
     option.value = i + 1;
-    option.innerHTML = result.attributes.Add1;
+    option.innerHTML = address;
     locationSelect.appendChild(option);
   });
 }
@@ -77,11 +78,11 @@ function plotLocation(location) {
 }
 
 
-function addDrawingTools() {
+function addDrawingTools(viewInTableControl) {
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingControl: true,
     drawingControlOptions: {
-      position: google.maps.ControlPosition.TOP_CENTER,
+      position: google.maps.ControlPosition.TOP_RIGHT,
       drawingModes: ['circle', 'polygon', 'rectangle']
     },
     circleOptions: {strokeColor: 'red'},
@@ -90,6 +91,7 @@ function addDrawingTools() {
   });
   google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
     drawingManager.setDrawingMode(null); // exit drawing mode
+    viewInTableControl.style.visibility = 'visible';
     containedApps(event.overlay);
   });
   drawingManager.setMap(map);
@@ -100,13 +102,15 @@ function addViewInTableButton() {
   var viewInTableDiv = document.createElement('div');
   var viewInTableControl = new viewInTableButton(viewInTableDiv);
   viewInTableDiv.index = 1;
-  map.controls[google.maps.ControlPosition.TOP_CENTER].push(viewInTableDiv);
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(viewInTableDiv);
+  return viewInTableControl; 
 }
 
 
 function viewInTableButton(div) {
   // Set CSS for the control border.
   var controlUI = document.createElement('div');
+  controlUI.style.visibility = 'hidden'; // hide until shape drawn
   controlUI.style.backgroundColor = '#fff';
   controlUI.style.border = '2px solid #fff';
   controlUI.style.borderRadius = '3px';
@@ -130,6 +134,7 @@ function viewInTableButton(div) {
   controlUI.addEventListener('click', function() {
     showPlottedAppsInTable();
   });
+  return controlUI;
 }
 
 

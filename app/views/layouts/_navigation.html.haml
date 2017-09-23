@@ -19,7 +19,6 @@
           = link_to 'Applications', url(:planning_app, :index)
         %li
           = link_to 'Map', url(:planning_app, :map)
-      %ul.nav.navbar-nav.navbar-right
         - if @show_location_finder
           %li
             %form.navbar-form.navbar-left
@@ -28,6 +27,7 @@
                 %input.btn.btn-default#find-locations{type: "button", value: 'Find'}
               %div{style: "height: 0px"}
                 %select#location-select{style: "width: 100%; visibility: hidden"}
+      %ul.nav.navbar-nav.navbar-right
         - if signed_in?
           %li
             = link_to 'Edit Profile', url(:users, :edit, id: session[:current_user])
