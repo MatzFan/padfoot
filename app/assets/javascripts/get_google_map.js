@@ -8,11 +8,16 @@ var locationSelect;
 
 
 function getGoogleMap() {
-  var center = {lat: 49.210, lng: -2.135}; // Digimap center
+  var center_initial = {lat: 49.210, lng: -2.135}; // Digimap center
   map = new google.maps.Map(document.getElementById('mapDiv'), {
     zoom: 13,
-    center: center,
+    center: center_initial,
     mapTypeId: 'satellite'
+  });
+  google.maps.event.addDomListener(window, 'resize', function() {
+    var center = map.getCenter();
+    google.maps.event.trigger(map, 'resize');
+    map.setCenter(center); 
   });
   var pinData = gon.data;
   $.each(pinData, function(i, data) { plotMarker(data); });
@@ -69,7 +74,7 @@ function plotLocation(location) {
   var attributes = location.attributes
   var lat_long = geometry.location;
   map.setCenter(lat_long);
-  map.setZoom(16)
+  map.setZoom(18)
   var marker = new google.maps.Marker({
     map: map, // RELIES ON GLOBAL VARAIABLE NAMESPACE!!!!!!!!!!!!
     position: lat_long,

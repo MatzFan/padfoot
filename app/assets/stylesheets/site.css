@@ -62,8 +62,8 @@ h1 {
 .map_container{
   position: relative;
   width: 100%;
-  /*height: calc(100% - 72px);*/
-  padding-bottom: 46%; /* 52% for 16:9 screen */
+  min-height: calc(100vh - 72px);
+  /* padding-bottom: 46%; 52% for 16:9 screen */
 }
 
 .map_container .map_canvas{
