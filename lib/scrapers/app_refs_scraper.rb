@@ -2,16 +2,16 @@ require 'json'
 
 # scrapes app refs for a given year
 class AppRefsScraper
-  ROOT = 'https://www.mygov.je/'.freeze
+  ROOT = 'https://www.gov.je/'.freeze
   CURL = 'curl -s -X POST -H "Content-Type: application/json" -d'.freeze
   URL = '"URL":'.freeze
-  SITE = '"https://www.mygov.je//Planning/Pages/Planning.aspx"'.freeze
+  SITE = '"https://www.gov.je/citizen/Planning/Pages/Planning.aspx"'.freeze
   COMMON = '"CommonParameters":'.freeze
   SEARCH = '"SearchParameters":'.freeze
   REQ_PAGE = '_layouts/15/PlanningAjaxServices/PlanningSearch.svc/Search'.freeze
   RESULT = 'ResultHTML'.freeze
   HEADER = 'HeaderHTML'.freeze
-  DETAILS_URL = '/Planning/Pages/PlanningApplicationDetail.aspx?'.freeze
+  DETAILS_URL = 'citizen/Planning/Pages/PlanningApplicationDetail.aspx?'.freeze
   PARAMS = 's=1&amp;r='.freeze
 
   attr_reader :year, :start_page, :ref_num_string

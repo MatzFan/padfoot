@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.4.2'
+ruby '2.5.0'
 
 group :production do
   gem 'unicorn', '5.3.0'
@@ -24,7 +24,7 @@ gem 'yui-compressor', '0.12.0' # CSS compression
 # Component requirements
 gem 'aws-sdk', '3.0.1', require: 'aws-sdk'
 gem 'gis_scraper', '0.1.10.pre'
-gem 'haml', '5.0.3'
+gem 'haml', '5.0.4'
 gem 'linguistics', '2.1.0'
 gem 'pg', '0.21.0'
 gem 'sass', '3.5.1'
@@ -40,7 +40,7 @@ group :test do
   gem 'factory_girl', '4.8.0'
   gem 'faker', '1.8.4'
   gem 'rack-test', '0.7.0', require: 'rack/test'
-  gem 'rspec', '3.6.0'
+  gem 'rspec', '3.7.0'
   gem 'selenium-webdriver', '3.5.2'
 end
 
