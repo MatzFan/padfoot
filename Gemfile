@@ -6,8 +6,8 @@ group :production do
 end
 
 gem 'mime-types', '>= 2.6.1', require: 'mime/types/columnar' # save mem
-gem 'padrino', '0.14.1.1'
-
+gem 'padrino', '0.14.3'
+gem 'sinatra', '>= 2.0.1' # params fix
 gem 'bcrypt', '3.1.11', require: 'bcrypt'
 gem 'gon-sinatra', '0.1.2'
 gem 'mechanize', '2.7.5'
