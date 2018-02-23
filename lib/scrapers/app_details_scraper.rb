@@ -1,14 +1,15 @@
 require 'mechanize'
 
+# Scrapes application details
 class AppDetailsScraper
-
-  ROOT = 'https://www.mygov.je/'
-  DETAILS_PAGE = 'Planning/Pages/PlanningApplicationDetail.aspx?s=1&r='
-  DATES_PAGE = 'Planning/Pages/PlanningApplicationTimeline.aspx?s=1&r='
-  CSS = ".//table[@class='pln-searchd-table']"
-  TT = '_table_titles'
-  ID_DELIM = 'ctl00_lbl'
-  COORDS = [:Latitude, :Longitude]
+  MIS = 'Application number is missing from the request or was not found'.freeze
+  ROOT = 'https://www.gov.je/citizen/Planning/Pages/'.freeze
+  DETAILS_PAGE = 'PlanningApplicationDetail.aspx?s=1&r='.freeze
+  DATES_PAGE = 'PlanningApplicationTimeline.aspx?s=1&r='.freeze
+  CSS = ".//table[@class='pln-searchd-table']".freeze
+  TT = '_table_titles'.freeze
+  ID_DELIM = 'ctl00_lbl'.freeze
+  COORDS = %i[Latitude Longitude].freeze
   LAT = 48.6 # minimum value for valid coords
 
   attr_reader :agent, :app_refs, :num_refs, :det_pages, :dat_pages
@@ -17,13 +18,13 @@ class AppDetailsScraper
     @agent = Mechanize.new
     @app_refs = app_refs.flatten # an array
     @num_refs = @app_refs.length
-    @det_pages = pages('DETAILS_PAGE').map &validate
-    @dat_pages = pages('DATES_PAGE').map &validate
-    return if num_refs != det_pages.size or num_refs != dat_pages.size
+    @det_pages = pages('DETAILS_PAGE').map(&validate)
+    @dat_pages = pages('DATES_PAGE').map(&validate)
+    return if num_refs != det_pages.size || num_refs != dat_pages.size
   end
 
-  def validate # invalid pages replaced with nil's
-    Proc.new { |page| page if page.title.include?('Application') }
+  def validate
+    proc { |page| page unless page.body.include? MIS } # invalid pages => nil's
   end
 
   def pages(type)
@@ -32,14 +33,14 @@ class AppDetailsScraper
 
   def app_details(i)
     if table_ok?(i, 'details')
-     (0..1).map { |n| det_table(i, n).map { |e| get_text(e) } }.flatten
+      (0..1).map { |n| det_table(i, n).map { |e| get_text(e) } }.flatten
     else
       {}
     end
   end
 
   def get_text(e)
-    e.text.empty? ? nil : e.text.strip.squeeze(' ') # removes all repeated spaces :)
+    e.text.empty? ? nil : e.text.strip.squeeze(' ') # removes repeated spaces
   end
 
   def details_hash(i)
@@ -103,12 +104,11 @@ class AppDetailsScraper
     COORDS.map { |coord| parse_coord(det_pages[i].body, coord.to_s).to_f }
   end
 
-  def coords_hash(r) # validates latitude
-    coords(r)[0] > LAT ? Hash[COORDS.map { |c| c.downcase}.zip(coords(r))] : {}
+  def coords_hash(r)
+    coords(r)[0] > LAT ? Hash[COORDS.map(&:downcase).zip(coords(r))] : {}
   end
 
   def parse_coord(source, coord)
     source.split('window.MapCentre' + coord + ' = ').last.split(';').first
   end
-
 end
