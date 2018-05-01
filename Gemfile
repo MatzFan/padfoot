@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.5.0'
+ruby '2.5.1'
 
 group :production do
   gem 'unicorn', '5.3.0'
