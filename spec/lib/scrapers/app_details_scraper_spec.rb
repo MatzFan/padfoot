@@ -12,7 +12,7 @@ describe AppDetailsScraper do
      'RW',
      'Upheld',
      'Richard Greig',
-     'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade, JE3 8EA',
+     'Mr & Mrs R.I.G. Hardcastle',
      'Replace 5 No. windows on South elevation..... REQUEST FOR '\
        'RECONSIDERATION for refusal of planning permission.',
      'Homewood',
@@ -30,8 +30,7 @@ describe AppDetailsScraper do
   let(:app_coords) { [49.185511, -2.191882] }
 
   let(:app_data_hash) do
-    { app_applicant: 'Mr & Mrs R.I.G. Hardcastle, Le Mont Sohier, St. Brelade'\
-        ', JE3 8EA',
+    { app_applicant: 'Mr & Mrs R.I.G. Hardcastle',
       app_address: 'Homewood',
       app_category: 'RW',
       app_constraints: 'Built-Up Area, Green Backdrop Zone, Potential Listed '\
