@@ -179,7 +179,7 @@ function setupDatePickers() {
   var fromDatePicker = $("#from_date").datepicker({
     dateFormat: 'dd/mm/yy',
     changeYear: true,
-    yearRange: "1984:2015",
+    yearRange: "1984:2018",
     onSelect: function() { table.draw(); }
   })
   fromDatePicker.datepicker("setDate", new Date(2006, 5, 1)); // defaults to 1 June 2006
@@ -187,7 +187,7 @@ function setupDatePickers() {
   var toDatePicker = $("#to_date").datepicker({
     dateFormat: 'dd/mm/yy',
     changeYear: true,
-    yearRange: "1984:2015",
+    yearRange: "1984:2018",
     onSelect: function() { table.draw(); }
   })
   toDatePicker.datepicker("setDate", new Date()); // today

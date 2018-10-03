@@ -2,8 +2,11 @@ require 'mechanize'
 
 # Scrapes application details
 class AppDetailsScraper
+  UA = 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0'.freeze
+  HEADERS = { 'User-Agent' => UA }.freeze
   MIS = 'Application number is missing from the request or was not found'.freeze
   ROOT = 'https://www.gov.je/citizen/Planning/Pages/'.freeze
+  FEDAUTH = 'FedAuth'.freeze
   DETAILS_PAGE = 'PlanningApplicationDetail.aspx?s=1&r='.freeze
   DATES_PAGE = 'PlanningApplicationTimeline.aspx?s=1&r='.freeze
   CSS = ".//table[@class='pln-searchd-table']".freeze
@@ -15,12 +18,18 @@ class AppDetailsScraper
   attr_reader :agent, :app_refs, :num_refs, :det_pages, :dat_pages
 
   def initialize(*app_refs)
-    @agent = Mechanize.new
+    @agent = Mechanize.new.tap { |agent| agent.request_headers = HEADERS } # tap
     @app_refs = app_refs.flatten # an array
+    set_fed_auth_cookie
     @num_refs = @app_refs.length
     @det_pages = pages('DETAILS_PAGE').map(&validate)
     @dat_pages = pages('DATES_PAGE').map(&validate)
     return if num_refs != det_pages.size || num_refs != dat_pages.size
+  end
+
+  def set_fed_auth_cookie
+    agent.get(ROOT + DETAILS_PAGE + app_refs.first)
+    agent.cookie_jar << agent.cookies.select { |c| c.name == FEDAUTH }.first
   end
 
   def validate
