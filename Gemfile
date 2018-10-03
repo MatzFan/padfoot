@@ -11,7 +11,7 @@ gem 'sinatra', '>= 2.0.1' # params fix
 gem 'bcrypt', '3.1.11', require: 'bcrypt'
 gem 'gon-sinatra', '0.1.2'
 gem 'mechanize', '2.7.6'
-gem 'nokogiri', '~> 1.8.1'
+gem 'nokogiri', '~> 1.8.4'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'parallel', '1.12.0'
 gem 'rake', '12.3.1'
