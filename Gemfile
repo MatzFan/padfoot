@@ -17,7 +17,7 @@ gem 'parallel', '1.12.0'
 gem 'rake', '12.3.1'
 gem 'thin', '1.7.2'
 gem 'uglifier', '3.2.0' # JS compression
-gem 'yui-compressor', '0.12.0' # CSS compression
+gem 'yui-compressor', '0.12.0' # CSS compression - needs java
 
 # Optional JSON codec (faster performance)
 # gem 'oj', '2.11.4', require: 'oj'
