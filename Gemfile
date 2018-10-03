@@ -10,7 +10,7 @@ gem 'padrino', '0.14.3'
 gem 'sinatra', '>= 2.0.1' # params fix
 gem 'bcrypt', '3.1.11', require: 'bcrypt'
 gem 'gon-sinatra', '0.1.2'
-gem 'mechanize', '2.7.5'
+gem 'mechanize', '2.7.6'
 gem 'nokogiri', '~> 1.8.1'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'parallel', '1.12.0'
