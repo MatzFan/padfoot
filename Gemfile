@@ -14,7 +14,7 @@ gem 'mechanize', '2.7.5'
 gem 'nokogiri', '~> 1.8.1'
 gem 'padrino-sprockets', '0.0.3', require: 'padrino/sprockets'
 gem 'parallel', '1.12.0'
-gem 'rake', '12.1.0'
+gem 'rake', '12.3.1'
 gem 'thin', '1.7.2'
 gem 'uglifier', '3.2.0' # JS compression
 gem 'yui-compressor', '0.12.0' # CSS compression
